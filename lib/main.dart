@@ -12,8 +12,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Athletic Air',
       debugShowCheckedModeBanner: false,
-      initialRoute: HomePage.route,
-      theme: customTheme,
+      theme: CustomTheme.theme(),
+      initialRoute: LoginPage.route,
       routes: {
         HomePage.route: (_) => HomePage(),
         LoginPage.route: (_) => LoginPage(),

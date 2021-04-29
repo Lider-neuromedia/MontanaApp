@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:montana_mobile/pages/session/password_page.dart';
 
 class LoginPage extends StatelessWidget {
   static final String route = 'login';
@@ -81,7 +82,7 @@ class LoginCard extends StatelessWidget {
               emailInput(),
               SizedBox(height: 30.0),
               passwordInput(),
-              forgetPasswordButton(),
+              forgetPasswordButton(context),
               SizedBox(height: 30.0),
               submitButton(context),
             ],
@@ -91,7 +92,7 @@ class LoginCard extends StatelessWidget {
     );
   }
 
-  Widget forgetPasswordButton() {
+  Widget forgetPasswordButton(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(top: 10.0),
       child: Row(
@@ -99,7 +100,9 @@ class LoginCard extends StatelessWidget {
         children: [
           TextButton(
             child: Text('Olvidé mi contraseña'),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).pushNamed(PasswordPage.route);
+            },
           )
         ],
       ),

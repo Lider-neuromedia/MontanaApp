@@ -69,6 +69,7 @@ class CustomTheme {
         button: textTheme.button.copyWith(
           fontSize: 17.0,
           fontFamily: 'SourceSansPro',
+          fontWeight: FontWeight.w600,
         ),
       ),
     );

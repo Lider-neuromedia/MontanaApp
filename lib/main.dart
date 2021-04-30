@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:montana_mobile/pages/home_page.dart';
+import 'package:montana_mobile/pages/home/home_page.dart';
 import 'package:montana_mobile/pages/session/login_page.dart';
 import 'package:montana_mobile/pages/session/password_page.dart';
 import 'package:montana_mobile/pages/session/reset_password_page.dart';
@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
       title: 'Athletic Air',
       debugShowCheckedModeBanner: false,
       theme: CustomTheme.theme(),
-      initialRoute: LoginPage.route,
+      initialRoute: HomePage.route,
       routes: {
         HomePage.route: (_) => HomePage(),
         LoginPage.route: (_) => LoginPage(),

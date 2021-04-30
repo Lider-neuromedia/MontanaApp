@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:montana_mobile/pages/home_page.dart';
 import 'package:montana_mobile/pages/session/password_page.dart';
 import 'package:montana_mobile/providers/LoginProvider.dart';
+import 'package:montana_mobile/utils/preferences.dart';
 import 'package:provider/provider.dart';
 
 class LoginPage extends StatelessWidget {
@@ -62,6 +63,8 @@ class LoginCard extends StatefulWidget {
 
 class _LoginCardState extends State<LoginCard> {
   LoginProvider _loginProvider;
+  TextEditingController _emailController = TextEditingController(text: '');
+  TextEditingController _passwordController = TextEditingController(text: '');
 
   @override
   Widget build(BuildContext context) {
@@ -125,6 +128,7 @@ class _LoginCardState extends State<LoginCard> {
 
   Widget emailInput() {
     return TextFormField(
+      controller: _emailController,
       keyboardType: TextInputType.emailAddress,
       decoration: InputDecoration(
         labelText: 'Usuario',
@@ -138,6 +142,7 @@ class _LoginCardState extends State<LoginCard> {
 
   Widget passwordInput() {
     return TextFormField(
+      controller: _passwordController,
       obscureText: true,
       decoration: InputDecoration(
         labelText: 'Contraseña',
@@ -150,20 +155,30 @@ class _LoginCardState extends State<LoginCard> {
 
   Widget submitButton(BuildContext context) {
     return ElevatedButton(
-      child: Text('Iniciar Sesión'),
+      child: Text(_loginProvider.isLoading ? 'Cargando...' : 'Iniciar Sesión'),
       style: ElevatedButton.styleFrom(
         primary: Theme.of(context).primaryColor,
         padding: EdgeInsets.symmetric(vertical: 20.0),
       ),
-      onPressed: _loginProvider.isLoginDataValid ? login : null,
+      onPressed:
+          _loginProvider.isLoginDataValid && _loginProvider.isLoading == false
+              ? login
+              : null,
     );
   }
 
-  void login() {
-    bool success = _loginProvider.login();
+  Future<void> login() async {
+    await _loginProvider.login();
+    final preferences = Preferences();
 
-    if (success) {
+    if (preferences.token != null) {
+      _emailController.text = '';
+      _passwordController.text = '';
+      _loginProvider.email = '';
+      _loginProvider.password = '';
       Navigator.of(context).pushReplacementNamed(HomePage.route);
+    } else {
+      print('bad');
     }
   }
 }

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:montana_mobile/pages/home_page.dart';
 import 'package:montana_mobile/pages/session/password_page.dart';
+import 'package:montana_mobile/providers/LoginProvider.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatelessWidget {
   static final String route = 'login';
@@ -8,23 +11,26 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     var mediaSize = MediaQuery.of(context).size;
 
-    return Scaffold(
-      body: Stack(
-        children: [
-          Positioned(
-            left: 0.0,
-            top: mediaSize.height * 0.2 * -1,
-            child: backgroundBox(context, mediaSize),
-          ),
-          Positioned(
-            left: mediaSize.width / 4,
-            top: mediaSize.height * 0.18,
-            child: backgroundLogo(mediaSize),
-          ),
-          Center(
-            child: LoginCard(),
-          )
-        ],
+    return ChangeNotifierProvider(
+      create: (_) => LoginProvider(),
+      child: Scaffold(
+        body: Stack(
+          children: [
+            Positioned(
+              left: 0.0,
+              top: mediaSize.height * 0.2 * -1,
+              child: backgroundBox(context, mediaSize),
+            ),
+            Positioned(
+              left: mediaSize.width / 4,
+              top: mediaSize.height * 0.18,
+              child: backgroundLogo(mediaSize),
+            ),
+            Center(
+              child: LoginCard(),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -49,10 +55,18 @@ class LoginPage extends StatelessWidget {
   }
 }
 
-class LoginCard extends StatelessWidget {
+class LoginCard extends StatefulWidget {
+  @override
+  _LoginCardState createState() => _LoginCardState();
+}
+
+class _LoginCardState extends State<LoginCard> {
+  LoginProvider _loginProvider;
+
   @override
   Widget build(BuildContext context) {
     var mediaSize = MediaQuery.of(context).size;
+    _loginProvider = Provider.of<LoginProvider>(context);
 
     return Container(
       margin: EdgeInsets.only(top: mediaSize.height * 0.15),
@@ -116,7 +130,9 @@ class LoginCard extends StatelessWidget {
         labelText: 'Usuario',
         hintText: 'example@mail.com',
       ),
-      onChanged: (String value) {},
+      onChanged: (String value) {
+        _loginProvider.email = value;
+      },
     );
   }
 
@@ -126,7 +142,9 @@ class LoginCard extends StatelessWidget {
       decoration: InputDecoration(
         labelText: 'Contraseña',
       ),
-      onChanged: (String value) {},
+      onChanged: (String value) {
+        _loginProvider.password = value;
+      },
     );
   }
 
@@ -137,7 +155,15 @@ class LoginCard extends StatelessWidget {
         primary: Theme.of(context).primaryColor,
         padding: EdgeInsets.symmetric(vertical: 20.0),
       ),
-      onPressed: () {},
+      onPressed: _loginProvider.isLoginDataValid ? login : null,
     );
+  }
+
+  void login() {
+    bool success = _loginProvider.login();
+
+    if (success) {
+      Navigator.of(context).pushReplacementNamed(HomePage.route);
+    }
   }
 }

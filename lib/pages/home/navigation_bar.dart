@@ -12,16 +12,19 @@ class NavigationBar extends StatelessWidget {
     final navigationProvider = Provider.of<NavigationProvider>(context);
 
     return BottomNavigationBar(
-      currentIndex: navigationProvider.currentPage,
+      currentIndex: navigationProvider.currentPage < 4
+          ? navigationProvider.currentPage
+          : 4,
       onTap: (int index) {
         if (index < 4) {
           navigationProvider.currentPage = index;
         } else {
-          // TODO: Mostrar navegación extra.
+          navigationProvider.showMore = !navigationProvider.showMore;
         }
       },
       type: BottomNavigationBarType.fixed,
-      elevation: 5.0,
+      elevation: 0.0,
+      backgroundColor: Colors.white,
       items: [
         BottomNavigationBarItem(
           icon: Icon(Icons.dashboard_outlined),

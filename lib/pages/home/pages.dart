@@ -10,11 +10,11 @@ class Pages extends StatelessWidget {
   final List<Widget> _pages = [
     PlaceHolderPage(background: Colors.yellow, title: 'Dashboard'),
     PlaceHolderPage(background: Colors.blue, title: 'Catálogo'),
-    PlaceHolderPage(background: Colors.orange, title: 'Pedidos'),
+    PlaceHolderPage(background: Colors.pink, title: 'Pedidos'),
     PlaceHolderPage(background: Colors.cyan, title: 'Show Room'),
     PlaceHolderPage(background: Colors.green, title: 'Tiendas'),
-    PlaceHolderPage(background: Colors.green, title: 'PQRS'),
-    PlaceHolderPage(background: Colors.green, title: 'Ampliación'),
+    PlaceHolderPage(background: Colors.orange, title: 'PQRS'),
+    PlaceHolderPage(background: Colors.indigo, title: 'Ampliación'),
   ];
 
   @override

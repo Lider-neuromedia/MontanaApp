@@ -36,7 +36,7 @@ class CardStatistic extends StatelessWidget {
 
     return Container(
       padding: EdgeInsets.all(10.0),
-      width: size.width * 0.45,
+      width: (size.width / 2) - 20.0,
       decoration: BoxDecoration(
         color: bgColor,
         border: Border.all(color: Colors.grey[200], width: 2.0),
@@ -61,7 +61,7 @@ class CardStatistic extends StatelessWidget {
                 ),
           SizedBox(height: 10.0),
           Center(
-            child: CardChart(
+            child: _CardChart(
               isMain: isMain,
               value: value,
               label: label,
@@ -74,8 +74,8 @@ class CardStatistic extends StatelessWidget {
   }
 }
 
-class CardChart extends StatelessWidget {
-  const CardChart({
+class _CardChart extends StatelessWidget {
+  const _CardChart({
     Key key,
     @required this.value,
     @required this.label,

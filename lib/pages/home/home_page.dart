@@ -18,9 +18,6 @@ class _HomePageState extends State<HomePage> {
     return ChangeNotifierProvider(
       create: (_) => NavigationProvider(),
       child: Scaffold(
-        appBar: AppBar(
-          title: Text('Athletic Air'),
-        ),
         body: Stack(
           children: [
             Pages(),

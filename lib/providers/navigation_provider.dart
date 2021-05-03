@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class NavigationProvider with ChangeNotifier {
   int _currentPage = 0;
-  bool _showMore = true;
+  bool _showMore = false;
 
   int get currentPage => _currentPage;
 

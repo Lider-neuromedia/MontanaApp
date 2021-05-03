@@ -33,6 +33,7 @@ dependencies:
   shared_preferences: ^2.0.5
   http: ^0.13.2
   flutter_dotenv: ^3.1.0
+  percent_indicator: ^3.0.1
 
 dev_dependencies:
   flutter_test:

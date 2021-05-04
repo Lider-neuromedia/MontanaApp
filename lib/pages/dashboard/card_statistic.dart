@@ -9,6 +9,7 @@ class CardStatistic extends StatelessWidget {
   final int value;
   final String label;
   final bool isMain;
+  final IconData icon;
 
   const CardStatistic({
     Key key,
@@ -17,6 +18,7 @@ class CardStatistic extends StatelessWidget {
     this.subtitle,
     @required this.value,
     @required this.label,
+    this.icon,
   }) : super(key: key);
 
   @override
@@ -45,7 +47,15 @@ class CardStatistic extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: titleStyle),
+          icon == null
+              ? Text(title, style: titleStyle)
+              : Row(
+                  children: [
+                    Icon(icon, color: isMain ? Colors.white : mainColor),
+                    SizedBox(width: 10.0),
+                    Text(title, style: titleStyle),
+                  ],
+                ),
           subtitle == null
               ? Container()
               : Row(

@@ -107,7 +107,6 @@ class _ContentNormal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     final titleStyle = Theme.of(context).textTheme.bodyText1.copyWith(
           color: CustomTheme.textColor1,
         );
@@ -117,7 +116,7 @@ class _ContentNormal extends StatelessWidget {
         );
 
     return Container(
-      width: (size.width / 2) - 20.0,
+      width: double.infinity,
       padding: EdgeInsets.all(10.0),
       decoration: BoxDecoration(
         color: Colors.white,

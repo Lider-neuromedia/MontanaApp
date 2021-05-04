@@ -44,9 +44,9 @@ class CustomTheme {
         overline: textTheme.overline
             .copyWith(fontFamily: 'SourceSansPro', color: textColor2),
         subtitle1: textTheme.subtitle1
-            .copyWith(fontFamily: 'SourceSansPro', color: textColor2),
+            .copyWith(fontFamily: 'SourceSansPro', color: textColor1),
         subtitle2: textTheme.subtitle2
-            .copyWith(fontFamily: 'SourceSansPro', color: textColor2),
+            .copyWith(fontFamily: 'SourceSansPro', color: textColor1),
         button: textTheme.button.copyWith(
           fontSize: 17.0,
           fontFamily: 'SourceSansPro',

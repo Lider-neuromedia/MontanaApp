@@ -76,10 +76,6 @@ class _TypeTag extends StatelessWidget {
   Widget build(BuildContext context) {
     TextStyle textStyle = Theme.of(context).textTheme.headline6;
 
-    String type = catalogue.type.toLowerCase().trim();
-    String firstLetter = type.substring(0, 1).toUpperCase();
-    String word = firstLetter + type.substring(1, type.length);
-
     return Positioned(
       top: 30.0,
       right: 5.0,
@@ -96,7 +92,7 @@ class _TypeTag extends StatelessWidget {
           ),
         ),
         child: Text(
-          word,
+          catalogue.typeFormatted,
           style: textStyle,
         ),
       ),
@@ -114,19 +110,21 @@ class _CatalogueCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextStyle textStyle1 = Theme.of(context).textTheme.headline5.copyWith(
-          fontWeight: FontWeight.w700,
-          color: CustomTheme.textColor1,
-        );
-    TextStyle textStyle2 = Theme.of(context).textTheme.headline6.copyWith(
-          color: CustomTheme.textColor1,
-        );
+    final textTheme = Theme.of(context).textTheme;
+    TextStyle textStyle1 = textTheme.headline5.copyWith(
+      fontWeight: FontWeight.w700,
+      color: CustomTheme.textColor1,
+    );
+    TextStyle textStyle2 = textTheme.headline6.copyWith(
+      color: CustomTheme.textColor1,
+    );
+
     return Card(
       elevation: 2.0,
       child: Padding(
         padding: const EdgeInsets.symmetric(
-          vertical: 10.0,
           horizontal: 15.0,
+          vertical: 10.0,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

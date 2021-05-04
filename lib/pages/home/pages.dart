@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:montana_mobile/pages/catalogue/catalogue.dart';
+import 'package:montana_mobile/pages/catalogue/catalogue_page.dart';
 import 'package:montana_mobile/pages/dashboard/dashboard_buyer_page.dart';
 import 'package:montana_mobile/pages/dashboard/dashboard_seller_page.dart';
+import 'package:montana_mobile/pages/orders/orders_page.dart';
 import 'package:montana_mobile/providers/navigation_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -13,7 +14,7 @@ class Pages extends StatelessWidget {
   final List<Widget> _pages = [
     DashboardSellerPage(), // DashboardBuyerPage(),
     CataloguePage(),
-    PlaceHolderPage(background: Colors.pink, title: 'Pedidos'),
+    OrdersPage(),
     PlaceHolderPage(background: Colors.cyan, title: 'Show Room'),
     PlaceHolderPage(background: Colors.green, title: 'Tiendas'),
     PlaceHolderPage(background: Colors.orange, title: 'PQRS'),

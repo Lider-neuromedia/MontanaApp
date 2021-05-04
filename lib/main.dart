@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:montana_mobile/pages/home/home_page.dart';
+import 'package:montana_mobile/pages/orders/order_create_page.dart';
+import 'package:montana_mobile/pages/orders/order_page.dart';
 import 'package:montana_mobile/pages/session/login_page.dart';
 import 'package:montana_mobile/pages/session/password_page.dart';
 import 'package:montana_mobile/pages/session/reset_password_page.dart';
@@ -30,6 +32,8 @@ class MyApp extends StatelessWidget {
         LoginPage.route: (_) => LoginPage(),
         PasswordPage.route: (_) => PasswordPage(),
         ResetPasswordPage.route: (_) => ResetPasswordPage(),
+        OrderPage.route: (_) => OrderPage(),
+        OrderCreatePage.route: (_) => OrderCreatePage(),
       },
     );
   }

@@ -14,6 +14,13 @@ class Catalogue {
   int quantity;
   int discount;
   String type;
+
+  String get typeFormatted {
+    String temp = type.toLowerCase().trim();
+    String firstLetter = temp.substring(0, 1).toUpperCase();
+    String word = firstLetter + temp.substring(1, temp.length);
+    return word;
+  }
 }
 
 List<Catalogue> catalogueListTest() {

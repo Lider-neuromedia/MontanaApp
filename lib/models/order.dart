@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:montana_mobile/utils/utils.dart';
 
 class Order {
   int id;
@@ -10,7 +9,30 @@ class Order {
   Client client;
   Seller seller;
 
-  Order({this.id, this.date, this.code, this.total});
+  Order({
+    this.id,
+    this.date,
+    this.code,
+    this.total,
+  });
+
+  String paymentMethod;
+  double subTotal;
+  int discount;
+  String notes;
+  List<OrderProduct> products;
+  List<Novelty> novelties;
+
+  Order.detail({
+    this.id,
+    this.date,
+    this.code,
+    this.total,
+    this.paymentMethod,
+    this.subTotal,
+    this.discount,
+    this.notes,
+  });
 
   get dateFormatted {
     final String year = date.year.toString();
@@ -18,6 +40,34 @@ class Order {
     final String day = date.day.toString().padLeft(2, '0');
     return "$day / $month / $year";
   }
+}
+
+class OrderProduct {
+  String reference;
+  int productQuantity;
+  String place;
+
+  OrderProduct({
+    this.reference,
+    this.productQuantity,
+    this.place,
+  });
+}
+
+class Novelty {
+  int id;
+  String type;
+  String description;
+  DateTime createdAt;
+  DateTime updatedAt;
+
+  Novelty({
+    this.id,
+    this.type,
+    this.description,
+    this.createdAt,
+    this.updatedAt,
+  });
 }
 
 class Status {
@@ -50,16 +100,197 @@ class Seller {
   String name;
   String lastname;
 
-  Seller({this.name, this.lastname});
+  Seller({
+    this.name,
+    this.lastname,
+  });
 }
 
 class Client {
   String name;
   String lastname;
 
-  Client({this.name, this.lastname});
+  Client({
+    this.name,
+    this.lastname,
+  });
 
+  int id;
+  int rolId;
+  String email;
+  String identificationType;
+  String dni;
+  String nit;
+
+  Client.orderDetail({
+    this.id,
+    this.name,
+    this.lastname,
+    this.rolId,
+    this.email,
+    this.identificationType,
+    this.dni,
+    this.nit,
+  });
   String get fullname => "$name $lastname";
+}
+
+Order orderDetailTest() {
+  Map<String, dynamic> element = {
+    "id_pedido": 23,
+    "fecha": "2020-10-27",
+    "codigo": "5f9876ea33765",
+    "metodo_pago": "contado",
+    "sub_total": 1650000,
+    "total": 495000,
+    "descuento": 70,
+    "notas": "Ninguna",
+    "vendedor": 3,
+    "estado": "cancelado",
+    "id_estado": 3,
+    "cliente": 4,
+    "info_cliente": {
+      "id": 4,
+      "rol_id": 3,
+      "name": "Juan Jose",
+      "apellidos": "Borrero",
+      "email": "emanuel@gmail.com",
+      "tipo_identificacion": "Cedula",
+      "dni": "42424425",
+      "email_verified_at": null,
+      "created_at": "2020-07-30 02:18:47",
+      "updated_at": "2021-01-25 03:20:40",
+      "nit": "6516516"
+    },
+    "productos": [
+      {"referencia": "ATH-30303", "cantidad_producto": 3, "lugar": "unico 2"},
+      {"referencia": "ATH-30303", "cantidad_producto": 5, "lugar": "Unicentro"}
+    ],
+    "novedades": [
+      {
+        "id_novedad": 6,
+        "tipo": "retraso en envio",
+        "descripcion": "Hubo retraso",
+        "pedido": 23,
+        "created_at": "2020-10-28 23:17:58",
+        "updated_at": "2020-10-28 23:17:58"
+      },
+      {
+        "id_novedad": 7,
+        "tipo": "retraso en envio",
+        "descripcion": "PRUEBA1",
+        "pedido": 23,
+        "created_at": "2021-01-07 18:44:09",
+        "updated_at": "2021-01-07 18:44:09"
+      },
+      {
+        "id_novedad": 23,
+        "tipo": "retraso en envio",
+        "descripcion": "Prueba 1",
+        "pedido": 23,
+        "created_at": "2021-03-30 19:21:13",
+        "updated_at": "2021-03-30 19:21:13"
+      },
+      {
+        "id_novedad": 24,
+        "tipo": "retraso en envío",
+        "descripcion": "prueba 2",
+        "pedido": 23,
+        "created_at": "2021-03-30 19:21:50",
+        "updated_at": "2021-03-30 19:21:50"
+      },
+      {
+        "id_novedad": 25,
+        "tipo": "retraso en envío",
+        "descripcion": "Prueba 3",
+        "pedido": 23,
+        "created_at": "2021-03-30 19:39:17",
+        "updated_at": "2021-03-30 19:39:17"
+      },
+      {
+        "id_novedad": 26,
+        "tipo": "retraso en envío",
+        "descripcion": "Prueba 4",
+        "pedido": 23,
+        "created_at": "2021-03-30 19:42:37",
+        "updated_at": "2021-03-30 19:42:37"
+      },
+      {
+        "id_novedad": 28,
+        "tipo": "retraso en envío",
+        "descripcion": "Prueba 8",
+        "pedido": 23,
+        "created_at": "2021-04-05 23:02:22",
+        "updated_at": "2021-04-05 23:02:22"
+      },
+      {
+        "id_novedad": 29,
+        "tipo": "retraso en envío",
+        "descripcion": "Prueba 8",
+        "pedido": 23,
+        "created_at": "2021-04-06 22:59:17",
+        "updated_at": "2021-04-06 22:59:17"
+      }
+    ]
+  };
+
+  var order = Order.detail(
+    id: element["id_pedido"],
+    date: DateTime.parse(element["fecha"]),
+    code: element["codigo"],
+    paymentMethod: element["metodo_pago"],
+    subTotal: double.parse(element["sub_total"].toString()),
+    total: double.parse(element["total"].toString()),
+    discount: element["descuento"],
+    notes: element["notas"],
+  );
+
+  var elementClient = element["info_cliente"];
+
+  order.client = Client.orderDetail(
+    id: elementClient["id"],
+    name: elementClient["name"],
+    lastname: elementClient["apellidos"],
+    rolId: elementClient["rol_id"],
+    email: elementClient["email"],
+    identificationType: elementClient["tipo_identificacion"],
+    dni: elementClient["dni"],
+    nit: elementClient["nit"],
+  );
+
+  order.status = Status(
+    id: int.parse(element["id_estado"].toString()),
+    status: element["estado"],
+  );
+
+  order.products = [];
+  order.novelties = [];
+
+  if (element['productos'] != null) {
+    List dataProducts = element['productos'];
+    dataProducts.forEach((elementProduct) {
+      order.products.add(OrderProduct(
+        reference: elementProduct["referencia"],
+        place: elementProduct["lugar"],
+        productQuantity: elementProduct["cantidad_producto"],
+      ));
+    });
+  }
+
+  if (element['novedades'] != null) {
+    List dataNovelties = element['novedades'];
+    dataNovelties.forEach((elementNovelty) {
+      order.novelties.add(Novelty(
+        id: elementNovelty["id_novedad"],
+        type: elementNovelty["tipo"],
+        description: elementNovelty["descripcion"],
+        createdAt: DateTime.parse(elementNovelty["created_at"]),
+        updatedAt: DateTime.parse(elementNovelty["updated_at"]),
+      ));
+    });
+  }
+
+  return order;
 }
 
 List<Order> ordersListTest() {

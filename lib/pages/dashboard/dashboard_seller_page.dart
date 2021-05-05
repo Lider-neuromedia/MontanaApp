@@ -33,7 +33,7 @@ class DashboardSellerPage extends StatelessWidget {
               isMain: true,
             ),
             _CommisionsList(
-              list: [
+              children: [
                 CardData(
                   title: 'Próximas a perder',
                   value: '\$4.300.400',
@@ -98,10 +98,10 @@ class _ConsolidatedClients extends StatelessWidget {
 class _CommisionsList extends StatelessWidget {
   const _CommisionsList({
     Key key,
-    this.list,
+    this.children,
   }) : super(key: key);
 
-  final List<Widget> list;
+  final List<Widget> children;
 
   @override
   Widget build(BuildContext context) {
@@ -109,12 +109,13 @@ class _CommisionsList extends StatelessWidget {
       height: 120.0,
       padding: EdgeInsets.all(15.0),
       child: GridView.count(
+        physics: NeverScrollableScrollPhysics(),
         padding: EdgeInsets.symmetric(vertical: 10.0),
         childAspectRatio: 16 / 6.5,
         crossAxisSpacing: 10,
         mainAxisSpacing: 20,
         crossAxisCount: 2,
-        children: list,
+        children: children,
       ),
     );
   }

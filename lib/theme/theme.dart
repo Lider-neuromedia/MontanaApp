@@ -15,7 +15,7 @@ class CustomTheme {
 
   static final String familySourceSansPro = 'SourceSansPro';
   static final String familyNunito = 'Nunito';
-  static final String primaryFont = 'SourceSansPro';
+  static final String primaryFont = 'Nunito';
 
   static ThemeData theme() {
     ThemeData original = ThemeData.light();

@@ -24,7 +24,7 @@ class DashboardBuyerPage extends StatelessWidget {
             SizedBox(height: 20.0),
             BuyerCard(),
             _CardDataList(
-              list: [
+              children: [
                 CardData(
                   title: 'Cupo preaprobado',
                   value: '\$4.300.400',
@@ -72,10 +72,10 @@ class DashboardBuyerPage extends StatelessWidget {
 class _CardDataList extends StatelessWidget {
   const _CardDataList({
     Key key,
-    this.list,
+    this.children,
   }) : super(key: key);
 
-  final List<Widget> list;
+  final List<Widget> children;
 
   @override
   Widget build(BuildContext context) {
@@ -83,12 +83,13 @@ class _CardDataList extends StatelessWidget {
       height: 220.0,
       padding: EdgeInsets.all(15.0),
       child: GridView.count(
+        physics: NeverScrollableScrollPhysics(),
         padding: EdgeInsets.symmetric(vertical: 10.0),
         childAspectRatio: 16 / 6.5,
         crossAxisSpacing: 10,
         mainAxisSpacing: 20,
         crossAxisCount: 2,
-        children: list,
+        children: children,
       ),
     );
   }
@@ -145,6 +146,7 @@ class _BuyerCardState extends State<BuyerCard> {
                 ),
               ),
               child: GridView.count(
+                physics: NeverScrollableScrollPhysics(),
                 padding: EdgeInsets.symmetric(vertical: 10.0),
                 childAspectRatio: 16 / 3.7,
                 crossAxisSpacing: 10,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:montana_mobile/models/order.dart';
 import 'package:montana_mobile/pages/orders/order_create_page.dart';
-import 'package:montana_mobile/pages/orders/order_item.dart';
+import 'package:montana_mobile/pages/orders/partials/order_item.dart';
 import 'package:montana_mobile/theme/theme.dart';
 
 class OrdersPage extends StatelessWidget {

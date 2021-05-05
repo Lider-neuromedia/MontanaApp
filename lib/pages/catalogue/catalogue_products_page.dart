@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:montana_mobile/models/catalogue.dart';
 import 'package:montana_mobile/models/product.dart';
-import 'package:montana_mobile/pages/catalogue/product_item.dart';
+import 'package:montana_mobile/pages/catalogue/partials/product_item.dart';
 
 class CatalogueProductsPage extends StatelessWidget {
   static final String route = 'catalogue-products';

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:montana_mobile/pages/home/bottom_drawer.dart';
-import 'package:montana_mobile/pages/home/navigation_bar.dart';
-import 'package:montana_mobile/pages/home/pages.dart';
+import 'package:montana_mobile/pages/home/partials/bottom_drawer.dart';
+import 'package:montana_mobile/pages/home/partials/navigation_bar.dart';
+import 'package:montana_mobile/pages/home/partials/pages.dart';
 import 'package:montana_mobile/providers/navigation_provider.dart';
 
 class HomePage extends StatefulWidget {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:montana_mobile/pages/dashboard/circular_statistic.dart';
+import 'package:montana_mobile/pages/dashboard/partials/circular_statistic.dart';
 import 'package:montana_mobile/theme/theme.dart';
 
 class ConsolidatedOrders extends StatelessWidget {

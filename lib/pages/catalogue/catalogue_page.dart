@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:montana_mobile/models/catalogue.dart';
-import 'package:montana_mobile/pages/catalogue/catalogue_item.dart';
+import 'package:montana_mobile/pages/catalogue/partials/catalogue_item.dart';
 
 class CataloguePage extends StatelessWidget {
   @override

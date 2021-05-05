@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:montana_mobile/pages/dashboard/card_statistic.dart';
-import 'package:montana_mobile/pages/dashboard/consolidated_orders.dart';
+import 'package:montana_mobile/pages/dashboard/partials/card_data.dart';
+import 'package:montana_mobile/pages/dashboard/partials/card_statistic.dart';
+import 'package:montana_mobile/pages/dashboard/partials/consolidated_orders.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:montana_mobile/widgets/scaffold_logo.dart';
-
-import 'card_data.dart';
 
 class DashboardSellerPage extends StatelessWidget {
   @override

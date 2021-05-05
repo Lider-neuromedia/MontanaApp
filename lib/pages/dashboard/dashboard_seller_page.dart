@@ -27,7 +27,7 @@ class DashboardSellerPage extends StatelessWidget {
             CardData(
               title: 'Comisiones perdidas',
               value: '\$3.300.400',
-              icon: Icons.face,
+              icon: Icons.sentiment_dissatisfied_rounded,
               color: CustomTheme.yellowColor,
               isMain: true,
             ),
@@ -36,14 +36,14 @@ class DashboardSellerPage extends StatelessWidget {
                 CardData(
                   title: 'Próximas a perder',
                   value: '\$4.300.400',
-                  icon: Icons.face,
+                  icon: Icons.sentiment_neutral_rounded,
                   color: CustomTheme.yellowColor,
                   isMain: false,
                 ),
                 CardData(
                   title: 'Comisiones ganadas',
                   value: '\$3.500.400',
-                  icon: Icons.face,
+                  icon: Icons.sentiment_very_satisfied,
                   color: CustomTheme.greenColor,
                   isMain: false,
                 ),

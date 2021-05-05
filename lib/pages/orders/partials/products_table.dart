@@ -96,35 +96,9 @@ class _HeaderField extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(label, style: textStyle),
-          _TableHeaderIcon(),
-        ],
-      ),
-    );
-  }
-}
-
-class _TableHeaderIcon extends StatelessWidget {
-  const _TableHeaderIcon({
-    Key key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 25.0,
-      child: Stack(
-        children: [
           Icon(
-            Icons.keyboard_arrow_up,
-            size: 18.0,
+            Icons.unfold_more,
             color: CustomTheme.textColor1,
-          ),
-          Align(
-            child: Icon(
-              Icons.keyboard_arrow_down,
-              size: 18.0,
-            ),
-            alignment: Alignment.bottomCenter,
           ),
         ],
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttericon/octicons_icons.dart';
 import 'package:montana_mobile/providers/navigation_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -35,7 +36,7 @@ class NavigationBar extends StatelessWidget {
           label: 'Catálogo',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.unarchive_outlined),
+          icon: Icon(Octicons.package),
           label: 'Pedidos',
         ),
         BottomNavigationBarItem(

@@ -12,7 +12,8 @@ class Pages extends StatelessWidget {
   }) : super(key: key);
 
   final List<Widget> _pages = [
-    DashboardSellerPage(), // DashboardBuyerPage(),
+    DashboardSellerPage(),
+    // DashboardBuyerPage(),
     CataloguePage(),
     OrdersPage(),
     PlaceHolderPage(background: Colors.cyan, title: 'Show Room'),

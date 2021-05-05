@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttericon/octicons_icons.dart';
 import 'package:montana_mobile/pages/dashboard/partials/card_data.dart';
 import 'package:montana_mobile/pages/dashboard/partials/card_statistic.dart';
 import 'package:montana_mobile/pages/dashboard/partials/consolidated_orders.dart';
@@ -28,28 +29,28 @@ class DashboardBuyerPage extends StatelessWidget {
                 CardData(
                   title: 'Cupo preaprobado',
                   value: '\$4.300.400',
-                  icon: Icons.face,
+                  icon: Icons.sentiment_neutral_rounded,
                   color: CustomTheme.yellowColor,
                   isMain: false,
                 ),
                 CardData(
                   title: 'Cupo disponible',
                   value: '\$3.500.400',
-                  icon: Icons.face,
+                  icon: Icons.sentiment_very_satisfied,
                   color: CustomTheme.greenColor,
                   isMain: false,
                 ),
                 CardData(
                   title: 'Saldo total deuda',
                   value: '\$4.300.400',
-                  icon: Icons.face,
+                  icon: Icons.error_outline,
                   color: CustomTheme.purpleColor,
                   isMain: false,
                 ),
                 CardData(
                   title: 'Saldo en mora',
                   value: '\$3.500.400',
-                  icon: Icons.face,
+                  icon: Icons.sentiment_dissatisfied_rounded,
                   color: CustomTheme.redColor,
                   isMain: false,
                 ),
@@ -225,7 +226,7 @@ class _ConsolidatedClients extends StatelessWidget {
         ),
         CardStatistic(
           isMain: false,
-          icon: Icons.chat,
+          icon: Octicons.comment_discussion,
           title: 'PQRS Generados',
           value: 50,
           label: 'Tiendas',

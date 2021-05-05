@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttericon/octicons_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:montana_mobile/pages/home/partials/drawer_item.dart';
 import 'package:montana_mobile/providers/navigation_provider.dart';
@@ -51,7 +52,7 @@ class BottomDrawer extends StatelessWidget {
             SizedBox(width: 20.0),
             DrawerItem(
               title: 'PQRS',
-              iconData: Icons.chat_outlined,
+              iconData: Octicons.comment_discussion,
               active: navigationProvider.currentPage == 5,
               onTap: () => navigationProvider.currentPage = 5,
             ),

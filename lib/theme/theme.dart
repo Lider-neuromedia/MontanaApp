@@ -9,9 +9,9 @@ class CustomTheme {
 
   static final Color redColor = Color.fromRGBO(255, 89, 106, 1.0);
   static final Color yellowColor = Color.fromRGBO(251, 173, 18, 1.0);
-  static final Color greenColor = Color.fromRGBO(162, 243, 219, 1.0);
+  static final Color greenColor = Color.fromRGBO(56, 224, 172, 1.0);
+  static final Color purpleColor = Color.fromRGBO(235, 30, 195, 1.0);
   static final Color greyColor = Color.fromRGBO(34, 34, 34, 0.2);
-  static final Color purpleColor = Color.fromRGBO(235, 30, 195, 0.2);
 
   static final String familySourceSansPro = 'SourceSansPro';
   static final String familyNunito = 'Nunito';

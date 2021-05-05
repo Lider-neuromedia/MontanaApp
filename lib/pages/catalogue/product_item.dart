@@ -17,6 +17,7 @@ class ProductItem extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     TextStyle textStyle1 = textTheme.headline5.copyWith(
       color: CustomTheme.textColor1,
+      fontWeight: FontWeight.w700,
     );
     TextStyle textStyle2 = textTheme.bodyText1.copyWith();
     return Card(

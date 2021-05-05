@@ -117,7 +117,7 @@ class _ContentNormal extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(10.0),
+      padding: EdgeInsets.only(top: 10.0, left: 10.0, right: 5.0, bottom: 0),
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border.all(

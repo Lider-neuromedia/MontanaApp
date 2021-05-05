@@ -13,6 +13,10 @@ class CustomTheme {
   static final Color greyColor = Color.fromRGBO(34, 34, 34, 0.2);
   static final Color purpleColor = Color.fromRGBO(235, 30, 195, 0.2);
 
+  static final String familySourceSansPro = 'SourceSansPro';
+  static final String familyNunito = 'Nunito';
+  static final String primaryFont = 'SourceSansPro';
+
   static ThemeData theme() {
     ThemeData original = ThemeData.light();
     var textTheme = original.textTheme;
@@ -20,37 +24,63 @@ class CustomTheme {
     return original.copyWith(
       primaryColor: mainColor,
       textButtonTheme: TextButtonThemeData(
-        style: TextButton.styleFrom(primary: textColor2),
+        style: TextButton.styleFrom(
+          primary: textColor2,
+        ),
       ),
       textTheme: original.textTheme.copyWith(
-        bodyText1: textTheme.bodyText1
-            .copyWith(fontFamily: 'SourceSansPro', color: textColor1),
-        bodyText2: textTheme.bodyText2
-            .copyWith(fontFamily: 'SourceSansPro', color: textColor2),
-        caption: textTheme.caption
-            .copyWith(fontFamily: 'SourceSansPro', color: textColor2),
-        headline1: textTheme.headline1
-            .copyWith(fontFamily: 'SourceSansPro', color: mainColor),
-        headline2: textTheme.headline2
-            .copyWith(fontFamily: 'SourceSansPro', color: mainColor),
-        headline3: textTheme.headline3
-            .copyWith(fontFamily: 'SourceSansPro', color: mainColor),
-        headline4: textTheme.headline4
-            .copyWith(fontFamily: 'SourceSansPro', color: mainColor),
-        headline5: textTheme.headline5
-            .copyWith(fontFamily: 'SourceSansPro', color: mainColor),
-        headline6: textTheme.headline6
-            .copyWith(fontFamily: 'SourceSansPro', color: mainColor),
-        overline: textTheme.overline
-            .copyWith(fontFamily: 'SourceSansPro', color: textColor2),
-        subtitle1: textTheme.subtitle1
-            .copyWith(fontFamily: 'SourceSansPro', color: textColor1),
-        subtitle2: textTheme.subtitle2
-            .copyWith(fontFamily: 'SourceSansPro', color: textColor1),
+        bodyText1: textTheme.bodyText1.copyWith(
+          fontFamily: primaryFont,
+          color: textColor1,
+        ),
+        bodyText2: textTheme.bodyText2.copyWith(
+          fontFamily: primaryFont,
+          color: textColor2,
+        ),
+        caption: textTheme.caption.copyWith(
+          fontFamily: primaryFont,
+          color: textColor2,
+        ),
+        headline1: textTheme.headline1.copyWith(
+          fontFamily: primaryFont,
+          color: mainColor,
+        ),
+        headline2: textTheme.headline2.copyWith(
+          fontFamily: primaryFont,
+          color: mainColor,
+        ),
+        headline3: textTheme.headline3.copyWith(
+          fontFamily: primaryFont,
+          color: mainColor,
+        ),
+        headline4: textTheme.headline4.copyWith(
+          fontFamily: primaryFont,
+          color: mainColor,
+        ),
+        headline5: textTheme.headline5.copyWith(
+          fontFamily: primaryFont,
+          color: mainColor,
+        ),
+        headline6: textTheme.headline6.copyWith(
+          fontFamily: primaryFont,
+          color: mainColor,
+        ),
+        overline: textTheme.overline.copyWith(
+          fontFamily: primaryFont,
+          color: textColor2,
+        ),
+        subtitle1: textTheme.subtitle1.copyWith(
+          fontFamily: primaryFont,
+          color: textColor1,
+        ),
+        subtitle2: textTheme.subtitle2.copyWith(
+          fontFamily: primaryFont,
+          color: textColor1,
+        ),
         button: textTheme.button.copyWith(
-          fontSize: 17.0,
-          fontFamily: 'SourceSansPro',
+          fontFamily: primaryFont,
           fontWeight: FontWeight.w600,
+          fontSize: 17.0,
         ),
       ),
     );

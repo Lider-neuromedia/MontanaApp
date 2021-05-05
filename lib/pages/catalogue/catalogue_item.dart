@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:montana_mobile/models/catalogue.dart';
+import 'package:montana_mobile/pages/catalogue/catalogue_products_page.dart';
 import 'package:montana_mobile/theme/theme.dart';
 
 class CatalogueItem extends StatelessWidget {
@@ -77,12 +78,12 @@ class _TypeTag extends StatelessWidget {
     TextStyle textStyle = Theme.of(context).textTheme.headline6;
 
     return Positioned(
-      top: 30.0,
       right: 5.0,
+      top: 30.0,
       child: Container(
         padding: EdgeInsets.symmetric(
-          vertical: 5.0,
           horizontal: 30.0,
+          vertical: 5.0,
         ),
         decoration: BoxDecoration(
           color: Colors.grey[100],
@@ -121,33 +122,41 @@ class _CatalogueCard extends StatelessWidget {
 
     return Card(
       elevation: 2.0,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 15.0,
-          vertical: 10.0,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.all(
-                Radius.circular(10.0),
+      child: InkWell(
+        onTap: () {
+          Navigator.of(context).pushNamed(
+            CatalogueProductsPage.route,
+            arguments: catalogue,
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 15.0,
+            vertical: 10.0,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10.0),
+                ),
+                child: FadeInImage(
+                  placeholder: AssetImage("assets/images/placeholder.png"),
+                  image: NetworkImage(catalogue.image),
+                  width: double.infinity,
+                  fit: BoxFit.contain,
+                ),
               ),
-              child: FadeInImage(
-                placeholder: AssetImage("assets/images/placeholder.png"),
-                image: NetworkImage(catalogue.image),
-                width: double.infinity,
-                fit: BoxFit.contain,
-              ),
-            ),
-            SizedBox(height: 5.0),
-            Text(catalogue.title.toUpperCase(), style: textStyle1),
-            SizedBox(height: 5.0),
-            catalogue.quantity == 1
-                ? Text("${catalogue.quantity} producto", style: textStyle2)
-                : Text("${catalogue.quantity} productos", style: textStyle2),
-            SizedBox(height: 5.0),
-          ],
+              SizedBox(height: 5.0),
+              Text(catalogue.title.toUpperCase(), style: textStyle1),
+              SizedBox(height: 5.0),
+              catalogue.quantity == 1
+                  ? Text("${catalogue.quantity} producto", style: textStyle2)
+                  : Text("${catalogue.quantity} productos", style: textStyle2),
+              SizedBox(height: 5.0),
+            ],
+          ),
         ),
       ),
     );

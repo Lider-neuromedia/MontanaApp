@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:montana_mobile/models/product.dart';
 import 'package:montana_mobile/pages/catalogue/product_page.dart';
+import 'package:montana_mobile/pages/catalogue/start_order_modal.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:montana_mobile/utils/utils.dart';
 
@@ -63,7 +64,18 @@ class ProductItem extends StatelessWidget {
             _ProductButton(
               icon: Icons.shopping_bag_outlined,
               label: 'Añadir a Pedido',
-              onPressed: () {},
+              onPressed: () {
+                showModalBottomSheet(
+                  context: context,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30.0),
+                      topRight: Radius.circular(30.0),
+                    ),
+                  ),
+                  builder: (_) => StartOrderModal(),
+                );
+              },
             ),
           ],
         ),

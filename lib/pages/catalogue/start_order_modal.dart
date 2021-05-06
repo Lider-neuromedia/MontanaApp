@@ -2,16 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:montana_mobile/theme/theme.dart';
 
 class StartOrderModal extends StatelessWidget {
+  const StartOrderModal({
+    Key key,
+    @required this.onPressed,
+  }) : super(key: key);
+
+  final Function onPressed;
+
   @override
   Widget build(BuildContext context) {
-    final titleStyle = Theme.of(context).textTheme.headline4.copyWith(
-          color: CustomTheme.textColor1,
-          fontWeight: FontWeight.bold,
-        );
-    final sizeWidth = MediaQuery.of(context).size.width;
+    final size = MediaQuery.of(context).size;
 
     return Container(
-      height: MediaQuery.of(context).size.height / 2,
+      height: size.height / 2,
       padding: EdgeInsets.all(10.0),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -22,31 +25,45 @@ class StartOrderModal extends StatelessWidget {
       ),
       child: Center(
         child: Container(
-          width: sizeWidth > 320.0 ? 320.0 : double.infinity,
+          width: size.width > 320.0 ? 320.0 : double.infinity,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Text(
-                'Comienza tu pedido',
-                style: titleStyle,
-                textAlign: TextAlign.center,
-              ),
+              _TitleModal(title: 'Comienza tu pedido'),
               _DropdownClientButton(),
               _ContinueButton(
                 icon: Icons.add,
                 label: 'Continuar',
-                onPressed: () {
-                  // Navigator.of(context).pushNamed(
-                  //   ProductPage.route,
-                  //   arguments: product,
-                  // );
-                },
+                onPressed: onPressed,
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class _TitleModal extends StatelessWidget {
+  const _TitleModal({
+    Key key,
+    this.title,
+  }) : super(key: key);
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    final titleStyle = Theme.of(context).textTheme.headline4.copyWith(
+          color: CustomTheme.textColor1,
+          fontWeight: FontWeight.bold,
+        );
+
+    return Text(
+      title,
+      style: titleStyle,
+      textAlign: TextAlign.center,
     );
   }
 }

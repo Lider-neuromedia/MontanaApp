@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:montana_mobile/models/product.dart';
+import 'package:montana_mobile/pages/catalogue/add_product_modal.dart';
 import 'package:montana_mobile/pages/catalogue/product_page.dart';
 import 'package:montana_mobile/pages/catalogue/start_order_modal.dart';
 import 'package:montana_mobile/theme/theme.dart';
@@ -64,22 +65,48 @@ class ProductItem extends StatelessWidget {
             _ProductButton(
               icon: Icons.shopping_bag_outlined,
               label: 'Añadir a Pedido',
-              onPressed: () {
-                showModalBottomSheet(
-                  context: context,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30.0),
-                      topRight: Radius.circular(30.0),
-                    ),
-                  ),
-                  builder: (_) => StartOrderModal(),
-                );
-              },
+              onPressed: () => onAddProduct(context),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  void onAddProduct(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(30.0),
+          topRight: Radius.circular(30.0),
+        ),
+      ),
+      builder: (_) {
+        return StartOrderModal(
+          onPressed: () {
+            Navigator.pop(context);
+            openAddProduct(context);
+          },
+        );
+      },
+    );
+  }
+
+  void openAddProduct(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      enableDrag: false,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(30.0),
+          topRight: Radius.circular(30.0),
+        ),
+      ),
+      builder: (_) {
+        return AddProductModal();
+      },
     );
   }
 }

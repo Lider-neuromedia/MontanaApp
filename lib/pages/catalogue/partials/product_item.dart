@@ -65,7 +65,7 @@ class ProductItem extends StatelessWidget {
             _ProductButton(
               icon: Icons.shopping_bag_outlined,
               label: 'Añadir a Pedido',
-              onPressed: () => onAddProduct(context),
+              onPressed: () => openStartOrder(context),
             ),
           ],
         ),
@@ -73,7 +73,7 @@ class ProductItem extends StatelessWidget {
     );
   }
 
-  void onAddProduct(BuildContext context) {
+  void openStartOrder(BuildContext context) {
     showModalBottomSheet(
       context: context,
       shape: RoundedRectangleBorder(

@@ -31,7 +31,31 @@ class StartOrderModal extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               _TitleModal(title: 'Comienza tu pedido'),
-              _DropdownClientButton(),
+              _FieldBox(
+                children: [
+                  _LabelField(label: 'CLIENTE'),
+                  SizedBox(height: 10.0),
+                  _DropdownList(
+                    values: [
+                      'Noreña Loaiza William',
+                      'Otro Cliente',
+                    ],
+                  ),
+                ],
+              ),
+              _FieldBox(
+                children: [
+                  _LabelField(label: 'CATALOGO'),
+                  SizedBox(height: 10.0),
+                  _DropdownList(
+                    values: [
+                      'Catalogo 1',
+                      'Catalogo 2',
+                      'Catalogo 3',
+                    ],
+                  ),
+                ],
+              ),
               _ContinueButton(
                 icon: Icons.add,
                 label: 'Continuar',
@@ -68,58 +92,89 @@ class _TitleModal extends StatelessWidget {
   }
 }
 
-class _DropdownClientButton extends StatefulWidget {
+class _FieldBox extends StatelessWidget {
+  const _FieldBox({
+    Key key,
+    @required this.children,
+  }) : super(key: key);
+
+  final List<Widget> children;
+
   @override
-  __DropdownClientButtonState createState() => __DropdownClientButtonState();
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: children,
+    );
+  }
 }
 
-class __DropdownClientButtonState extends State<_DropdownClientButton> {
-  final List<String> values = ['Noreña Loaiza William'];
-  String dropdownValue = 'Noreña Loaiza William';
+class _LabelField extends StatelessWidget {
+  const _LabelField({
+    Key key,
+    this.label,
+  }) : super(key: key);
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final labelStyle = Theme.of(context).textTheme.bodyText1.copyWith(
+          color: Theme.of(context).primaryColor,
+        );
+    return Text(label, style: labelStyle);
+  }
+}
+
+class _DropdownList extends StatefulWidget {
+  _DropdownList({
+    Key key,
+    this.values,
+  }) : super(key: key);
+
+  final List<String> values;
+
+  @override
+  __DropdownListState createState() => __DropdownListState();
+}
+
+class __DropdownListState extends State<_DropdownList> {
+  String value;
 
   @override
   Widget build(BuildContext context) {
     final valueStyle = Theme.of(context).textTheme.bodyText1.copyWith(
           fontWeight: FontWeight.w700,
         );
-    final labelStyle = Theme.of(context).textTheme.bodyText1.copyWith(
-          color: Theme.of(context).primaryColor,
-        );
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text('CLIENTE', style: labelStyle),
-        SizedBox(height: 10.0),
-        Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: 20.0,
-          ),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10.0),
-            border: Border.all(
-              color: CustomTheme.greyColor,
-            ),
-          ),
-          child: DropdownButton<String>(
-            style: valueStyle,
-            icon: const Icon(Icons.keyboard_arrow_down),
-            underline: Container(height: 0),
-            elevation: 16,
-            iconSize: 24,
-            value: dropdownValue,
-            onChanged: (String newValue) {
-              setState(() => dropdownValue = newValue);
-            },
-            items: values.map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                child: Text(value),
-                value: value,
-              );
-            }).toList(),
-          ),
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: 20.0,
+      ),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10.0),
+        border: Border.all(
+          color: CustomTheme.greyColor,
         ),
-      ],
+      ),
+      child: DropdownButton<String>(
+        icon: const Icon(Icons.keyboard_arrow_down),
+        underline: Container(height: 0),
+        isExpanded: true,
+        style: valueStyle,
+        elevation: 16,
+        iconSize: 24,
+        value: value,
+        onChanged: (String newValue) {
+          setState(() => value = newValue);
+        },
+        items: widget.values.map<DropdownMenuItem<String>>((String value) {
+          return DropdownMenuItem<String>(
+            child: Text(value),
+            value: value,
+          );
+        }).toList(),
+      ),
     );
   }
 }
@@ -129,12 +184,12 @@ class _ContinueButton extends StatelessWidget {
     Key key,
     @required this.label,
     @required this.icon,
-    this.onPressed,
+    @required this.onPressed,
   }) : super(key: key);
 
   final Function onPressed;
-  final String label;
   final IconData icon;
+  final String label;
 
   @override
   Widget build(BuildContext context) {

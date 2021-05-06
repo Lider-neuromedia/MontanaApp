@@ -4,6 +4,7 @@ import 'package:montana_mobile/pages/orders/partials/order_detail_card.dart';
 import 'package:montana_mobile/pages/orders/partials/products_table.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:montana_mobile/utils/utils.dart';
+import 'package:montana_mobile/widgets/cart_icon.dart';
 
 class OrderPage extends StatelessWidget {
   static final String route = 'order';
@@ -15,6 +16,9 @@ class OrderPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Pedido'),
+        actions: [
+          CartIcon(),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(

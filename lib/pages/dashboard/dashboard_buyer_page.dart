@@ -4,6 +4,7 @@ import 'package:montana_mobile/pages/dashboard/partials/card_data.dart';
 import 'package:montana_mobile/pages/dashboard/partials/card_statistic.dart';
 import 'package:montana_mobile/pages/dashboard/partials/consolidated_orders.dart';
 import 'package:montana_mobile/theme/theme.dart';
+import 'package:montana_mobile/widgets/cart_icon.dart';
 import 'package:montana_mobile/widgets/scaffold_logo.dart';
 
 class DashboardBuyerPage extends StatelessWidget {
@@ -18,6 +19,9 @@ class DashboardBuyerPage extends StatelessWidget {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: ScaffoldLogo(),
+        actions: [
+          CartIcon(),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(

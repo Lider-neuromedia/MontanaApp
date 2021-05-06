@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:montana_mobile/models/order.dart';
-import 'package:montana_mobile/pages/orders/order_create_page.dart';
 import 'package:montana_mobile/pages/orders/partials/order_item.dart';
 import 'package:montana_mobile/theme/theme.dart';
+import 'package:montana_mobile/widgets/cart_icon.dart';
 
 class OrdersPage extends StatelessWidget {
   @override
@@ -10,6 +10,9 @@ class OrdersPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Pedidos'),
+        actions: [
+          CartIcon(),
+        ],
       ),
       body: Column(
         children: [
@@ -63,7 +66,7 @@ class _CreateOrderButton extends StatelessWidget {
       backgroundColor: Theme.of(context).primaryColor,
       child: Icon(Icons.add),
       onPressed: () {
-        Navigator.of(context).pushNamed(OrderCreatePage.route);
+        // TODO: modal sheet
       },
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:montana_mobile/widgets/cart_icon.dart';
 
 class ProductPage extends StatelessWidget {
   static final String route = 'product';
@@ -8,6 +9,9 @@ class ProductPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Detalle de Producto'),
+        actions: [
+          CartIcon(),
+        ],
       ),
     );
   }

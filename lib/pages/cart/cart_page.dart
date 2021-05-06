@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class OrderCreatePage extends StatelessWidget {
-  static final String route = 'order-create';
+class CartPage extends StatelessWidget {
+  static final String route = 'cart';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Crear Pedido'),
+        title: Text('Bolsa de Compras'),
       ),
     );
   }

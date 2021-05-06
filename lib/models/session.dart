@@ -5,6 +5,9 @@ Session sessionFromJson(String str) => Session.fromJson(json.decode(str));
 String sessionToJson(Session data) => json.encode(data.toJson());
 
 class Session {
+  static const rolSeller = 'seller';
+  static const rolBuyer = 'buyer';
+
   Session({
     this.accessToken,
     this.tokenType,

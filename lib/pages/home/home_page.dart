@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:montana_mobile/models/session.dart';
 import 'package:provider/provider.dart';
 import 'package:montana_mobile/pages/home/partials/bottom_drawer.dart';
 import 'package:montana_mobile/pages/home/partials/navigation_bar.dart';
@@ -20,7 +21,7 @@ class _HomePageState extends State<HomePage> {
       child: Scaffold(
         body: Stack(
           children: [
-            Pages(),
+            Pages(rol: Session.rolSeller),
             BottomDrawer(),
           ],
         ),

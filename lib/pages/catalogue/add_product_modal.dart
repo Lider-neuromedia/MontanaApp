@@ -167,10 +167,10 @@ class _LabelField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final titleStyle = Theme.of(context).textTheme.bodyText1.copyWith(
+    final labelStyle = Theme.of(context).textTheme.bodyText1.copyWith(
           color: Theme.of(context).primaryColor,
         );
-    return Text(label, style: titleStyle);
+    return Text(label, style: labelStyle);
   }
 }
 

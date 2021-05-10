@@ -108,17 +108,21 @@ class _CommisionsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> items = [];
+
+    children.asMap().forEach((index, item) {
+      items.add(Expanded(child: item));
+      if (index < children.length - 1) {
+        items.add(SizedBox(width: 10.0));
+      }
+    });
+
     return Container(
-      height: 120.0,
       padding: EdgeInsets.all(15.0),
-      child: GridView.count(
-        physics: NeverScrollableScrollPhysics(),
-        padding: EdgeInsets.symmetric(vertical: 10.0),
-        childAspectRatio: 16 / 6.5,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 20,
-        crossAxisCount: 2,
-        children: children,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: items,
       ),
     );
   }

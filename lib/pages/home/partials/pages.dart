@@ -25,6 +25,9 @@ class Pages extends StatelessWidget {
       CataloguePage(),
       OrdersPage(),
       ShowRoomPage(),
+      rol == Session.rolSeller
+          ? PlaceHolderPage(background: Colors.purple, title: 'Clientes')
+          : PlaceHolderPage(background: Colors.green, title: 'Tiendas'),
       PlaceHolderPage(background: Colors.green, title: 'Tiendas'),
       PlaceHolderPage(background: Colors.orange, title: 'PQRS'),
       PlaceHolderPage(background: Colors.indigo, title: 'Ampliación'),

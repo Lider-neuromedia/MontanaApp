@@ -22,7 +22,7 @@ class _HomePageState extends State<HomePage> {
         body: Stack(
           children: [
             Pages(rol: Session.rolSeller),
-            BottomDrawer(),
+            BottomDrawer(rol: Session.rolSeller),
           ],
         ),
         bottomNavigationBar: NavigationBar(),

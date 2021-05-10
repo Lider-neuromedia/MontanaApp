@@ -3,12 +3,12 @@ import 'package:montana_mobile/theme/theme.dart';
 
 class PaymentMethodsField extends StatelessWidget {
   final List<String> paymentMethods = ['Contado', 'Crédito 45 días'];
-  String selected = 'Contado';
 
   @override
   Widget build(BuildContext context) {
     paymentMethods.asMap().forEach((key, value) {});
     List<Widget> methodsOptions = [];
+    String selected = 'Contado';
 
     paymentMethods.asMap().forEach(
       (int index, String method) {
@@ -30,7 +30,7 @@ class PaymentMethodsField extends StatelessWidget {
 }
 
 class _MethodOption extends StatelessWidget {
-  const _MethodOption({
+  _MethodOption({
     Key key,
     @required this.method,
     @required this.selected,
@@ -43,6 +43,15 @@ class _MethodOption extends StatelessWidget {
   final bool hasBorderLeft;
   final bool hasBorderRight;
 
+  final borderLeft = BorderRadius.only(
+    bottomLeft: Radius.circular(10.0),
+    topLeft: Radius.circular(10.0),
+  );
+  final borderRight = BorderRadius.only(
+    bottomRight: Radius.circular(10.0),
+    topRight: Radius.circular(10.0),
+  );
+
   @override
   Widget build(BuildContext context) {
     final textStyle = Theme.of(context).textTheme.headline6.copyWith(
@@ -53,52 +62,44 @@ class _MethodOption extends StatelessWidget {
         );
 
     var borderRadius;
-
     if (hasBorderLeft) {
-      borderRadius = BorderRadius.only(
-        bottomLeft: Radius.circular(10.0),
-        topLeft: Radius.circular(10.0),
-      );
+      borderRadius = borderLeft;
+    }
+    if (hasBorderRight) {
+      borderRadius = borderRight;
     }
 
-    if (hasBorderRight) {
-      borderRadius = BorderRadius.only(
-        bottomRight: Radius.circular(10.0),
-        topRight: Radius.circular(10.0),
-      );
-    }
-    // TODO: en proceso.
+    Color normalColor =
+        selected ? Theme.of(context).primaryColor : CustomTheme.greyColor;
+    Color darkColor =
+        selected ? CustomTheme.mainDarkColor : CustomTheme.textColor1;
+
     return Expanded(
       child: Container(
-        // decoration: BoxDecoration(
-        //   color: selected ? CustomTheme.mainDarkColor : CustomTheme.textColor2,
-        //   borderRadius: borderRadius,
-        // ),
+        padding: EdgeInsets.only(bottom: 3.0),
+        decoration: BoxDecoration(
+          color: darkColor,
+          borderRadius: borderRadius,
+        ),
         child: Material(
+          clipBehavior: Clip.hardEdge,
+          borderRadius: borderRadius,
           child: InkWell(
-            splashColor: selected
-                ? Theme.of(context).primaryColor.withOpacity(0.5)
-                : CustomTheme.greyColor.withOpacity(0.5),
-            borderRadius: borderRadius,
             onTap: () => print(method),
+            borderRadius: borderRadius,
             child: Ink(
-              color: selected
-                  ? Theme.of(context).primaryColor
-                  : CustomTheme.greyColor,
-              child: Container(
-                margin: EdgeInsets.only(bottom: 3.0),
-                decoration: BoxDecoration(
-                  borderRadius: borderRadius,
-                  // color: selected
-                  //     ? Theme.of(context).primaryColor
-                  //     : CustomTheme.greyColor,
-                ),
-                padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
-                child: Text(
-                  method,
-                  style: textStyle,
-                  textAlign: TextAlign.center,
-                ),
+              padding: EdgeInsets.symmetric(
+                horizontal: 5.0,
+                vertical: 10.0,
+              ),
+              decoration: BoxDecoration(
+                borderRadius: borderRadius,
+                color: normalColor,
+              ),
+              child: Text(
+                method,
+                style: textStyle,
+                textAlign: TextAlign.center,
               ),
             ),
           ),

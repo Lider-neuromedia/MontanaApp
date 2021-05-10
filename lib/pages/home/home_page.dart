@@ -21,7 +21,7 @@ class _HomePageState extends State<HomePage> {
       child: Scaffold(
         body: Stack(
           children: [
-            Pages(rol: Session.rolBuyer),
+            Pages(rol: Session.rolSeller),
             BottomDrawer(),
           ],
         ),

@@ -9,20 +9,37 @@ import 'package:montana_mobile/utils/utils.dart';
 class ProductItem extends StatelessWidget {
   const ProductItem({
     Key key,
-    this.product,
+    @required this.product,
+    @required this.isShowRoom,
   }) : super(key: key);
 
   final Product product;
+  final bool isShowRoom;
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    TextStyle textStyle1 = textTheme.headline5.copyWith(
-      color: CustomTheme.textColor1,
+    final TextStyle textStyle1 = textTheme.headline5.copyWith(
+      color: isShowRoom ? Colors.white : CustomTheme.textColor1,
       fontWeight: FontWeight.w700,
     );
-    TextStyle textStyle2 = textTheme.bodyText1.copyWith();
-    return Card(
+    final TextStyle textStyle2 = textTheme.bodyText1.copyWith(
+      color: isShowRoom ? Colors.white : CustomTheme.textColor1,
+    );
+
+    return Container(
+      decoration: BoxDecoration(
+        color: isShowRoom ? Colors.transparent : Colors.white,
+        border: !isShowRoom ? null : Border.all(color: CustomTheme.goldColor),
+        boxShadow: isShowRoom
+            ? []
+            : [
+                BoxShadow(
+                  color: Colors.grey,
+                  blurRadius: 6.0,
+                ),
+              ],
+      ),
       child: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: 20.0,
@@ -33,13 +50,18 @@ class ProductItem extends StatelessWidget {
           children: [
             Text(product.name, style: textStyle1),
             SizedBox(height: 10.0),
-            Text("Ref: ${product.reference}", style: textStyle2),
+            isShowRoom
+                ? Container()
+                : Text("Ref: ${product.reference}", style: textStyle2),
             SizedBox(height: 15.0),
-            FadeInImage(
-              placeholder: AssetImage("assets/images/placeholder.png"),
-              image: NetworkImage(product.image),
-              width: double.infinity,
-              fit: BoxFit.contain,
+            ClipRRect(
+              borderRadius: BorderRadius.circular(5.0),
+              child: FadeInImage(
+                placeholder: AssetImage("assets/images/placeholder.png"),
+                image: NetworkImage(product.image),
+                width: double.infinity,
+                fit: BoxFit.contain,
+              ),
             ),
             SizedBox(height: 15.0),
             Row(
@@ -47,11 +69,18 @@ class ProductItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(formatMoney(product.price), style: textStyle1),
-                Text("Stock: ${product.stock} cajas", style: textStyle2),
+                isShowRoom
+                    ? Container()
+                    : Text("Stock: ${product.stock} cajas", style: textStyle2),
               ],
             ),
             SizedBox(height: 15.0),
             _ProductButton(
+              mainColor:
+                  isShowRoom ? Colors.white : Theme.of(context).primaryColor,
+              secondColor: isShowRoom
+                  ? Theme.of(context).textTheme.bodyText1.color
+                  : Colors.white,
               icon: Icons.remove_red_eye_outlined,
               label: 'Ver Producto',
               onPressed: () {
@@ -63,6 +92,12 @@ class ProductItem extends StatelessWidget {
             ),
             SizedBox(height: 15.0),
             _ProductButton(
+              mainColor: isShowRoom
+                  ? CustomTheme.goldColor
+                  : Theme.of(context).primaryColor,
+              secondColor: isShowRoom
+                  ? Theme.of(context).textTheme.bodyText1.color
+                  : Colors.white,
               icon: Icons.shopping_bag_outlined,
               label: 'Añadir a Pedido',
               onPressed: () => openStartOrder(context),
@@ -116,12 +151,16 @@ class _ProductButton extends StatelessWidget {
     Key key,
     @required this.label,
     @required this.icon,
-    this.onPressed,
+    @required this.onPressed,
+    @required this.mainColor,
+    @required this.secondColor,
   }) : super(key: key);
 
   final Function onPressed;
   final String label;
   final IconData icon;
+  final Color mainColor;
+  final Color secondColor;
 
   @override
   Widget build(BuildContext context) {
@@ -133,11 +172,11 @@ class _ProductButton extends StatelessWidget {
         children: [
           Container(
             decoration: BoxDecoration(
-              color: Theme.of(context).primaryColor,
+              color: mainColor,
               shape: BoxShape.circle,
             ),
             padding: EdgeInsets.all(15.0),
-            child: Icon(icon, color: Colors.white),
+            child: Icon(icon, color: secondColor),
           ),
           Text(label),
           Container(
@@ -149,12 +188,12 @@ class _ProductButton extends StatelessWidget {
       style: OutlinedButton.styleFrom(
         padding: EdgeInsets.only(left: 0.0, right: 10.0),
         side: BorderSide(
-          color: Theme.of(context).primaryColor,
+          color: mainColor,
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30.0),
         ),
-        primary: Theme.of(context).primaryColor,
+        primary: mainColor,
       ),
     );
   }

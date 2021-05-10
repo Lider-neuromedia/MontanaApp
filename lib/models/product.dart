@@ -57,7 +57,7 @@ List<Product> productsListTest() {
       "descripcion": "Tenis Puma Hombre Moda BMW MMS Roma",
       "sku": null,
       "total": 150000,
-      "descuento": 0,
+      "descuento": 5,
       "iva": 19,
       "catalogo": 3,
       "marca": 1,

@@ -126,7 +126,7 @@ class _CatalogueCard extends StatelessWidget {
         onTap: () {
           Navigator.of(context).pushNamed(
             CatalogueProductsPage.route,
-            arguments: catalogue,
+            arguments: ProductsScreenArguments(catalogue, false),
           );
         },
         child: Padding(

@@ -9,6 +9,7 @@ class CustomTheme {
 
   static final Color redColor = Color.fromRGBO(255, 89, 106, 1.0);
   static final Color yellowColor = Color.fromRGBO(251, 173, 18, 1.0);
+  static final Color goldColor = Color.fromRGBO(255, 217, 3, 1.0);
   static final Color greenColor = Color.fromRGBO(56, 224, 172, 1.0);
   static final Color green2Color = Color.fromRGBO(104, 190, 142, 1.0);
   static final Color purpleColor = Color.fromRGBO(235, 30, 195, 1.0);

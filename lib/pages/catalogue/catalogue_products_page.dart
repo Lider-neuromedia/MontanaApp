@@ -9,7 +9,10 @@ class CatalogueProductsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Catalogue catalogue = ModalRoute.of(context).settings.arguments;
+    final ProductsScreenArguments args =
+        ModalRoute.of(context).settings.arguments as ProductsScreenArguments;
+
+    Catalogue catalogue = args.catalogue;
     List<Product> products = productsListTest();
 
     return Scaffold(
@@ -25,6 +28,7 @@ class CatalogueProductsPage extends StatelessWidget {
         itemBuilder: (_, index) {
           return ProductItem(
             product: products[index],
+            isShowRoom: false,
           );
         },
         separatorBuilder: (_, index) {
@@ -33,4 +37,14 @@ class CatalogueProductsPage extends StatelessWidget {
       ),
     );
   }
+}
+
+class ProductsScreenArguments {
+  final Catalogue catalogue;
+  final bool showRoom;
+
+  ProductsScreenArguments(
+    this.catalogue,
+    this.showRoom,
+  );
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:montana_mobile/pages/cart/partials/payment_methods_field.dart';
 import 'package:montana_mobile/pages/catalogue/partials/action_button.dart';
 import 'package:montana_mobile/theme/theme.dart';
@@ -31,22 +32,52 @@ class _CheckoutForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Container(
-        padding: EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _TitleCheckout(),
-            SizedBox(height: 10.0),
-            _LabelField(label: 'Forma de pago'),
-            SizedBox(height: 5.0),
-            PaymentMethodsField(),
-            SizedBox(height: 15.0),
-            _LabelField(label: 'Descuento asignado'),
-            SizedBox(height: 5.0),
-            _LabelField(label: 'Notas adicionales'),
-            SizedBox(height: 5.0),
-          ],
+      child: SingleChildScrollView(
+        child: Container(
+          padding: EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _TitleCheckout(),
+              SizedBox(height: 10.0),
+              _LabelField(label: 'Forma de pago'),
+              SizedBox(height: 5.0),
+              PaymentMethodsField(),
+              SizedBox(height: 15.0),
+              _LabelField(label: 'Descuento asignado'),
+              SizedBox(height: 10.0),
+              TextField(
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  isCollapsed: true,
+                  contentPadding: EdgeInsets.all(10.0),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: CustomTheme.greyColor,
+                      width: 1.0,
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 10.0),
+              _LabelField(label: 'Notas adicionales'),
+              SizedBox(height: 10.0),
+              TextField(
+                maxLines: 5,
+                decoration: InputDecoration(
+                  isCollapsed: true,
+                  contentPadding: EdgeInsets.all(10.0),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: CustomTheme.greyColor,
+                      width: 1.0,
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 5.0),
+            ],
+          ),
         ),
       ),
     );

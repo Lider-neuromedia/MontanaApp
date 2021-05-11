@@ -102,7 +102,7 @@ class _OrdersFilter extends StatefulWidget {
 }
 
 class __OrdersFilterState extends State<_OrdersFilter> {
-  String dropdownValue;
+  String dropdownValue = 'Más recientes';
   final List<String> values = ['Más recientes'];
 
   @override

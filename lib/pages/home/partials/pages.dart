@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:montana_mobile/models/session.dart';
 import 'package:montana_mobile/pages/catalogue/catalogue_page.dart';
 import 'package:montana_mobile/pages/catalogue/show_room_page.dart';
+import 'package:montana_mobile/pages/clients/clients_page.dart';
 import 'package:montana_mobile/pages/dashboard/dashboard_buyer_page.dart';
 import 'package:montana_mobile/pages/dashboard/dashboard_seller_page.dart';
 import 'package:montana_mobile/pages/orders/orders_page.dart';
@@ -26,7 +27,7 @@ class Pages extends StatelessWidget {
       OrdersPage(),
       ShowRoomPage(),
       rol == Session.rolSeller
-          ? PlaceHolderPage(background: Colors.purple, title: 'Clientes')
+          ? ClientsPage()
           : PlaceHolderPage(background: Colors.green, title: 'Tiendas'),
       PlaceHolderPage(background: Colors.green, title: 'Tiendas'),
       PlaceHolderPage(background: Colors.orange, title: 'PQRS'),

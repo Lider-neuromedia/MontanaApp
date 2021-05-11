@@ -32,7 +32,6 @@ class ClientsPage extends StatelessWidget {
       body: Column(
         children: [
           SearchBox(),
-          ClientsFilter(),
           Expanded(
             child: ListView.separated(
               itemCount: clients.length,

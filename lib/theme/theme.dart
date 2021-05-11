@@ -6,14 +6,17 @@ class CustomTheme {
   static final Color mainDarkColor = Color.fromRGBO(193, 29, 46, 1.0);
   static final Color textColor1 = Color.fromRGBO(68, 74, 79, 1.0);
   static final Color textColor2 = Color.fromRGBO(125, 125, 125, 1.0);
+  static final Color textColor3 = Color.fromRGBO(129, 144, 176, 1.0);
 
   static final Color redColor = Color.fromRGBO(255, 89, 106, 1.0);
   static final Color yellowColor = Color.fromRGBO(251, 173, 18, 1.0);
   static final Color goldColor = Color.fromRGBO(255, 217, 3, 1.0);
   static final Color greenColor = Color.fromRGBO(56, 224, 172, 1.0);
   static final Color green2Color = Color.fromRGBO(104, 190, 142, 1.0);
+  static final Color green3Color = Color.fromRGBO(92, 208, 104, 1.0);
   static final Color purpleColor = Color.fromRGBO(235, 30, 195, 1.0);
   static final Color greyColor = Color.fromRGBO(210, 210, 210, 1.0);
+  static final Color grey2Color = Color.fromRGBO(165, 165, 165, 1.0);
 
   static final String familySourceSansPro = 'SourceSansPro';
   static final String familyNunito = 'Nunito';

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:montana_mobile/pages/client/client_page.dart';
+import 'package:montana_mobile/pages/clients/clients_page.dart';
 import 'package:montana_mobile/theme/theme.dart';
 
 class ClientCard extends StatelessWidget {
@@ -93,36 +94,4 @@ class ClientCard extends StatelessWidget {
   void goToDetailClient(BuildContext context) {
     Navigator.of(context).pushNamed(ClientPage.route);
   }
-}
-
-class ClientTemporal {
-  String name;
-  String code;
-  ClientTemporal(this.name, this.code);
-
-  String get initials {
-    List<String> words = name.split(" ");
-
-    if (words.length == 1) {
-      return words[0].substring(0, 2).toUpperCase();
-    } else if (words.length > 1) {
-      String c1 = words[0].substring(0, 1);
-      String c2 = words[1].substring(0, 1);
-      return "$c1$c2";
-    }
-
-    return 'CL';
-  }
-}
-
-List<ClientTemporal> clientsListTest() {
-  return [
-    ClientTemporal('Bejarano Garavito Bladimiro Alfonso', '464648654'),
-    ClientTemporal('Ana María Urrutia Vasquez', '134467465'),
-    ClientTemporal('Alicia Maldonado', '213216545'),
-    ClientTemporal('Luis Restrepo', '798161354'),
-    ClientTemporal('Alfonso Sallas', '715689485'),
-    ClientTemporal('Julian Linarez Gonzalez', '363546156'),
-    ClientTemporal('Laura Osorio', '846434645'),
-  ];
 }

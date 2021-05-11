@@ -6,6 +6,7 @@ import 'package:montana_mobile/pages/clients/clients_page.dart';
 import 'package:montana_mobile/pages/dashboard/dashboard_buyer_page.dart';
 import 'package:montana_mobile/pages/dashboard/dashboard_seller_page.dart';
 import 'package:montana_mobile/pages/orders/orders_page.dart';
+import 'package:montana_mobile/pages/pqrs/pqrs_page.dart';
 import 'package:montana_mobile/providers/navigation_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -29,8 +30,7 @@ class Pages extends StatelessWidget {
       rol == Session.rolSeller
           ? ClientsPage()
           : PlaceHolderPage(background: Colors.green, title: 'Tiendas'),
-      PlaceHolderPage(background: Colors.green, title: 'Tiendas'),
-      PlaceHolderPage(background: Colors.orange, title: 'PQRS'),
+      PqrsPage(),
       PlaceHolderPage(background: Colors.indigo, title: 'Ampliación'),
     ];
 

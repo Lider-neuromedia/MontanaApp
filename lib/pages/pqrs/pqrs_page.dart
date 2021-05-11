@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:montana_mobile/pages/clients/clients_page.dart';
+import 'package:montana_mobile/pages/pqrs/create_pqrs_page.dart';
 import 'package:montana_mobile/pages/pqrs/partials/pqrs_card.dart';
 import 'package:montana_mobile/pages/pqrs/partials/pqrs_filter.dart';
 import 'package:montana_mobile/pages/pqrs/partials/search_box.dart';
@@ -37,7 +38,7 @@ class PqrsPage extends StatelessWidget {
           Expanded(
             child: ListView.separated(
               itemCount: pqrsList.length,
-              padding: EdgeInsets.symmetric(vertical: 15.0),
+              padding: EdgeInsets.only(top: 15.0, bottom: 100.0),
               itemBuilder: (_, int index) {
                 return PqrsCard(pqrs: pqrsList[index]);
               },
@@ -47,6 +48,13 @@ class PqrsPage extends StatelessWidget {
             ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Theme.of(context).primaryColor,
+        child: Icon(Icons.add),
+        onPressed: () {
+          Navigator.of(context).pushNamed(CreatePqrsPage.route);
+        },
       ),
     );
   }

@@ -3,16 +3,10 @@ import 'package:montana_mobile/pages/catalogue/partials/action_button.dart';
 import 'package:montana_mobile/theme/theme.dart';
 
 class AddProductModal extends StatelessWidget {
-  final List<StoreStockTemporal> stores = [
-    StoreStockTemporal(1, 'CC Único', 'L 204', 102),
-    StoreStockTemporal(2, 'San Andresito', 'L 118', 102),
-    StoreStockTemporal(3, 'CC Unicentro', 'L 204', 102),
-    StoreStockTemporal(4, 'Granada', 'Calle 4 No. 6 - 89', 102),
-  ];
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final List<StoreStockTemporal> stores = storesListTest();
 
     List<Widget> list = [
       _LabelField(label: 'REFERENCIA'),
@@ -92,15 +86,6 @@ class AddProductModal extends StatelessWidget {
       ),
     );
   }
-}
-
-class StoreStockTemporal {
-  StoreStockTemporal(this.id, this.place, this.local, this.stock);
-
-  int id;
-  String place;
-  String local;
-  int stock;
 }
 
 class _ProductStoreStock extends StatelessWidget {
@@ -216,4 +201,65 @@ class _BoxField extends StatelessWidget {
       ),
     );
   }
+}
+
+List<StoreStockTemporal> storesListTest() {
+  return [
+    StoreStockTemporal(
+      1,
+      'CC Único',
+      'L 204',
+      102,
+      'Cali',
+      'Valle del Cauca',
+      'Calle 13 No. 4 - 66',
+    ),
+    StoreStockTemporal(
+      2,
+      'San Andresito',
+      'L 118',
+      102,
+      'Cali',
+      'Valle del Cauca',
+      'Avenida 13 No. 4 - 66',
+    ),
+    StoreStockTemporal(
+      3,
+      'CC Unicentro',
+      'L 204',
+      102,
+      'Medellín',
+      'Antioquia',
+      'Carrera 13 No. 4 - 66',
+    ),
+    StoreStockTemporal(
+      4,
+      'Granada',
+      'Calle 4 No. 6 - 89',
+      102,
+      'Bogotá',
+      'Cundinamarca',
+      'Calle 4 No. 33 - 6',
+    ),
+  ];
+}
+
+class StoreStockTemporal {
+  StoreStockTemporal(
+    this.id,
+    this.place,
+    this.local,
+    this.stock,
+    this.city,
+    this.department,
+    this.address,
+  );
+
+  int id;
+  String place;
+  String local;
+  int stock;
+  String city;
+  String department;
+  String address;
 }

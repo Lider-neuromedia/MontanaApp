@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:montana_mobile/pages/client/client_page.dart';
 import 'package:montana_mobile/theme/theme.dart';
 
 class ClientCard extends StatelessWidget {
@@ -46,7 +47,7 @@ class ClientCard extends StatelessWidget {
             borderRadius: BorderRadius.all(Radius.circular(10.0)),
             child: InkWell(
               borderRadius: BorderRadius.all(Radius.circular(10.0)),
-              onTap: () {},
+              onTap: () => goToDetailClient(context),
               child: Ink(
                 width: double.infinity,
                 decoration: BoxDecoration(
@@ -87,6 +88,10 @@ class ClientCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void goToDetailClient(BuildContext context) {
+    Navigator.of(context).pushNamed(ClientPage.route);
   }
 }
 

@@ -25,6 +25,10 @@ class CustomTheme {
 
     return original.copyWith(
       primaryColor: mainColor,
+      appBarTheme: original.appBarTheme.copyWith(
+        brightness: Brightness.dark,
+      ),
+      scaffoldBackgroundColor: Colors.white,
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           primary: textColor2,

@@ -15,7 +15,6 @@ class DashboardSellerPage extends StatelessWidget {
         );
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         title: ScaffoldLogo(),
         actions: [

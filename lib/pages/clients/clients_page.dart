@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:montana_mobile/pages/clients/client_card.dart';
+import 'package:montana_mobile/pages/clients/partials/client_card.dart';
 import 'package:montana_mobile/pages/clients/partials/clients_filter.dart';
 import 'package:montana_mobile/pages/clients/partials/search_box.dart';
 import 'package:montana_mobile/widgets/scaffold_logo.dart';
@@ -10,7 +10,6 @@ class ClientsPage extends StatelessWidget {
     final List<ClientTemporal> clients = clientsListTest();
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         title: ScaffoldLogo(),
         actions: [

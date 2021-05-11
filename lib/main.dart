@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:montana_mobile/pages/cart/cart_page.dart';
 import 'package:montana_mobile/pages/catalogue/catalogue_products_page.dart';
 import 'package:montana_mobile/pages/catalogue/product_page.dart';
+import 'package:montana_mobile/pages/client/client_page.dart';
 import 'package:montana_mobile/pages/home/home_page.dart';
 import 'package:montana_mobile/pages/orders/order_page.dart';
 import 'package:montana_mobile/pages/session/login_page.dart';
@@ -38,6 +39,7 @@ class MyApp extends StatelessWidget {
         CatalogueProductsPage.route: (_) => CatalogueProductsPage(),
         ProductPage.route: (_) => ProductPage(),
         CartPage.route: (_) => CartPage(),
+        ClientPage.route: (_) => ClientPage(),
       },
     );
   }

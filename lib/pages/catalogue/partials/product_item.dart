@@ -99,7 +99,7 @@ class ProductItem extends StatelessWidget {
                   ? Theme.of(context).textTheme.bodyText1.color
                   : Colors.white,
               icon: Icons.shopping_bag_outlined,
-              label: 'Añadir a Pedido',
+              label: 'Añadir al Pedido',
               onPressed: () => openStartOrder(context),
             ),
           ],

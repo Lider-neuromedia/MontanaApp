@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:fluttericon/linecons_icons.dart';
+import 'package:fluttericon/web_symbols_icons.dart';
 import 'package:montana_mobile/pages/pqrs/partials/message_card.dart';
 import 'package:montana_mobile/pages/pqrs/pqrs_page.dart';
 import 'package:montana_mobile/theme/theme.dart';
@@ -9,20 +11,37 @@ class MessagesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     PqrsTemporal pqrs = pqrsWithMessagesTest();
+    List<int> users = [];
+
+    pqrs.messages.forEach((message) => users.add(message.userId));
+    users = users.toSet().toList();
 
     return Scaffold(
       backgroundColor: CustomTheme.grey3Color,
       appBar: AppBar(
         title: Text('PQRS'),
+        actions: [
+          IconButton(
+            icon: Icon(WebSymbols.arrows_cw),
+            onPressed: () {},
+          ),
+        ],
       ),
       body: Stack(
         children: [
           ListView.separated(
             itemCount: pqrs.messages.length,
-            padding: EdgeInsets.all(10.0),
+            padding: EdgeInsets.only(
+              left: 10.0,
+              top: 10.0,
+              right: 10.0,
+              bottom: 100.0,
+            ),
             itemBuilder: (_, int index) {
+              final message = pqrs.messages[index];
               return MessageCard(
-                message: pqrs.messages[index],
+                message: message,
+                leftSide: users.indexOf(message.userId) % 2 == 0,
               );
             },
             separatorBuilder: (_, int index) {
@@ -48,8 +67,8 @@ class _SendMessageForm extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: 20.0,
-        vertical: 15.0,
+        horizontal: 15.0,
+        vertical: 10.0,
       ),
       color: Colors.white,
       child: Row(
@@ -66,27 +85,11 @@ class _SendMessageForm extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               primary: CustomTheme.blue1Color,
               shape: CircleBorder(),
-              padding: EdgeInsets.all(20),
+              padding: EdgeInsets.all(14),
             ),
-            child: Icon(Icons.send),
+            child: Icon(Linecons.paper_plane, size: 20.0),
             onPressed: () {},
           ),
-          // ElevatedButton(
-          //   onPressed: () {},
-          //   child: Icon(Icons.send),
-          //   style: ElevatedButton.styleFrom(
-          //     shape: RoundedRectangleBorder(
-          //       borderRadius: BorderRadius.all(Radius.circular(30.0)),
-          //     ),
-          //   ),
-          // ),
-          // CircleAvatar(
-          //   child: IconButton(
-          //     onPressed: () {},
-          //     icon: Icon(Icons.send),
-          //     color: Colors.white,
-          //   ),
-          // ),
         ],
       ),
     );

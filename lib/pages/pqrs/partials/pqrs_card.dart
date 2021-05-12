@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:montana_mobile/pages/pqrs/messages_page.dart';
 import 'package:montana_mobile/pages/pqrs/pqrs_page.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:montana_mobile/utils/utils.dart';
@@ -28,7 +29,7 @@ class PqrsCard extends StatelessWidget {
               color: CustomTheme.grey2Color,
             );
     return ListTile(
-      onTap: () {},
+      onTap: () => Navigator.of(context).pushNamed(MessagesPage.route),
       title: Text(pqrs.client.name, style: titleText),
       subtitle: Text("#${pqrs.client.code}", style: subtitleText),
       leading: _IconPqrsCard(pqrs: pqrs),

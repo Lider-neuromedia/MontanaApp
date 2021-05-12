@@ -6,6 +6,7 @@ import 'package:montana_mobile/pages/client/client_page.dart';
 import 'package:montana_mobile/pages/home/home_page.dart';
 import 'package:montana_mobile/pages/orders/order_page.dart';
 import 'package:montana_mobile/pages/pqrs/create_pqrs_page.dart';
+import 'package:montana_mobile/pages/pqrs/messages_page.dart';
 import 'package:montana_mobile/pages/session/login_page.dart';
 import 'package:montana_mobile/pages/session/password_page.dart';
 import 'package:montana_mobile/pages/session/reset_password_page.dart';
@@ -42,6 +43,7 @@ class MyApp extends StatelessWidget {
         CartPage.route: (_) => CartPage(),
         ClientPage.route: (_) => ClientPage(),
         CreatePqrsPage.route: (_) => CreatePqrsPage(),
+        MessagesPage.route: (_) => MessagesPage(),
       },
     );
   }

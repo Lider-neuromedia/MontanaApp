@@ -50,9 +50,10 @@ class ClientsPage extends StatelessWidget {
 }
 
 class ClientTemporal {
+  int id;
   String name;
   String code;
-  ClientTemporal(this.name, this.code);
+  ClientTemporal(this.id, this.name, this.code);
 
   String get initials {
     List<String> words = name.split(" ");
@@ -71,12 +72,12 @@ class ClientTemporal {
 
 List<ClientTemporal> clientsListTest() {
   return [
-    ClientTemporal('Bejarano Garavito Bladimiro Alfonso', '464648654'),
-    ClientTemporal('Ana María Urrutia Vasquez', '134467465'),
-    ClientTemporal('Alicia Maldonado', '213216545'),
-    ClientTemporal('Luis Restrepo', '798161354'),
-    ClientTemporal('Alfonso Sallas', '715689485'),
-    ClientTemporal('Julian Linarez Gonzalez', '363546156'),
-    ClientTemporal('Laura Osorio', '846434645'),
+    ClientTemporal(1, 'Bejarano Garavito Bladimiro Alfonso', '464648654'),
+    ClientTemporal(2, 'Ana María Urrutia Vasquez', '134467465'),
+    ClientTemporal(3, 'Alicia Maldonado', '213216545'),
+    ClientTemporal(4, 'Luis Restrepo', '798161354'),
+    ClientTemporal(5, 'Alfonso Sallas', '715689485'),
+    ClientTemporal(6, 'Julian Linarez Gonzalez', '363546156'),
+    ClientTemporal(7, 'Laura Osorio', '846434645'),
   ];
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:montana_mobile/theme/theme.dart';
 
 class CreatePqrsPage extends StatelessWidget {
-  static final String route = 'create-pqrs';
+  static final String route = '/create-pqrs';
 
   @override
   Widget build(BuildContext context) {

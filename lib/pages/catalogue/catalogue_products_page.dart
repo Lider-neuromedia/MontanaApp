@@ -12,12 +12,12 @@ class CatalogueProductsPage extends StatelessWidget {
     final ProductsScreenArguments args =
         ModalRoute.of(context).settings.arguments as ProductsScreenArguments;
 
-    Catalogue catalogue = args.catalogue;
+    Catalogo catalogue = args.catalogue;
     List<Product> products = productsListTest();
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(catalogue.title),
+        title: Text(catalogue.titulo),
         actions: [
           CartIcon(),
         ],
@@ -40,7 +40,7 @@ class CatalogueProductsPage extends StatelessWidget {
 }
 
 class ProductsScreenArguments {
-  final Catalogue catalogue;
+  final Catalogo catalogue;
   final bool showRoom;
 
   ProductsScreenArguments(

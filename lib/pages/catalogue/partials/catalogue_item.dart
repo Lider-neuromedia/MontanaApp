@@ -9,7 +9,7 @@ class CatalogueItem extends StatelessWidget {
     this.catalogue,
   }) : super(key: key);
 
-  final Catalogue catalogue;
+  final Catalogo catalogue;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +19,7 @@ class CatalogueItem extends StatelessWidget {
           catalogue: catalogue,
         ),
         _TypeTag(catalogue: catalogue),
-        catalogue.discount != null
+        catalogue.descuento != null
             ? _DiscountTag(catalogue: catalogue)
             : Container()
       ],
@@ -33,7 +33,7 @@ class _DiscountTag extends StatelessWidget {
     @required this.catalogue,
   }) : super(key: key);
 
-  final Catalogue catalogue;
+  final Catalogo catalogue;
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +57,7 @@ class _DiscountTag extends StatelessWidget {
           ),
         ),
         child: Text(
-          "${catalogue.discount}%",
+          "${catalogue.descuento}%",
           style: textStyle,
         ),
       ),
@@ -71,7 +71,7 @@ class _TypeTag extends StatelessWidget {
     @required this.catalogue,
   }) : super(key: key);
 
-  final Catalogue catalogue;
+  final Catalogo catalogue;
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +93,7 @@ class _TypeTag extends StatelessWidget {
           ),
         ),
         child: Text(
-          catalogue.typeFormatted,
+          catalogue.tipoFormatted,
           style: textStyle,
         ),
       ),
@@ -107,7 +107,7 @@ class _CatalogueCard extends StatelessWidget {
     @required this.catalogue,
   }) : super(key: key);
 
-  final Catalogue catalogue;
+  final Catalogo catalogue;
 
   @override
   Widget build(BuildContext context) {
@@ -143,17 +143,17 @@ class _CatalogueCard extends StatelessWidget {
                 ),
                 child: FadeInImage(
                   placeholder: AssetImage("assets/images/placeholder.png"),
-                  image: NetworkImage(catalogue.image),
+                  image: NetworkImage(catalogue.imagen),
                   width: double.infinity,
                   fit: BoxFit.contain,
                 ),
               ),
               SizedBox(height: 5.0),
-              Text(catalogue.title.toUpperCase(), style: textStyle1),
+              Text(catalogue.titulo.toUpperCase(), style: textStyle1),
               SizedBox(height: 5.0),
-              catalogue.quantity == 1
-                  ? Text("${catalogue.quantity} producto", style: textStyle2)
-                  : Text("${catalogue.quantity} productos", style: textStyle2),
+              catalogue.cantidad == 1
+                  ? Text("${catalogue.cantidad} producto", style: textStyle2)
+                  : Text("${catalogue.cantidad} productos", style: textStyle2),
               SizedBox(height: 5.0),
             ],
           ),

@@ -41,4 +41,19 @@ class Preferences {
       _prefs.setString('session', json.encode(value.toJson()));
     }
   }
+
+  Map<String, String> get httpGuestHeaders {
+    Map<String, String> headers = {
+      'X-Requested-With': 'XMLHttpRequest',
+    };
+    return headers;
+  }
+
+  Map<String, String> get httpSignedHeaders {
+    Map<String, String> headers = {
+      'X-Requested-With': 'XMLHttpRequest',
+      'Authorization': 'Bearer $token',
+    };
+    return headers;
+  }
 }

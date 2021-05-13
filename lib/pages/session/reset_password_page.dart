@@ -70,6 +70,11 @@ class ResetPasswordPage extends StatelessWidget {
       _passwordController.clear();
       _passwordConfirmationController.clear();
 
+      provider.token = '';
+      provider.email = '';
+      provider.password = '';
+      provider.passwordConfirmation = '';
+
       _showSuccessDialog(context, () {
         Navigator.of(context).pushReplacementNamed(LoginPage.route);
       });

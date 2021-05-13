@@ -132,6 +132,9 @@ class _LoginCardState extends State<LoginCard> {
     if (preferences.token != null) {
       _emailController.clear();
       _passwordController.clear();
+      _loginProvider.email = '';
+      _loginProvider.password = '';
+
       Navigator.of(context).pushReplacementNamed(HomePage.route);
     } else {
       _showWarningDialog(context);

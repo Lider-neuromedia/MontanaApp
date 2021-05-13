@@ -52,13 +52,15 @@ class PasswordPage extends StatelessWidget {
   }
 
   Future<void> _requestResetEmail(
-      BuildContext context, PasswordProvider passwordProvider) async {
-    passwordProvider.isLoading = true;
-    bool success = await passwordProvider.requestResetEmail();
-    passwordProvider.isLoading = false;
+      BuildContext context, PasswordProvider provider) async {
+    provider.isLoading = true;
+    bool success = await provider.requestResetEmail();
+    provider.isLoading = false;
 
     if (success) {
       _emailController.clear();
+      provider.email = '';
+
       _showSuccessDialog(context, () {
         Navigator.of(context).pushNamed(ResetPasswordPage.route);
       });

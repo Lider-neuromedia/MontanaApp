@@ -50,7 +50,7 @@ class LoginProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  bool get canLogin {
+  bool get canSend {
     bool isValid = true;
 
     if (_isLoading) {

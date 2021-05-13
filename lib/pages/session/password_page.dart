@@ -59,7 +59,7 @@ class PasswordPage extends StatelessWidget {
 
     if (success) {
       _emailController.clear();
-      _showSuccesDialog(context, () {
+      _showSuccessDialog(context, () {
         Navigator.of(context).pushNamed(ResetPasswordPage.route);
       });
     } else {
@@ -67,7 +67,7 @@ class PasswordPage extends StatelessWidget {
     }
   }
 
-  Future<void> _showSuccesDialog(
+  Future<void> _showSuccessDialog(
       BuildContext context, Function onAccept) async {
     return showDialog<void>(
       context: context,
@@ -84,7 +84,10 @@ class PasswordPage extends StatelessWidget {
           ),
           actions: <Widget>[
             TextButton(
-              onPressed: onAccept,
+              onPressed: () {
+                Navigator.of(context).pop();
+                onAccept();
+              },
               child: Text('Aceptar'),
             ),
           ],

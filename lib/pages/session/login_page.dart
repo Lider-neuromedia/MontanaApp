@@ -111,7 +111,7 @@ class _LoginCardState extends State<LoginCard> {
                     )
                   : _SubmitLoginButton(
                       label: 'Iniciar Sesión',
-                      onPressed: !_loginProvider.canLogin
+                      onPressed: !_loginProvider.canSend
                           ? null
                           : () => _login(context),
                     ),

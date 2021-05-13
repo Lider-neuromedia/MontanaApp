@@ -4,6 +4,19 @@ class ValidationField {
 
   ValidationField({this.value, this.error});
 
+  bool hasError() {
+    return error != null;
+  }
+
+  bool isEmpty() {
+    if (value == null) return true;
+    return value.isEmpty;
+  }
+
+  bool isEmptyAndHasError() {
+    return hasError() || isEmpty();
+  }
+
   static String validateInteger(String value) {
     if (int.tryParse(value) == null) {
       return 'El campo debe ser un número';

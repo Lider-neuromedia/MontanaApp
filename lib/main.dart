@@ -12,6 +12,7 @@ import 'package:montana_mobile/pages/session/password_page.dart';
 import 'package:montana_mobile/pages/session/reset_password_page.dart';
 import 'package:montana_mobile/providers/login_provider.dart';
 import 'package:montana_mobile/providers/password_provider.dart';
+import 'package:montana_mobile/providers/reset_password_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 import 'package:montana_mobile/utils/preferences.dart';
@@ -34,6 +35,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => LoginProvider()),
         ChangeNotifierProvider(create: (_) => PasswordProvider()),
+        ChangeNotifierProvider(create: (_) => ResetPasswordProvider()),
       ],
       child: MaterialApp(
         title: 'Athletic Air',

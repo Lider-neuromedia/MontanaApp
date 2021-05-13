@@ -1,39 +1,63 @@
 import 'package:flutter/material.dart';
 import 'package:montana_mobile/models/session.dart';
 import 'package:montana_mobile/utils/preferences.dart';
-import 'package:montana_mobile/utils/utils.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 
+import 'ValidationField.dart';
+
 class LoginProvider with ChangeNotifier {
   final String _url = dotenv.env['API_URL'];
-  String _email = '';
-  String _password = '';
-  bool isLoading = false;
 
-  get email => _email;
-  get password => _password;
+  ValidationField _email = ValidationField();
+  ValidationField _password = ValidationField();
+  bool _isLoading = false;
 
-  set email(String email) {
-    _email = email;
+  String get email => _email.value;
+  String get password => _password.value;
+  String get emailError => _email.error;
+  String get passwordError => _password.error;
+  bool get isLoading => _isLoading;
+
+  set isLoading(bool value) {
+    _isLoading = value;
     notifyListeners();
   }
 
-  set password(String password) {
-    _password = password;
+  set email(String value) {
+    final errorLength = ValidationField.validateLength(value, max: 100);
+    final errorEmail = ValidationField.validateEmail(value);
+
+    if (errorLength != null) {
+      _email = ValidationField(error: errorLength);
+    } else if (errorEmail != null) {
+      _email = ValidationField(error: errorEmail);
+    } else {
+      _email = ValidationField(value: value);
+    }
+
     notifyListeners();
   }
 
-  bool get isLoginDataValid {
+  set password(String value) {
+    final errorLength = ValidationField.validateLength(value, max: 100, min: 6);
+
+    if (errorLength != null) {
+      _password = ValidationField(error: errorLength);
+    } else {
+      _password = ValidationField(value: value);
+    }
+
+    notifyListeners();
+  }
+
+  bool get canLogin {
     bool isValid = true;
 
-    if (_email.trim().length == 0 || _password.trim().length == 0) {
+    if (_email.error != null || _password.error != null) {
       isValid = false;
     }
-    if (_password.length < 6) {
-      isValid = false;
-    }
-    if (!isEmailValid(_email)) {
+    if (_email.value == null || _password.value == null) {
       isValid = false;
     }
 
@@ -46,12 +70,9 @@ class LoginProvider with ChangeNotifier {
       'X-Requested-With': 'XMLHttpRequest',
     };
     Map<String, String> data = {
-      'email': _email,
-      'password': _password,
+      'email': _email.value,
+      'password': _password.value,
     };
-
-    isLoading = true;
-    notifyListeners();
 
     http.Response response = await http.post(url, headers: headers, body: data);
     final preferences = Preferences();
@@ -67,7 +88,6 @@ class LoginProvider with ChangeNotifier {
       preferences.session = session;
     }
 
-    isLoading = false;
     notifyListeners();
   }
 
@@ -75,7 +95,6 @@ class LoginProvider with ChangeNotifier {
     final preferences = Preferences();
     preferences.token = null;
     preferences.session = null;
-    isLoading = false;
     notifyListeners();
   }
 }

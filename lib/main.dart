@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
       title: 'Athletic Air',
       debugShowCheckedModeBanner: false,
       theme: CustomTheme.theme(),
-      initialRoute: HomePage.route,
+      initialRoute: LoginPage.route,
       routes: {
         HomePage.route: (_) => HomePage(),
         LoginPage.route: (_) => LoginPage(),

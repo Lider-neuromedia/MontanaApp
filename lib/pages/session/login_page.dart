@@ -20,31 +20,27 @@ class LoginPage extends StatelessWidget {
             Positioned(
               left: 0.0,
               top: mediaSize.height * 0.2 * -1,
-              child: backgroundBox(context, mediaSize),
+              child: _BackgroundBox(),
             ),
-            Positioned(
-              left: mediaSize.width / 4,
-              top: mediaSize.height * 0.18,
-              child: backgroundLogo(mediaSize),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _BackgroundLogo(),
+                SizedBox(height: 30.0),
+                LoginCard(),
+              ],
             ),
-            Center(
-              child: LoginCard(),
-            )
           ],
         ),
       ),
     );
   }
+}
 
-  Widget backgroundLogo(Size mediaSize) {
-    return Image(
-      image: AssetImage("assets/images/logo.png"),
-      fit: BoxFit.contain,
-      width: mediaSize.width / 2,
-    );
-  }
-
-  Widget backgroundBox(BuildContext context, Size mediaSize) {
+class _BackgroundBox extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    var mediaSize = MediaQuery.of(context).size;
     return Transform(
       transform: Matrix4.skewY(0.15),
       child: Container(
@@ -56,6 +52,18 @@ class LoginPage extends StatelessWidget {
   }
 }
 
+class _BackgroundLogo extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final mediaSize = MediaQuery.of(context).size;
+    return Image(
+      image: AssetImage("assets/images/logo.png"),
+      fit: BoxFit.contain,
+      width: mediaSize.width / 2,
+    );
+  }
+}
+
 class LoginCard extends StatefulWidget {
   @override
   _LoginCardState createState() => _LoginCardState();
@@ -63,8 +71,10 @@ class LoginCard extends StatefulWidget {
 
 class _LoginCardState extends State<LoginCard> {
   LoginProvider _loginProvider;
-  TextEditingController _emailController = TextEditingController(text: '');
-  TextEditingController _passwordController = TextEditingController(text: '');
+  final TextEditingController _emailController =
+      TextEditingController(text: '');
+  final TextEditingController _passwordController =
+      TextEditingController(text: '');
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +82,6 @@ class _LoginCardState extends State<LoginCard> {
     _loginProvider = Provider.of<LoginProvider>(context);
 
     return Container(
-      margin: EdgeInsets.only(top: mediaSize.height * 0.15),
       width: mediaSize.width > 400 ? 400 : mediaSize.width,
       child: Card(
         elevation: 4.0,
@@ -89,19 +98,27 @@ class _LoginCardState extends State<LoginCard> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Center(
-                child: Text(
-                  'Iniciar Sesión',
-                  style: Theme.of(context).textTheme.headline5,
-                ),
-              ),
+              _LoginTitle(),
               SizedBox(height: 30.0),
-              emailInput(),
+              _EmailInput(emailController: _emailController),
               SizedBox(height: 30.0),
-              passwordInput(),
-              forgetPasswordButton(context),
+              _PasswordInput(passwordController: _passwordController),
+              _ForgetPasswordButton(),
               SizedBox(height: 30.0),
-              submitButton(context),
+              _loginProvider.isLoading
+                  ? Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                            Theme.of(context).primaryColor),
+                      ),
+                    )
+                  : _SubmitLoginButton(
+                      label: 'Iniciar Sesión',
+                      onPressed:
+                          !_loginProvider.canLogin || _loginProvider.isLoading
+                              ? null
+                              : () => _login(context),
+                    ),
             ],
           ),
         ),
@@ -109,7 +126,127 @@ class _LoginCardState extends State<LoginCard> {
     );
   }
 
-  Widget forgetPasswordButton(BuildContext context) {
+  Future<void> _login(BuildContext context) async {
+    _loginProvider.isLoading = true;
+    await _loginProvider.login();
+    _loginProvider.isLoading = false;
+
+    final preferences = Preferences();
+
+    if (preferences.token != null) {
+      _emailController.clear();
+      _passwordController.clear();
+      Navigator.of(context).pushReplacementNamed(HomePage.route);
+    } else {
+      _showMyDialog(context);
+    }
+  }
+
+  Future<void> _showMyDialog(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Aviso'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Usuario y contraseña incorrectos.'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Aceptar'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _SubmitLoginButton extends StatelessWidget {
+  const _SubmitLoginButton({
+    Key key,
+    @required this.onPressed,
+    @required this.label,
+  }) : super(key: key);
+
+  final String label;
+  final Function onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      child: Text(label),
+      style: ElevatedButton.styleFrom(
+        primary: Theme.of(context).primaryColor,
+        padding: EdgeInsets.symmetric(vertical: 20.0),
+      ),
+    );
+  }
+}
+
+class _PasswordInput extends StatelessWidget {
+  const _PasswordInput({
+    Key key,
+    @required this.passwordController,
+  }) : super(key: key);
+
+  final TextEditingController passwordController;
+
+  @override
+  Widget build(BuildContext context) {
+    LoginProvider loginProvider = Provider.of<LoginProvider>(context);
+
+    return TextFormField(
+      controller: passwordController,
+      obscureText: true,
+      decoration: InputDecoration(
+        labelText: 'Contraseña',
+        errorText: loginProvider.passwordError,
+      ),
+      onChanged: (String value) {
+        loginProvider.password = value;
+      },
+    );
+  }
+}
+
+class _EmailInput extends StatelessWidget {
+  const _EmailInput({
+    Key key,
+    @required this.emailController,
+  }) : super(key: key);
+
+  final TextEditingController emailController;
+
+  @override
+  Widget build(BuildContext context) {
+    LoginProvider loginProvider = Provider.of<LoginProvider>(context);
+
+    return TextFormField(
+      controller: emailController,
+      keyboardType: TextInputType.emailAddress,
+      decoration: InputDecoration(
+        labelText: 'Usuario',
+        hintText: 'example@mail.com',
+        errorText: loginProvider.emailError,
+      ),
+      onChanged: (String value) {
+        loginProvider.email = value;
+      },
+    );
+  }
+}
+
+class _ForgetPasswordButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(top: 10.0),
       child: Row(
@@ -125,60 +262,16 @@ class _LoginCardState extends State<LoginCard> {
       ),
     );
   }
+}
 
-  Widget emailInput() {
-    return TextFormField(
-      controller: _emailController,
-      keyboardType: TextInputType.emailAddress,
-      decoration: InputDecoration(
-        labelText: 'Usuario',
-        hintText: 'example@mail.com',
+class _LoginTitle extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text(
+        'Iniciar Sesión',
+        style: Theme.of(context).textTheme.headline5,
       ),
-      onChanged: (String value) {
-        _loginProvider.email = value;
-      },
     );
-  }
-
-  Widget passwordInput() {
-    return TextFormField(
-      controller: _passwordController,
-      obscureText: true,
-      decoration: InputDecoration(
-        labelText: 'Contraseña',
-      ),
-      onChanged: (String value) {
-        _loginProvider.password = value;
-      },
-    );
-  }
-
-  Widget submitButton(BuildContext context) {
-    return ElevatedButton(
-      child: Text(_loginProvider.isLoading ? 'Cargando...' : 'Iniciar Sesión'),
-      style: ElevatedButton.styleFrom(
-        primary: Theme.of(context).primaryColor,
-        padding: EdgeInsets.symmetric(vertical: 20.0),
-      ),
-      onPressed:
-          _loginProvider.isLoginDataValid && _loginProvider.isLoading == false
-              ? login
-              : null,
-    );
-  }
-
-  Future<void> login() async {
-    await _loginProvider.login();
-    final preferences = Preferences();
-
-    if (preferences.token != null) {
-      _emailController.text = '';
-      _passwordController.text = '';
-      _loginProvider.email = '';
-      _loginProvider.password = '';
-      Navigator.of(context).pushReplacementNamed(HomePage.route);
-    } else {
-      print('bad');
-    }
   }
 }

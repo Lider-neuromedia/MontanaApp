@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:montana_mobile/models/session.dart';
+import 'package:montana_mobile/providers/validation_field.dart';
 import 'package:montana_mobile/utils/preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
-
-import 'ValidationField.dart';
 
 class LoginProvider with ChangeNotifier {
   final String _url = dotenv.env['API_URL'];

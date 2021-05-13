@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:montana_mobile/pages/home/home_page.dart';
 import 'package:montana_mobile/pages/session/password_page.dart';
-import 'package:montana_mobile/providers/LoginProvider.dart';
+import 'package:montana_mobile/providers/login_provider.dart';
 import 'package:montana_mobile/utils/preferences.dart';
 import 'package:provider/provider.dart';
 

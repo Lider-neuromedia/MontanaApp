@@ -12,26 +12,23 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     var mediaSize = MediaQuery.of(context).size;
 
-    return ChangeNotifierProvider(
-      create: (_) => LoginProvider(),
-      child: Scaffold(
-        body: Stack(
-          children: [
-            Positioned(
-              left: 0.0,
-              top: mediaSize.height * 0.2 * -1,
-              child: _BackgroundBox(),
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _BackgroundLogo(),
-                SizedBox(height: 30.0),
-                LoginCard(),
-              ],
-            ),
-          ],
-        ),
+    return Scaffold(
+      body: Stack(
+        children: [
+          Positioned(
+            left: 0.0,
+            top: mediaSize.height * 0.2 * -1,
+            child: _BackgroundBox(),
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _BackgroundLogo(),
+              SizedBox(height: 30.0),
+              LoginCard(),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -100,9 +97,9 @@ class _LoginCardState extends State<LoginCard> {
             children: [
               _LoginTitle(),
               SizedBox(height: 30.0),
-              _EmailInput(emailController: _emailController),
+              _EmailInput(controller: _emailController),
               SizedBox(height: 30.0),
-              _PasswordInput(passwordController: _passwordController),
+              _PasswordInput(controller: _passwordController),
               _ForgetPasswordButton(),
               SizedBox(height: 30.0),
               _loginProvider.isLoading
@@ -114,10 +111,9 @@ class _LoginCardState extends State<LoginCard> {
                     )
                   : _SubmitLoginButton(
                       label: 'Iniciar Sesión',
-                      onPressed:
-                          !_loginProvider.canLogin || _loginProvider.isLoading
-                              ? null
-                              : () => _login(context),
+                      onPressed: !_loginProvider.canLogin
+                          ? null
+                          : () => _login(context),
                     ),
             ],
           ),
@@ -138,11 +134,11 @@ class _LoginCardState extends State<LoginCard> {
       _passwordController.clear();
       Navigator.of(context).pushReplacementNamed(HomePage.route);
     } else {
-      _showMyDialog(context);
+      _showWarningDialog(context);
     }
   }
 
-  Future<void> _showMyDialog(BuildContext context) async {
+  Future<void> _showWarningDialog(BuildContext context) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false,
@@ -194,17 +190,17 @@ class _SubmitLoginButton extends StatelessWidget {
 class _PasswordInput extends StatelessWidget {
   const _PasswordInput({
     Key key,
-    @required this.passwordController,
+    @required this.controller,
   }) : super(key: key);
 
-  final TextEditingController passwordController;
+  final TextEditingController controller;
 
   @override
   Widget build(BuildContext context) {
     LoginProvider loginProvider = Provider.of<LoginProvider>(context);
 
     return TextFormField(
-      controller: passwordController,
+      controller: controller,
       obscureText: true,
       decoration: InputDecoration(
         labelText: 'Contraseña',
@@ -220,17 +216,17 @@ class _PasswordInput extends StatelessWidget {
 class _EmailInput extends StatelessWidget {
   const _EmailInput({
     Key key,
-    @required this.emailController,
+    @required this.controller,
   }) : super(key: key);
 
-  final TextEditingController emailController;
+  final TextEditingController controller;
 
   @override
   Widget build(BuildContext context) {
     LoginProvider loginProvider = Provider.of<LoginProvider>(context);
 
     return TextFormField(
-      controller: emailController,
+      controller: controller,
       keyboardType: TextInputType.emailAddress,
       decoration: InputDecoration(
         labelText: 'Usuario',

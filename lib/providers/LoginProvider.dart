@@ -54,6 +54,9 @@ class LoginProvider with ChangeNotifier {
   bool get canLogin {
     bool isValid = true;
 
+    if (_isLoading) {
+      isValid = false;
+    }
     if (_email.error != null || _password.error != null) {
       isValid = false;
     }

@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:montana_mobile/models/product.dart';
+import 'package:montana_mobile/pages/catalogue/partials/empty_message.dart';
+import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/pages/catalogue/partials/product_item.dart';
+import 'package:montana_mobile/providers/products_provider.dart';
 import 'package:montana_mobile/widgets/cart_icon.dart';
 import 'package:montana_mobile/widgets/scaffold_logo.dart';
+import 'package:provider/provider.dart';
 
 class ShowRoomPage extends StatelessWidget {
   static final String route = 'show-room';
+
   @override
   Widget build(BuildContext context) {
-    List<Product> products = productsListTest();
+    final ProductsProvider productsProvider =
+        Provider.of<ProductsProvider>(context);
+    productsProvider.loadShowRoomProducts();
 
     return Scaffold(
       appBar: AppBar(
@@ -18,32 +24,55 @@ class ShowRoomPage extends StatelessWidget {
         ],
       ),
       backgroundColor: Color.fromRGBO(45, 45, 45, 1.0),
-      body: ListView.separated(
-        padding: EdgeInsets.all(20.0),
-        itemCount: products.length,
-        itemBuilder: (_, index) {
-          if (index == 0) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                BannerShowRoom(),
-                ProductItem(
-                  product: products[index],
-                  isShowRoom: true,
-                ),
-              ],
-            );
-          }
-          return ProductItem(
-            product: products[index],
-            isShowRoom: true,
-          );
-        },
-        separatorBuilder: (_, index) {
-          return SizedBox(height: 30.0);
-        },
+      body: RefreshIndicator(
+        onRefresh: () => productsProvider.loadShowRoomProducts(),
+        color: Theme.of(context).primaryColor,
+        child: productsProvider.isLoadingShowRoom
+            ? const LoadingContainer()
+            : productsProvider.products.length == 0
+                ? EmptyMessage(
+                    onPressed: () => productsProvider.loadShowRoomProducts(),
+                    message: 'No hay productos disponibles en ShowRoom.',
+                  )
+                : _ProductsList(),
       ),
+    );
+  }
+}
+
+class _ProductsList extends StatelessWidget {
+  const _ProductsList({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final ProductsProvider productsProvider =
+        Provider.of<ProductsProvider>(context);
+
+    return ListView.separated(
+      padding: EdgeInsets.all(20.0),
+      itemCount: productsProvider.showRoomProducts.length,
+      itemBuilder: (_, index) {
+        if (index == 0) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              BannerShowRoom(),
+              ProductItem(
+                product: productsProvider.showRoomProducts[index],
+                isShowRoom: true,
+              ),
+            ],
+          );
+        }
+        return ProductItem(
+          product: productsProvider.showRoomProducts[index],
+          isShowRoom: true,
+        );
+      },
+      separatorBuilder: (_, index) {
+        return SizedBox(height: 30.0);
+      },
     );
   }
 }

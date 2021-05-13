@@ -13,7 +13,7 @@ class ProductItem extends StatelessWidget {
     @required this.isShowRoom,
   }) : super(key: key);
 
-  final Product product;
+  final Producto product;
   final bool isShowRoom;
 
   @override
@@ -48,11 +48,11 @@ class ProductItem extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(product.name, style: textStyle1),
+            Text(product.nombre, style: textStyle1),
             SizedBox(height: 10.0),
             isShowRoom
                 ? Container()
-                : Text("Ref: ${product.reference}", style: textStyle2),
+                : Text("Ref: ${product.referencia}", style: textStyle2),
             SizedBox(height: 15.0),
             ClipRRect(
               borderRadius: BorderRadius.circular(5.0),
@@ -68,7 +68,7 @@ class ProductItem extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(formatMoney(product.price), style: textStyle1),
+                Text(formatMoney(product.precio), style: textStyle1),
                 isShowRoom
                     ? Container()
                     : Text("Stock: ${product.stock} cajas", style: textStyle2),

@@ -26,8 +26,10 @@ class CataloguesProvider with ChangeNotifier {
 
     Uri url = Uri.parse('$_url/catalogos');
 
-    http.Response response =
-        await http.get(url, headers: preferences.httpSignedHeaders);
+    http.Response response = await http.get(
+      url,
+      headers: preferences.httpSignedHeaders,
+    );
 
     if (response.statusCode == 200) {
       ResponseCatalogos responseCatalogos =

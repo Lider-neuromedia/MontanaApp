@@ -16,7 +16,7 @@ class ProductPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Product product = productTest();
+    Producto product; // = productTest();
 
     return Scaffold(
       backgroundColor: CustomTheme.grey3Color,
@@ -51,7 +51,7 @@ class ProductPage extends StatelessWidget {
                       children: [
                         SizedBox(height: 10.0),
                         Text(
-                          product.description,
+                          product.descripcion,
                           softWrap: true,
                           textAlign: TextAlign.left,
                           style: Theme.of(context).textTheme.bodyText1.copyWith(
@@ -140,7 +140,7 @@ class _ProductTitle extends StatelessWidget {
     @required this.product,
   }) : super(key: key);
 
-  final Product product;
+  final Producto product;
 
   @override
   Widget build(BuildContext context) {
@@ -157,7 +157,7 @@ class _ProductTitle extends StatelessWidget {
       children: [
         Expanded(
           child: Text(
-            product.name,
+            product.nombre,
             style: titleStyle,
             softWrap: true,
           ),
@@ -167,7 +167,7 @@ class _ProductTitle extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(formatMoney(product.total), style: totalStyle),
-            Text(formatMoney(product.price), style: priceStyle),
+            Text(formatMoney(product.precio), style: priceStyle),
           ],
         ),
       ],
@@ -181,7 +181,7 @@ class _GalleryProduct extends StatelessWidget {
     @required this.product,
   }) : super(key: key);
 
-  final Product product;
+  final Producto product;
 
   @override
   Widget build(BuildContext context) {
@@ -206,23 +206,23 @@ class _GalleryProduct extends StatelessWidget {
             ),
           ),
           SizedBox(height: 10.0),
-          product.images.length == 0
+          product.imagenes.length == 0
               ? Container()
               : Container(
                   height: 50.0,
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
-                    itemCount: product.images.length,
+                    itemCount: product.imagenes.length,
                     itemBuilder: (_, int index) {
                       return Container(
                         child: InkWell(
                           onTap: () {
-                            print(product.images[index].image);
+                            print(product.imagenes[index].image);
                           },
                           child: FadeInImage(
                             placeholder:
                                 AssetImage("assets/images/placeholder.png"),
-                            image: NetworkImage(product.images[index].image),
+                            image: NetworkImage(product.imagenes[index].image),
                             fit: BoxFit.cover,
                           ),
                         ),

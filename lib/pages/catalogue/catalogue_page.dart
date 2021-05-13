@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:montana_mobile/pages/catalogue/partials/catalogue_item.dart';
+import 'package:montana_mobile/pages/catalogue/partials/empty_message.dart';
+import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/providers/catalogues_provider.dart';
 import 'package:montana_mobile/widgets/cart_icon.dart';
 import 'package:provider/provider.dart';
@@ -21,43 +23,13 @@ class CataloguePage extends StatelessWidget {
         onRefresh: () => cataloguesProvider.loadCatalogues(),
         color: Theme.of(context).primaryColor,
         child: cataloguesProvider.isLoading
-            ? const _LoadingContainer()
+            ? const LoadingContainer()
             : cataloguesProvider.catalogues.length == 0
-                ? const _EmptyMessage()
+                ? EmptyMessage(
+                    onPressed: () => cataloguesProvider.loadCatalogues(),
+                    message: 'No hay catálogos disponibles.',
+                  )
                 : const _CataloguesList(),
-      ),
-    );
-  }
-}
-
-class _EmptyMessage extends StatelessWidget {
-  const _EmptyMessage({Key key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: SizedBox(
-        width: 230.0,
-        child: Text(
-          'No hay catálogos disponibles.\nPuede arrastrar la pantalla hacia bajo para recargar.',
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.subtitle1,
-        ),
-      ),
-    );
-  }
-}
-
-class _LoadingContainer extends StatelessWidget {
-  const _LoadingContainer({Key key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: CircularProgressIndicator(
-        valueColor: AlwaysStoppedAnimation<Color>(
-          Theme.of(context).primaryColor,
-        ),
       ),
     );
   }

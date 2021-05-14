@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:montana_mobile/models/order.dart';
 import 'package:montana_mobile/pages/cart/cart_page.dart';
 import 'package:montana_mobile/pages/catalogue/partials/empty_message.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
@@ -22,20 +21,24 @@ class OrdersPage extends StatelessWidget {
           CartIcon(),
         ],
       ),
-      body: Column(
-        children: [
-          _OrdersFilter(),
-          ordersProvider.isLoading
-              ? Expanded(child: const LoadingContainer())
-              : ordersProvider.orders.length == 0
-                  ? Expanded(
-                      child: EmptyMessage(
-                        onPressed: () => ordersProvider.loadOrders(),
-                        message: 'No hay pedidos.',
-                      ),
-                    )
-                  : _ListOrders(),
-        ],
+      body: RefreshIndicator(
+        onRefresh: () => ordersProvider.loadOrders(),
+        color: Theme.of(context).primaryColor,
+        child: Column(
+          children: [
+            _OrdersFilter(),
+            ordersProvider.isLoading
+                ? Expanded(child: const LoadingContainer())
+                : ordersProvider.orders.length == 0
+                    ? Expanded(
+                        child: EmptyMessage(
+                          onPressed: () => ordersProvider.loadOrders(),
+                          message: 'No hay pedidos.',
+                        ),
+                      )
+                    : _ListOrders(),
+          ],
+        ),
       ),
       floatingActionButton: _CreateOrderButton(),
     );
@@ -50,9 +53,7 @@ class _ListOrders extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final OrdersProvider ordersProvider = Provider.of<OrdersProvider>(context);
-    print(ordersProvider.orders);
 
-    List<Order> orders = ordersListTest();
     return Expanded(
       child: ListView.separated(
         padding: EdgeInsets.only(
@@ -61,9 +62,9 @@ class _ListOrders extends StatelessWidget {
           right: 10.0,
           bottom: 100.0,
         ),
-        itemCount: orders.length,
+        itemCount: ordersProvider.orders.length,
         itemBuilder: (_, index) {
-          return OrderItem(order: orders[index]);
+          return OrderItem(order: ordersProvider.orders[index]);
         },
         separatorBuilder: (_, index) {
           return SizedBox(height: 10.0);
@@ -118,12 +119,11 @@ class _OrdersFilter extends StatefulWidget {
 }
 
 class __OrdersFilterState extends State<_OrdersFilter> {
-  String dropdownValue = 'Más recientes';
-  final List<String> values = ['Más recientes'];
-
   @override
   Widget build(BuildContext context) {
-    TextStyle textStyle = Theme.of(context).textTheme.subtitle1;
+    final TextStyle textStyle = Theme.of(context).textTheme.subtitle1;
+    final OrdersProvider ordersProvider = Provider.of<OrdersProvider>(context);
+
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: 15.0,
@@ -136,22 +136,21 @@ class __OrdersFilterState extends State<_OrdersFilter> {
           Text('Ordenar por:', style: textStyle),
           SizedBox(width: 10.0),
           DropdownButton<String>(
-            value: dropdownValue,
             icon: const Icon(Icons.keyboard_arrow_down),
             iconSize: 24,
             elevation: 16,
             style: textStyle,
             underline: Container(
-              height: 2,
               color: CustomTheme.greyColor,
+              height: 2,
             ),
-            onChanged: (String newValue) {
-              setState(() => dropdownValue = newValue);
-            },
-            items: values.map<DropdownMenuItem<String>>((String value) {
+            onChanged: (String value) => ordersProvider.sortBy = value,
+            value: ordersProvider.sortBy,
+            items: ordersProvider.sortValues
+                .map<DropdownMenuItem<String>>((value) {
               return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
+                value: value.id,
+                child: Text(value.value),
               );
             }).toList(),
           ),

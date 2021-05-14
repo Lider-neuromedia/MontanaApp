@@ -9,7 +9,7 @@ class OrderItem extends StatelessWidget {
     this.order,
   }) : super(key: key);
 
-  final Order order;
+  final Pedido order;
 
   @override
   Widget build(BuildContext context) {
@@ -39,17 +39,17 @@ class OrderItem extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Cliente: ${order.client.fullname}", style: textStyle1),
+              Text("Cliente: ${order.clienteNombre}", style: textStyle1),
               SizedBox(height: 5.0),
-              Text("Pedido #${order.code}", style: textStyle2),
+              Text("Pedido #${order.codigo}", style: textStyle2),
               SizedBox(height: 5.0),
-              Text(order.dateFormatted, style: textStyle2),
+              Text(formatDate(order.fecha), style: textStyle2),
               SizedBox(height: 5.0),
               Text(formatMoney(order.total), style: textStyle3),
               SizedBox(height: 10.0),
               Container(
-                child: Text(order.status.statusFormatted, style: textStyle4),
-                color: order.status.color,
+                child: Text(order.estadoFormatted, style: textStyle4),
+                color: order.estadoColor,
                 padding: EdgeInsets.symmetric(
                   horizontal: 10.0,
                   vertical: 5.0,

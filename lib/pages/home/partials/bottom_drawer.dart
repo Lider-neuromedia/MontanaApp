@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fluttericon/octicons_icons.dart';
+import 'package:fluttericon/web_symbols_icons.dart';
 import 'package:montana_mobile/models/session.dart';
+import 'package:montana_mobile/pages/session/login_page.dart';
+import 'package:montana_mobile/providers/login_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:montana_mobile/pages/home/partials/drawer_item.dart';
 import 'package:montana_mobile/providers/navigation_provider.dart';
@@ -17,7 +20,8 @@ class BottomDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final navigationProvider = Provider.of<NavigationProvider>(context);
-    var size = MediaQuery.of(context).size;
+    final loginProvider = Provider.of<LoginProvider>(context);
+    final size = MediaQuery.of(context).size;
 
     return AnimatedPositioned(
       curve: Curves.easeInOut,
@@ -67,6 +71,17 @@ class BottomDrawer extends StatelessWidget {
               iconData: Icons.tab_unselected,
               active: navigationProvider.currentPage == 6,
               onTap: () => navigationProvider.currentPage = 6,
+            ),
+            SizedBox(width: 20.0),
+            DrawerItem(
+              title: 'Logout',
+              iconData: WebSymbols.logout,
+              active: false,
+              onTap: () {
+                loginProvider.logout();
+                navigationProvider.showMore = false;
+                Navigator.of(context).pushReplacementNamed(LoginPage.route);
+              },
             ),
           ],
         ),

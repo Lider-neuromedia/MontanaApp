@@ -1,4 +1,116 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+
+ResponseOrders responsePedidosFromJson(String str) =>
+    ResponseOrders.fromJson(json.decode(str));
+
+String responsePedidosToJson(ResponseOrders data) => json.encode(data.toJson());
+
+class ResponseOrders {
+  ResponseOrders({
+    this.response,
+    this.status,
+    this.pedidos,
+  });
+
+  String response;
+  int status;
+  List<Pedido> pedidos;
+
+  factory ResponseOrders.fromJson(Map<String, dynamic> json) => ResponseOrders(
+        response: json["response"],
+        status: json["status"],
+        pedidos:
+            List<Pedido>.from(json["pedidos"].map((x) => Pedido.fromJson(x))),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "response": response,
+        "status": status,
+        "pedidos": List<dynamic>.from(pedidos.map((x) => x.toJson())),
+      };
+}
+
+class Pedido {
+  Pedido({
+    this.idPedido,
+    this.fecha,
+    this.firma,
+    this.codigo,
+    this.total,
+    this.nameVendedor,
+    this.apellidoVendedor,
+    this.nameCliente,
+    this.apellidoCliente,
+    this.estado,
+    this.idEstado,
+  });
+
+  int idPedido;
+  DateTime fecha;
+  String firma;
+  String codigo;
+  double total;
+  String nameVendedor;
+  String apellidoVendedor;
+  String nameCliente;
+  String apellidoCliente;
+  Estado estado;
+  int idEstado;
+
+  factory Pedido.fromJson(Map<String, dynamic> json) => Pedido(
+        idPedido: json["id_pedido"],
+        fecha: DateTime.parse(json["fecha"]),
+        firma: json["firma"],
+        codigo: json["codigo"],
+        total: json["total"],
+        nameVendedor: json["name_vendedor"],
+        apellidoVendedor: json["apellido_vendedor"],
+        nameCliente: json["name_cliente"],
+        apellidoCliente: json["apellido_cliente"],
+        estado: estadoValues.map[json["estado"]],
+        idEstado: json["id_estado"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id_pedido": idPedido,
+        "fecha":
+            "${fecha.year.toString().padLeft(4, '0')}-${fecha.month.toString().padLeft(2, '0')}-${fecha.day.toString().padLeft(2, '0')}",
+        "firma": firma,
+        "codigo": codigo,
+        "total": total,
+        "name_vendedor": nameVendedor,
+        "apellido_vendedor": apellidoVendedor,
+        "name_cliente": nameCliente,
+        "apellido_cliente": apellidoCliente,
+        "estado": estadoValues.reverse[estado],
+        "id_estado": idEstado,
+      };
+}
+
+enum Estado { ENTREGADO, PENDIENTE, CANCELADO }
+
+final estadoValues = EnumValues({
+  "cancelado": Estado.CANCELADO,
+  "entregado": Estado.ENTREGADO,
+  "pendiente": Estado.PENDIENTE
+});
+
+class EnumValues<T> {
+  Map<String, T> map;
+  Map<T, String> reverseMap;
+
+  EnumValues(this.map);
+
+  Map<T, String> get reverse {
+    if (reverseMap == null) {
+      reverseMap = map.map((k, v) => new MapEntry(v, k));
+    }
+    return reverseMap;
+  }
+}
+
+// TODO: BORRAR LO DE ABAJO ------------------------------------------------
 
 class Order {
   int id;

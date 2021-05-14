@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:montana_mobile/models/order.dart';
 import 'package:montana_mobile/pages/cart/cart_page.dart';
+import 'package:montana_mobile/pages/catalogue/partials/empty_message.dart';
+import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/pages/catalogue/start_order_modal.dart';
 import 'package:montana_mobile/pages/orders/partials/order_item.dart';
+import 'package:montana_mobile/providers/orders_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:montana_mobile/widgets/cart_icon.dart';
+import 'package:provider/provider.dart';
 
 class OrdersPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final OrdersProvider ordersProvider = Provider.of<OrdersProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Pedidos'),
@@ -19,7 +25,16 @@ class OrdersPage extends StatelessWidget {
       body: Column(
         children: [
           _OrdersFilter(),
-          _ListOrders(),
+          ordersProvider.isLoading
+              ? Expanded(child: const LoadingContainer())
+              : ordersProvider.orders.length == 0
+                  ? Expanded(
+                      child: EmptyMessage(
+                        onPressed: () => ordersProvider.loadOrders(),
+                        message: 'No hay pedidos.',
+                      ),
+                    )
+                  : _ListOrders(),
         ],
       ),
       floatingActionButton: _CreateOrderButton(),
@@ -34,6 +49,9 @@ class _ListOrders extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final OrdersProvider ordersProvider = Provider.of<OrdersProvider>(context);
+    print(ordersProvider.orders);
+
     List<Order> orders = ordersListTest();
     return Expanded(
       child: ListView.separated(
@@ -45,9 +63,7 @@ class _ListOrders extends StatelessWidget {
         ),
         itemCount: orders.length,
         itemBuilder: (_, index) {
-          return OrderItem(
-            order: orders[index],
-          );
+          return OrderItem(order: orders[index]);
         },
         separatorBuilder: (_, index) {
           return SizedBox(height: 10.0);

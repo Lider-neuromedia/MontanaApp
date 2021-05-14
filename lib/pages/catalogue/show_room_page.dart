@@ -24,18 +24,18 @@ class ShowRoomPage extends StatelessWidget {
         ],
       ),
       backgroundColor: Color.fromRGBO(45, 45, 45, 1.0),
-      body: RefreshIndicator(
-        onRefresh: () => productsProvider.loadShowRoomProducts(),
-        color: Theme.of(context).primaryColor,
-        child: productsProvider.isLoadingShowRoom
-            ? const LoadingContainer()
-            : productsProvider.products.length == 0
-                ? EmptyMessage(
-                    onPressed: () => productsProvider.loadShowRoomProducts(),
-                    message: 'No hay productos disponibles en ShowRoom.',
-                  )
-                : _ProductsList(),
-      ),
+      body: productsProvider.isLoadingShowRoom
+          ? const LoadingContainer()
+          : productsProvider.products.length == 0
+              ? EmptyMessage(
+                  onPressed: () => productsProvider.loadShowRoomProducts(),
+                  message: 'No hay productos disponibles en ShowRoom.',
+                )
+              : RefreshIndicator(
+                  onRefresh: () => productsProvider.loadShowRoomProducts(),
+                  color: Theme.of(context).primaryColor,
+                  child: _ProductsList(),
+                ),
     );
   }
 }

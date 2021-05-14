@@ -19,18 +19,18 @@ class CataloguePage extends StatelessWidget {
           CartIcon(),
         ],
       ),
-      body: RefreshIndicator(
-        onRefresh: () => cataloguesProvider.loadCatalogues(),
-        color: Theme.of(context).primaryColor,
-        child: cataloguesProvider.isLoading
-            ? const LoadingContainer()
-            : cataloguesProvider.catalogues.length == 0
-                ? EmptyMessage(
-                    onPressed: () => cataloguesProvider.loadCatalogues(),
-                    message: 'No hay catálogos disponibles.',
-                  )
-                : const _CataloguesList(),
-      ),
+      body: cataloguesProvider.isLoading
+          ? const LoadingContainer()
+          : cataloguesProvider.catalogues.length == 0
+              ? EmptyMessage(
+                  onPressed: () => cataloguesProvider.loadCatalogues(),
+                  message: 'No hay catálogos disponibles.',
+                )
+              : RefreshIndicator(
+                  onRefresh: () => cataloguesProvider.loadCatalogues(),
+                  color: Theme.of(context).primaryColor,
+                  child: const _CataloguesList(),
+                ),
     );
   }
 }

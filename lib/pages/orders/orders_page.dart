@@ -21,26 +21,24 @@ class OrdersPage extends StatelessWidget {
           CartIcon(),
         ],
       ),
-      body: RefreshIndicator(
-        onRefresh: () => ordersProvider.loadOrders(),
-        color: Theme.of(context).primaryColor,
-        child: Column(
-          children: [
-            _OrdersFilter(),
-            ordersProvider.isLoading
-                ? Expanded(child: const LoadingContainer())
-                : ordersProvider.orders.length == 0
-                    ? Expanded(
-                        child: EmptyMessage(
-                          onPressed: () => ordersProvider.loadOrders(),
-                          message: 'No hay pedidos.',
-                        ),
-                      )
-                    : _ListOrders(),
-          ],
-        ),
-      ),
       floatingActionButton: _CreateOrderButton(),
+      body: ordersProvider.isLoading
+          ? const LoadingContainer()
+          : ordersProvider.orders.length == 0
+              ? EmptyMessage(
+                  onPressed: () => ordersProvider.loadOrders(),
+                  message: 'No hay pedidos.',
+                )
+              : RefreshIndicator(
+                  onRefresh: () => ordersProvider.loadOrders(),
+                  color: Theme.of(context).primaryColor,
+                  child: Column(
+                    children: [
+                      _OrdersFilter(),
+                      _ListOrders(),
+                    ],
+                  ),
+                ),
     );
   }
 }

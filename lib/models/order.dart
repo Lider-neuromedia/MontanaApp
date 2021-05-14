@@ -3,8 +3,11 @@ import 'dart:convert';
 
 ResponseOrders responsePedidosFromJson(String str) =>
     ResponseOrders.fromJson(json.decode(str));
+ResponseOrder responsePedidoFromJson(String str) =>
+    ResponseOrder.fromJson(json.decode(str));
 
 String responsePedidosToJson(ResponseOrders data) => json.encode(data.toJson());
+String responsePedidoToJson(ResponseOrder data) => json.encode(data.toJson());
 
 class ResponseOrders {
   ResponseOrders({
@@ -31,6 +34,30 @@ class ResponseOrders {
       };
 }
 
+class ResponseOrder {
+  ResponseOrder({
+    this.response,
+    this.status,
+    this.pedido,
+  });
+
+  String response;
+  int status;
+  Pedido pedido;
+
+  factory ResponseOrder.fromJson(Map<String, dynamic> json) => ResponseOrder(
+        response: json["response"],
+        status: json["status"],
+        pedido: Pedido.detailFromJson(json["pedido"]),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "response": response,
+        "status": status,
+        "pedido": pedido.detailToJson(),
+      };
+}
+
 class Pedido {
   Pedido({
     this.idPedido,
@@ -38,6 +65,15 @@ class Pedido {
     this.firma,
     this.codigo,
     this.total,
+    this.descuento,
+    this.notas,
+    this.vendedorId,
+    this.clienteId,
+    this.cliente,
+    this.productos,
+    this.novedades,
+    this.metodoPago,
+    this.subTotal,
     this.nameVendedor,
     this.apellidoVendedor,
     this.nameCliente,
@@ -51,11 +87,20 @@ class Pedido {
   String firma;
   String codigo;
   double total;
+  int clienteId;
+  String metodoPago;
+  double subTotal;
+  int descuento;
+  String notas;
+  int vendedorId;
   String nameVendedor;
   String apellidoVendedor;
   String nameCliente;
   String apellidoCliente;
   Estado estado;
+  Cliente cliente;
+  List<PedidoProducto> productos;
+  List<Novedad> novedades;
   int idEstado;
 
   factory Pedido.fromJson(Map<String, dynamic> json) => Pedido(
@@ -85,6 +130,47 @@ class Pedido {
         "apellido_cliente": apellidoCliente,
         "estado": estadoValues.reverse[estado],
         "id_estado": idEstado,
+      };
+
+  factory Pedido.detailFromJson(Map<String, dynamic> json) => Pedido(
+        idPedido: json["id_pedido"],
+        fecha: DateTime.parse(json["fecha"]),
+        firma: json["firma"],
+        codigo: json["codigo"],
+        metodoPago: json["metodo_pago"],
+        subTotal: double.parse(json["sub_total"].toString()),
+        total: double.parse(json["total"].toString()),
+        descuento: json["descuento"],
+        notas: json["notas"],
+        vendedorId: json["vendedor"],
+        estado: estadoValues.map[json["estado"]],
+        idEstado: json["id_estado"],
+        clienteId: json["cliente"],
+        cliente: Cliente.fromJson(json["info_cliente"]),
+        productos: List<PedidoProducto>.from(
+            json["productos"].map((x) => PedidoProducto.fromJson(x))),
+        novedades: List<Novedad>.from(
+            json["novedades"].map((x) => Novedad.fromJson(x))),
+      );
+
+  Map<String, dynamic> detailToJson() => {
+        "id_pedido": idPedido,
+        "fecha":
+            "${fecha.year.toString().padLeft(4, '0')}-${fecha.month.toString().padLeft(2, '0')}-${fecha.day.toString().padLeft(2, '0')}",
+        "firma": firma,
+        "codigo": codigo,
+        "metodo_pago": metodoPago,
+        "sub_total": subTotal,
+        "total": total,
+        "descuento": descuento,
+        "notas": notas,
+        "vendedor": vendedorId,
+        "estado": estadoValues.reverse[estado],
+        "id_estado": idEstado,
+        "cliente": clienteId,
+        "info_cliente": cliente.toJson(),
+        "productos": List<dynamic>.from(productos.map((x) => x.toJson())),
+        "novedades": List<dynamic>.from(novedades.map((x) => x.toJson())),
       };
 
   String get clienteNombre => "$nameCliente $apellidoCliente";
@@ -131,297 +217,403 @@ class EnumValues<T> {
   }
 }
 
-// TODO: BORRAR LO DE ABAJO ------------------------------------------------
-
-class Order {
-  int id;
-  DateTime date;
-  String code;
-  double total;
-  Status status;
-  Client client;
-  Seller seller;
-
-  Order({
+class Cliente {
+  Cliente({
     this.id,
-    this.date,
-    this.code,
-    this.total,
-  });
-
-  String paymentMethod;
-  double subTotal;
-  int discount;
-  String notes;
-  List<OrderProduct> products;
-  List<Novelty> novelties;
-
-  Order.detail({
-    this.id,
-    this.date,
-    this.code,
-    this.total,
-    this.paymentMethod,
-    this.subTotal,
-    this.discount,
-    this.notes,
-  });
-
-  get dateFormatted {
-    final String year = date.year.toString();
-    final String month = date.month.toString().padLeft(2, '0');
-    final String day = date.day.toString().padLeft(2, '0');
-    return "$day / $month / $year";
-  }
-}
-
-class OrderProduct {
-  String reference;
-  int productQuantity;
-  String place;
-
-  OrderProduct({
-    this.reference,
-    this.productQuantity,
-    this.place,
-  });
-}
-
-class Novelty {
-  int id;
-  String type;
-  String description;
-  DateTime createdAt;
-  DateTime updatedAt;
-
-  Novelty({
-    this.id,
-    this.type,
-    this.description,
-    this.createdAt,
-    this.updatedAt,
-  });
-}
-
-class Status {
-  int id;
-  String status;
-
-  Status({this.id, this.status});
-
-  get color {
-    Color statusColor = Color.fromRGBO(109, 109, 109, 1.0);
-
-    if (status == 'entregado') {
-      statusColor = Color.fromRGBO(55, 202, 8, 1.0);
-    } else if (status == 'cancelado') {
-      statusColor = Color.fromRGBO(229, 10, 32, 1.0);
-    }
-
-    return statusColor;
-  }
-
-  String get statusFormatted {
-    String temp = status.toLowerCase().trim();
-    String firstLetter = temp.substring(0, 1).toUpperCase();
-    String word = firstLetter + temp.substring(1, temp.length);
-    return word;
-  }
-}
-
-class Seller {
-  String name;
-  String lastname;
-
-  Seller({
+    this.rolId,
     this.name,
-    this.lastname,
-  });
-}
-
-class Client {
-  String name;
-  String lastname;
-
-  Client({
-    this.name,
-    this.lastname,
+    this.apellidos,
+    this.email,
+    this.tipoIdentificacion,
+    this.dni,
+    this.nit,
   });
 
   int id;
   int rolId;
+  String name;
+  String apellidos;
   String email;
-  String identificationType;
+  String tipoIdentificacion;
   String dni;
   String nit;
 
-  Client.orderDetail({
-    this.id,
-    this.name,
-    this.lastname,
-    this.rolId,
-    this.email,
-    this.identificationType,
-    this.dni,
-    this.nit,
+  String get nombreCompleto => "$name $apellidos";
+
+  factory Cliente.fromJson(Map<String, dynamic> json) => Cliente(
+        id: json["id"],
+        rolId: json["rol_id"],
+        name: json["name"],
+        apellidos: json["apellidos"],
+        email: json["email"],
+        tipoIdentificacion: json["tipo_identificacion"],
+        dni: json["dni"],
+        nit: json["nit"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "rol_id": rolId,
+        "name": name,
+        "apellidos": apellidos,
+        "email": email,
+        "tipo_identificacion": tipoIdentificacion,
+        "dni": dni,
+        "nit": nit,
+      };
+}
+
+class Novedad {
+  Novedad({
+    this.idNovedad,
+    this.tipo,
+    this.descripcion,
+    this.pedido,
+    this.createdAt,
+    this.updatedAt,
   });
-  String get fullname => "$name $lastname";
+
+  int idNovedad;
+  String tipo;
+  String descripcion;
+  int pedido;
+  DateTime createdAt;
+  DateTime updatedAt;
+
+  factory Novedad.fromJson(Map<String, dynamic> json) => Novedad(
+        idNovedad: json["id_novedad"],
+        tipo: json["tipo"],
+        descripcion: json["descripcion"],
+        pedido: json["pedido"],
+        createdAt: DateTime.parse(json["created_at"]),
+        updatedAt: DateTime.parse(json["updated_at"]),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id_novedad": idNovedad,
+        "tipo": tipo,
+        "descripcion": descripcion,
+        "pedido": pedido,
+        "created_at": createdAt.toIso8601String(),
+        "updated_at": updatedAt.toIso8601String(),
+      };
 }
 
-Order orderDetailTest() {
-  Map<String, dynamic> element = {
-    "id_pedido": 23,
-    "fecha": "2020-10-27",
-    "codigo": "5f9876ea33765",
-    "metodo_pago": "contado",
-    "sub_total": 1650000,
-    "total": 495000,
-    "descuento": 70,
-    "notas": "Ninguna",
-    "vendedor": 3,
-    "estado": "cancelado",
-    "id_estado": 3,
-    "cliente": 4,
-    "info_cliente": {
-      "id": 4,
-      "rol_id": 3,
-      "name": "Juan Jose",
-      "apellidos": "Borrero",
-      "email": "emanuel@gmail.com",
-      "tipo_identificacion": "Cedula",
-      "dni": "42424425",
-      "email_verified_at": null,
-      "created_at": "2020-07-30 02:18:47",
-      "updated_at": "2021-01-25 03:20:40",
-      "nit": "6516516"
-    },
-    "productos": [
-      {"referencia": "ATH-30303", "cantidad_producto": 3, "lugar": "unico 2"},
-      {"referencia": "ATH-30303", "cantidad_producto": 5, "lugar": "Unicentro"}
-    ],
-    "novedades": [
-      {
-        "id_novedad": 6,
-        "tipo": "retraso en envio",
-        "descripcion": "Hubo retraso",
-        "pedido": 23,
-        "created_at": "2020-10-28 23:17:58",
-        "updated_at": "2020-10-28 23:17:58"
-      },
-      {
-        "id_novedad": 7,
-        "tipo": "retraso en envio",
-        "descripcion": "PRUEBA1",
-        "pedido": 23,
-        "created_at": "2021-01-07 18:44:09",
-        "updated_at": "2021-01-07 18:44:09"
-      },
-      {
-        "id_novedad": 23,
-        "tipo": "retraso en envio",
-        "descripcion": "Prueba 1",
-        "pedido": 23,
-        "created_at": "2021-03-30 19:21:13",
-        "updated_at": "2021-03-30 19:21:13"
-      },
-      {
-        "id_novedad": 24,
-        "tipo": "retraso en envío",
-        "descripcion": "prueba 2",
-        "pedido": 23,
-        "created_at": "2021-03-30 19:21:50",
-        "updated_at": "2021-03-30 19:21:50"
-      },
-      {
-        "id_novedad": 25,
-        "tipo": "retraso en envío",
-        "descripcion": "Prueba 3",
-        "pedido": 23,
-        "created_at": "2021-03-30 19:39:17",
-        "updated_at": "2021-03-30 19:39:17"
-      },
-      {
-        "id_novedad": 26,
-        "tipo": "retraso en envío",
-        "descripcion": "Prueba 4",
-        "pedido": 23,
-        "created_at": "2021-03-30 19:42:37",
-        "updated_at": "2021-03-30 19:42:37"
-      },
-      {
-        "id_novedad": 28,
-        "tipo": "retraso en envío",
-        "descripcion": "Prueba 8",
-        "pedido": 23,
-        "created_at": "2021-04-05 23:02:22",
-        "updated_at": "2021-04-05 23:02:22"
-      },
-      {
-        "id_novedad": 29,
-        "tipo": "retraso en envío",
-        "descripcion": "Prueba 8",
-        "pedido": 23,
-        "created_at": "2021-04-06 22:59:17",
-        "updated_at": "2021-04-06 22:59:17"
-      }
-    ]
-  };
+class PedidoProducto {
+  PedidoProducto({
+    this.referencia,
+    this.cantidadProducto,
+    this.lugar,
+  });
 
-  var order = Order.detail(
-    id: element["id_pedido"],
-    date: DateTime.parse(element["fecha"]),
-    code: element["codigo"],
-    paymentMethod: element["metodo_pago"],
-    subTotal: double.parse(element["sub_total"].toString()),
-    total: double.parse(element["total"].toString()),
-    discount: element["descuento"],
-    notes: element["notas"],
-  );
+  String referencia;
+  int cantidadProducto;
+  String lugar;
 
-  var elementClient = element["info_cliente"];
+  factory PedidoProducto.fromJson(Map<String, dynamic> json) => PedidoProducto(
+        referencia: json["referencia"],
+        cantidadProducto: json["cantidad_producto"],
+        lugar: json["lugar"],
+      );
 
-  order.client = Client.orderDetail(
-    id: elementClient["id"],
-    name: elementClient["name"],
-    lastname: elementClient["apellidos"],
-    rolId: elementClient["rol_id"],
-    email: elementClient["email"],
-    identificationType: elementClient["tipo_identificacion"],
-    dni: elementClient["dni"],
-    nit: elementClient["nit"],
-  );
-
-  order.status = Status(
-    id: int.parse(element["id_estado"].toString()),
-    status: element["estado"],
-  );
-
-  order.products = [];
-  order.novelties = [];
-
-  if (element['productos'] != null) {
-    List dataProducts = element['productos'];
-    dataProducts.forEach((elementProduct) {
-      order.products.add(OrderProduct(
-        reference: elementProduct["referencia"],
-        place: elementProduct["lugar"],
-        productQuantity: elementProduct["cantidad_producto"],
-      ));
-    });
-  }
-
-  if (element['novedades'] != null) {
-    List dataNovelties = element['novedades'];
-    dataNovelties.forEach((elementNovelty) {
-      order.novelties.add(Novelty(
-        id: elementNovelty["id_novedad"],
-        type: elementNovelty["tipo"],
-        description: elementNovelty["descripcion"],
-        createdAt: DateTime.parse(elementNovelty["created_at"]),
-        updatedAt: DateTime.parse(elementNovelty["updated_at"]),
-      ));
-    });
-  }
-
-  return order;
+  Map<String, dynamic> toJson() => {
+        "referencia": referencia,
+        "cantidad_producto": cantidadProducto,
+        "lugar": lugar,
+      };
 }
+
+// TODO: BORRAR LO DE ABAJO ------------------------------------------------
+
+// class Order {
+//   int id;
+//   DateTime date;
+//   String code;
+//   double total;
+//   Status status;
+//   Client client;
+//   Seller seller;
+
+//   Order({
+//     this.id,
+//     this.date,
+//     this.code,
+//     this.total,
+//   });
+
+//   String paymentMethod;
+//   double subTotal;
+//   int discount;
+//   String notes;
+//   List<OrderProduct> products;
+//   List<Novelty> novelties;
+
+//   Order.detail({
+//     this.id,
+//     this.date,
+//     this.code,
+//     this.total,
+//     this.paymentMethod,
+//     this.subTotal,
+//     this.discount,
+//     this.notes,
+//   });
+
+//   get dateFormatted {
+//     final String year = date.year.toString();
+//     final String month = date.month.toString().padLeft(2, '0');
+//     final String day = date.day.toString().padLeft(2, '0');
+//     return "$day / $month / $year";
+//   }
+// }
+
+// class OrderProduct {
+//   String reference;
+//   int productQuantity;
+//   String place;
+
+//   OrderProduct({
+//     this.reference,
+//     this.productQuantity,
+//     this.place,
+//   });
+// }
+
+// class Novelty {
+//   int id;
+//   String type;
+//   String description;
+//   DateTime createdAt;
+//   DateTime updatedAt;
+
+//   Novelty({
+//     this.id,
+//     this.type,
+//     this.description,
+//     this.createdAt,
+//     this.updatedAt,
+//   });
+// }
+
+// class Status {
+//   int id;
+//   String status;
+
+//   Status({this.id, this.status});
+
+//   get color {
+//     Color statusColor = Color.fromRGBO(109, 109, 109, 1.0);
+
+//     if (status == 'entregado') {
+//       statusColor = Color.fromRGBO(55, 202, 8, 1.0);
+//     } else if (status == 'cancelado') {
+//       statusColor = Color.fromRGBO(229, 10, 32, 1.0);
+//     }
+
+//     return statusColor;
+//   }
+
+//   String get statusFormatted {
+//     String temp = status.toLowerCase().trim();
+//     String firstLetter = temp.substring(0, 1).toUpperCase();
+//     String word = firstLetter + temp.substring(1, temp.length);
+//     return word;
+//   }
+// }
+
+// class Seller {
+//   String name;
+//   String lastname;
+
+//   Seller({
+//     this.name,
+//     this.lastname,
+//   });
+// }
+
+// class Client {
+//   String name;
+//   String lastname;
+
+//   Client({
+//     this.name,
+//     this.lastname,
+//   });
+
+//   int id;
+//   int rolId;
+//   String email;
+//   String identificationType;
+//   String dni;
+//   String nit;
+
+//   Client.orderDetail({
+//     this.id,
+//     this.name,
+//     this.lastname,
+//     this.rolId,
+//     this.email,
+//     this.identificationType,
+//     this.dni,
+//     this.nit,
+//   });
+//   String get fullname => "$name $lastname";
+// }
+
+// Order orderDetailTest() {
+//   Map<String, dynamic> element = {
+//     "id_pedido": 23,
+//     "fecha": "2020-10-27",
+//     "codigo": "5f9876ea33765",
+//     "metodo_pago": "contado",
+//     "sub_total": 1650000,
+//     "total": 495000,
+//     "descuento": 70,
+//     "notas": "Ninguna",
+//     "vendedor": 3,
+//     "estado": "cancelado",
+//     "id_estado": 3,
+//     "cliente": 4,
+//     "info_cliente": {
+//       "id": 4,
+//       "rol_id": 3,
+//       "name": "Juan Jose",
+//       "apellidos": "Borrero",
+//       "email": "emanuel@gmail.com",
+//       "tipo_identificacion": "Cedula",
+//       "dni": "42424425",
+//       "email_verified_at": null,
+//       "created_at": "2020-07-30 02:18:47",
+//       "updated_at": "2021-01-25 03:20:40",
+//       "nit": "6516516"
+//     },
+//     "productos": [
+//       {"referencia": "ATH-30303", "cantidad_producto": 3, "lugar": "unico 2"},
+//       {"referencia": "ATH-30303", "cantidad_producto": 5, "lugar": "Unicentro"}
+//     ],
+//     "novedades": [
+//       {
+//         "id_novedad": 6,
+//         "tipo": "retraso en envio",
+//         "descripcion": "Hubo retraso",
+//         "pedido": 23,
+//         "created_at": "2020-10-28 23:17:58",
+//         "updated_at": "2020-10-28 23:17:58"
+//       },
+//       {
+//         "id_novedad": 7,
+//         "tipo": "retraso en envio",
+//         "descripcion": "PRUEBA1",
+//         "pedido": 23,
+//         "created_at": "2021-01-07 18:44:09",
+//         "updated_at": "2021-01-07 18:44:09"
+//       },
+//       {
+//         "id_novedad": 23,
+//         "tipo": "retraso en envio",
+//         "descripcion": "Prueba 1",
+//         "pedido": 23,
+//         "created_at": "2021-03-30 19:21:13",
+//         "updated_at": "2021-03-30 19:21:13"
+//       },
+//       {
+//         "id_novedad": 24,
+//         "tipo": "retraso en envío",
+//         "descripcion": "prueba 2",
+//         "pedido": 23,
+//         "created_at": "2021-03-30 19:21:50",
+//         "updated_at": "2021-03-30 19:21:50"
+//       },
+//       {
+//         "id_novedad": 25,
+//         "tipo": "retraso en envío",
+//         "descripcion": "Prueba 3",
+//         "pedido": 23,
+//         "created_at": "2021-03-30 19:39:17",
+//         "updated_at": "2021-03-30 19:39:17"
+//       },
+//       {
+//         "id_novedad": 26,
+//         "tipo": "retraso en envío",
+//         "descripcion": "Prueba 4",
+//         "pedido": 23,
+//         "created_at": "2021-03-30 19:42:37",
+//         "updated_at": "2021-03-30 19:42:37"
+//       },
+//       {
+//         "id_novedad": 28,
+//         "tipo": "retraso en envío",
+//         "descripcion": "Prueba 8",
+//         "pedido": 23,
+//         "created_at": "2021-04-05 23:02:22",
+//         "updated_at": "2021-04-05 23:02:22"
+//       },
+//       {
+//         "id_novedad": 29,
+//         "tipo": "retraso en envío",
+//         "descripcion": "Prueba 8",
+//         "pedido": 23,
+//         "created_at": "2021-04-06 22:59:17",
+//         "updated_at": "2021-04-06 22:59:17"
+//       }
+//     ]
+//   };
+
+//   var order = Order.detail(
+//     id: element["id_pedido"],
+//     date: DateTime.parse(element["fecha"]),
+//     code: element["codigo"],
+//     paymentMethod: element["metodo_pago"],
+//     subTotal: double.parse(element["sub_total"].toString()),
+//     total: double.parse(element["total"].toString()),
+//     discount: element["descuento"],
+//     notes: element["notas"],
+//   );
+
+//   var elementClient = element["info_cliente"];
+
+//   order.client = Client.orderDetail(
+//     id: elementClient["id"],
+//     name: elementClient["name"],
+//     lastname: elementClient["apellidos"],
+//     rolId: elementClient["rol_id"],
+//     email: elementClient["email"],
+//     identificationType: elementClient["tipo_identificacion"],
+//     dni: elementClient["dni"],
+//     nit: elementClient["nit"],
+//   );
+
+//   order.status = Status(
+//     id: int.parse(element["id_estado"].toString()),
+//     status: element["estado"],
+//   );
+
+//   order.products = [];
+//   order.novelties = [];
+
+//   if (element['productos'] != null) {
+//     List dataProducts = element['productos'];
+//     dataProducts.forEach((elementProduct) {
+//       order.products.add(OrderProduct(
+//         reference: elementProduct["referencia"],
+//         place: elementProduct["lugar"],
+//         productQuantity: elementProduct["cantidad_producto"],
+//       ));
+//     });
+//   }
+
+//   if (element['novedades'] != null) {
+//     List dataNovelties = element['novedades'];
+//     dataNovelties.forEach((elementNovelty) {
+//       order.novelties.add(Novelty(
+//         id: elementNovelty["id_novedad"],
+//         type: elementNovelty["tipo"],
+//         description: elementNovelty["descripcion"],
+//         createdAt: DateTime.parse(elementNovelty["created_at"]),
+//         updatedAt: DateTime.parse(elementNovelty["updated_at"]),
+//       ));
+//     });
+//   }
+
+//   return order;
+// }

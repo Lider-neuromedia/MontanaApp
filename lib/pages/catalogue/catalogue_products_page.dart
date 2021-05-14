@@ -48,19 +48,18 @@ class _CatalogueProductsPageState extends State<CatalogueProductsPage> {
           CartIcon(),
         ],
       ),
-      body: RefreshIndicator(
-        onRefresh: () => productsProvider.loadProducts(catalogue.id),
-        color: Theme.of(context).primaryColor,
-        child: productsProvider.isLoadingProducts
-            ? const LoadingContainer()
-            : productsProvider.products.length == 0
-                ? EmptyMessage(
-                    onPressed: () =>
-                        productsProvider.loadProducts(catalogue.id),
-                    message: 'No hay productos disponibles en este catálogo.',
-                  )
-                : _ProductsList(),
-      ),
+      body: productsProvider.isLoadingProducts
+          ? const LoadingContainer()
+          : productsProvider.products.length == 0
+              ? EmptyMessage(
+                  onPressed: () => productsProvider.loadProducts(catalogue.id),
+                  message: 'No hay productos disponibles en este catálogo.',
+                )
+              : RefreshIndicator(
+                  onRefresh: () => productsProvider.loadProducts(catalogue.id),
+                  color: Theme.of(context).primaryColor,
+                  child: _ProductsList(),
+                ),
     );
   }
 }

@@ -1,17 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:montana_mobile/models/order.dart';
+import 'package:montana_mobile/pages/catalogue/partials/empty_message.dart';
+import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/pages/orders/partials/order_detail_card.dart';
 import 'package:montana_mobile/pages/orders/partials/products_table.dart';
+import 'package:montana_mobile/providers/orders_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:montana_mobile/utils/utils.dart';
 import 'package:montana_mobile/widgets/cart_icon.dart';
+import 'package:provider/provider.dart';
 
-class OrderPage extends StatelessWidget {
+class OrderPage extends StatefulWidget {
   static final String route = 'order';
 
   @override
+  _OrderPageState createState() => _OrderPageState();
+}
+
+class _OrderPageState extends State<OrderPage> {
+  @override
+  void initState() {
+    super.initState();
+
+    () async {
+      await Future.delayed(Duration.zero);
+      _loadData(context);
+    }();
+  }
+
+  void _loadData(BuildContext context) {
+    final int orderId = ModalRoute.of(context).settings.arguments as int;
+    final OrdersProvider ordersProvider =
+        Provider.of<OrdersProvider>(context, listen: false);
+    ordersProvider.loadOrder(orderId);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    Order order = orderDetailTest();
+    final OrdersProvider ordersProvider = Provider.of<OrdersProvider>(context);
+    final int orderId = ModalRoute.of(context).settings.arguments as int;
 
     return Scaffold(
       appBar: AppBar(
@@ -20,66 +47,90 @@ class OrderPage extends StatelessWidget {
           CartIcon(),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(
-                top: 20.0,
-              ),
-              child: Column(
-                children: [
-                  _OrderTitle(order: order),
-                  SizedBox(height: 20.0),
-                  _OrderDataList(
-                    children: [
-                      _OrderDetailData(
-                        title: 'Fecha de emisión del pedido:',
-                        value: formatDate(order.date),
-                      ),
-                      SizedBox(height: 10.0),
-                      _OrderDetailData(
-                        title: 'Nombre comercial:',
-                        value: order.client.fullname,
-                      ),
-                      SizedBox(height: 10.0),
-                      _OrderDetailData(
-                        title: 'Nit:',
-                        value: order.client.nit,
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 20.0),
-                  _OrderDetailCards(
-                    height: 270.0,
-                    children: [
-                      OrderDetailCard(
-                        title: 'Valor del pedido',
-                        value: formatMoney(order.total),
-                      ),
-                      OrderDetailCard(
-                        title: 'Método de pago',
-                        value: order.paymentMethod,
-                      ),
-                      OrderDetailCard(
-                        title: 'Estado del pedido',
-                        value: order.status.statusFormatted,
-                      ),
-                      OrderDetailCard(
-                        title: 'Descuento',
-                        value: "${order.discount}%",
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 20.0),
-                  ProductsTable(
-                    products: order.products,
-                  ),
-                ],
-              ),
+      body: ordersProvider.isOrderLoading
+          ? const LoadingContainer()
+          : ordersProvider.order == null
+              ? EmptyMessage(
+                  onPressed: () => ordersProvider.loadOrder(orderId),
+                  message: 'No hay información.',
+                )
+              : RefreshIndicator(
+                  onRefresh: () => ordersProvider.loadOrder(orderId),
+                  color: Theme.of(context).primaryColor,
+                  child: _OrderDetailContent(order: ordersProvider.order),
+                ),
+    );
+  }
+}
+
+class _OrderDetailContent extends StatelessWidget {
+  const _OrderDetailContent({
+    Key key,
+    @required this.order,
+  }) : super(key: key);
+
+  final Pedido order;
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      physics: AlwaysScrollableScrollPhysics(),
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(
+              top: 20.0,
             ),
-          ],
-        ),
+            child: Column(
+              children: [
+                _OrderTitle(order: order),
+                SizedBox(height: 20.0),
+                _OrderDataList(
+                  children: [
+                    _OrderDetailData(
+                      title: 'Fecha de emisión del pedido:',
+                      value: formatDate(order.fecha),
+                    ),
+                    SizedBox(height: 10.0),
+                    _OrderDetailData(
+                      title: 'Nombre comercial:',
+                      value: order.cliente.nombreCompleto,
+                    ),
+                    SizedBox(height: 10.0),
+                    _OrderDetailData(
+                      title: 'Nit:',
+                      value: order.cliente.nit,
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20.0),
+                _OrderDetailCards(
+                  height: 270.0,
+                  children: [
+                    OrderDetailCard(
+                      title: 'Valor del pedido',
+                      value: formatMoney(order.total),
+                    ),
+                    OrderDetailCard(
+                      title: 'Método de pago',
+                      value: order.metodoPago,
+                    ),
+                    OrderDetailCard(
+                      title: 'Estado del pedido',
+                      value: order.estadoFormatted,
+                    ),
+                    OrderDetailCard(
+                      title: 'Descuento',
+                      value: "${order.descuento}%",
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20.0),
+                ProductsTable(products: order.productos),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -137,7 +188,7 @@ class _OrderTitle extends StatelessWidget {
     @required this.order,
   }) : super(key: key);
 
-  final Order order;
+  final Pedido order;
 
   @override
   Widget build(BuildContext context) {
@@ -147,7 +198,7 @@ class _OrderTitle extends StatelessWidget {
         );
 
     return Text(
-      "PEDIDO #${order.code}",
+      "PEDIDO #${order.codigo}",
       textAlign: TextAlign.center,
       style: titleStyle,
     );

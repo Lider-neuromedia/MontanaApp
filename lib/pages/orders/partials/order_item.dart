@@ -29,7 +29,10 @@ class OrderItem extends StatelessWidget {
     return Card(
       child: InkWell(
         onTap: () {
-          Navigator.of(context).pushNamed(OrderPage.route);
+          Navigator.of(context).pushNamed(
+            OrderPage.route,
+            arguments: order.idPedido,
+          );
         },
         child: Container(
           padding: EdgeInsets.symmetric(

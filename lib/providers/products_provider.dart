@@ -26,10 +26,8 @@ class ProductsProvider with ChangeNotifier {
 
     Uri url = Uri.parse('$_url/productos/$catalogId');
 
-    http.Response response = await http.get(
-      url,
-      headers: preferences.httpSignedHeaders,
-    );
+    http.Response response =
+        await http.get(url, headers: preferences.signedHeaders);
 
     if (response.statusCode == 200) {
       ResponseProductos responseProductos =
@@ -49,11 +47,8 @@ class ProductsProvider with ChangeNotifier {
     notifyListeners();
 
     Uri url = Uri.parse('$_url/getProductsShowRoom');
-
-    http.Response response = await http.get(
-      url,
-      headers: preferences.httpSignedHeaders,
-    );
+    http.Response response =
+        await http.get(url, headers: preferences.signedHeaders);
 
     if (response.statusCode == 200) {
       ResponseProductos responseProductos =

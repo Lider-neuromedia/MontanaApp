@@ -42,14 +42,14 @@ class Preferences {
     }
   }
 
-  Map<String, String> get httpGuestHeaders {
+  Map<String, String> get guestHeaders {
     Map<String, String> headers = {
       'X-Requested-With': 'XMLHttpRequest',
     };
     return headers;
   }
 
-  Map<String, String> get httpSignedHeaders {
+  Map<String, String> get signedHeaders {
     Map<String, String> headers = {
       'X-Requested-With': 'XMLHttpRequest',
       'Authorization': 'Bearer $token',

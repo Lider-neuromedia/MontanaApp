@@ -3,11 +3,11 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 import 'package:montana_mobile/models/order.dart';
 import 'package:montana_mobile/utils/preferences.dart';
-import 'dart:convert';
 
 class OrdersProvider with ChangeNotifier {
   final String _url = dotenv.env['API_URL'];
   List<Pedido> _orders = [];
+  Pedido _order;
 
   final sortValues = [
     SortValue(SortValue.RECENT_FIRST, "Más Recientes"),
@@ -18,45 +18,61 @@ class OrdersProvider with ChangeNotifier {
 
   String _sortBy = SortValue.RECENT_FIRST;
   bool _isLoading = false;
+  bool _isOrderLoading = false;
 
   OrdersProvider() {
     loadOrders();
   }
 
   bool get isLoading => _isLoading;
+  bool get isOrderLoading => _isOrderLoading;
   List<Pedido> get orders => _orders;
+  Pedido get order => _order;
   String get sortBy => _sortBy;
 
   set sortBy(String value) {
     _sortBy = value;
-    sortOrders();
+    _sortOrders();
     notifyListeners();
   }
 
   Future<void> loadOrders() async {
-    final preferences = Preferences();
     _orders = [];
-
     _isLoading = true;
     notifyListeners();
-
-    Uri url = Uri.parse('$_url/pedidos');
-
-    http.Response response = await http.get(
-      url,
-      headers: preferences.httpSignedHeaders,
-    );
-
-    if (response.statusCode == 200) {
-      ResponseOrders responseCatalogos = responsePedidosFromJson(response.body);
-      _orders = responseCatalogos.pedidos;
-    }
-
+    _orders = await getOrders();
     _isLoading = false;
     notifyListeners();
   }
 
-  void sortOrders() {
+  Future<void> loadOrder(int orderId) async {
+    _order = null;
+    _isOrderLoading = true;
+    notifyListeners();
+    _order = await getOrder(orderId);
+    _isOrderLoading = false;
+    notifyListeners();
+  }
+
+  Future<List<Pedido>> getOrders() async {
+    final prefs = Preferences();
+    final url = Uri.parse('$_url/pedidos');
+    final response = await http.get(url, headers: prefs.signedHeaders);
+
+    if (response.statusCode != 200) return [];
+    return responsePedidosFromJson(response.body).pedidos;
+  }
+
+  Future<Pedido> getOrder(int orderId) async {
+    final prefs = Preferences();
+    final url = Uri.parse('$_url/pedidos/$orderId');
+    final response = await http.get(url, headers: prefs.signedHeaders);
+
+    if (response.statusCode != 200) return null;
+    return responsePedidoFromJson(response.body).pedido;
+  }
+
+  void _sortOrders() {
     _orders.sort((Pedido order, Pedido previus) {
       if (_sortBy == SortValue.RECENT_FIRST) {
         return order.fecha.compareTo(previus.fecha) * -1;
@@ -73,6 +89,24 @@ class OrdersProvider with ChangeNotifier {
       return 0;
     });
   }
+
+  void sortOrderProductsBy(String value, bool desc) {
+    _order.productos.sort((PedidoProducto product, PedidoProducto previus) {
+      int compare = 0;
+
+      if (value == 'reference') {
+        compare = product.referencia.compareTo(previus.referencia);
+      }
+      if (value == 'place') {
+        compare = product.lugar.compareTo(previus.lugar);
+      }
+
+      return desc ? compare : compare * -1;
+    });
+    notifyListeners();
+  }
+
+  void sortOrderProductsByPlace(String place) {}
 }
 
 class SortValue {

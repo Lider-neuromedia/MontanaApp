@@ -10,10 +10,14 @@ class ProductsProvider with ChangeNotifier {
   List<Producto> _showRoomProducts = [];
   bool _isLoadingProducts = false;
   bool _isLoadingShowRoom = false;
+  bool _isLoadingProduct = false;
+  Producto _product;
 
   bool get isLoadingProducts => _isLoadingProducts;
   bool get isLoadingShowRoom => _isLoadingShowRoom;
+  bool get isLoadingProduct => _isLoadingProduct;
 
+  Producto get product => _product;
   List<Producto> get products => _products;
   List<Producto> get showRoomProducts => _showRoomProducts;
 
@@ -58,5 +62,23 @@ class ProductsProvider with ChangeNotifier {
 
     _isLoadingShowRoom = false;
     notifyListeners();
+  }
+
+  Future<void> loadProduct(int productId) async {
+    _product = null;
+    _isLoadingProduct = true;
+    notifyListeners();
+    _product = await getProduct(productId);
+    _isLoadingProduct = false;
+    notifyListeners();
+  }
+
+  Future<Producto> getProduct(int productoId) async {
+    final prefs = Preferences();
+    final url = Uri.parse('$_url/producto/$productoId');
+    final response = await http.get(url, headers: prefs.signedHeaders);
+
+    if (response.statusCode != 200) return null;
+    return responseProductoFromJson(response.body).producto;
   }
 }

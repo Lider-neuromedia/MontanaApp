@@ -34,10 +34,7 @@ class ProductItem extends StatelessWidget {
         boxShadow: isShowRoom
             ? []
             : [
-                BoxShadow(
-                  color: Colors.grey,
-                  blurRadius: 6.0,
-                ),
+                BoxShadow(color: Colors.grey, blurRadius: 6.0),
               ],
       ),
       child: Padding(
@@ -86,7 +83,7 @@ class ProductItem extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).pushNamed(
                   ProductPage.route,
-                  arguments: product,
+                  arguments: product.idProducto,
                 );
               },
             ),

@@ -1,22 +1,48 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:montana_mobile/models/product.dart';
 import 'package:montana_mobile/pages/catalogue/add_product_modal.dart';
 import 'package:montana_mobile/pages/catalogue/partials/comments.dart';
+import 'package:montana_mobile/pages/catalogue/partials/empty_message.dart';
+import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/pages/catalogue/partials/ratings.dart';
 import 'package:montana_mobile/pages/catalogue/partials/section_card.dart';
 import 'package:montana_mobile/pages/catalogue/start_order_modal.dart';
+import 'package:montana_mobile/providers/products_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:montana_mobile/utils/utils.dart';
 import 'package:montana_mobile/widgets/cart_icon.dart';
+import 'package:provider/provider.dart';
 
-class ProductPage extends StatelessWidget {
+class ProductPage extends StatefulWidget {
   static final String route = 'product';
 
   @override
+  _ProductPageState createState() => _ProductPageState();
+}
+
+class _ProductPageState extends State<ProductPage> {
+  @override
+  void initState() {
+    super.initState();
+
+    () async {
+      await Future.delayed(Duration.zero);
+      _loadData(context);
+    }();
+  }
+
+  void _loadData(BuildContext context) {
+    final int productId = ModalRoute.of(context).settings.arguments as int;
+    final ProductsProvider productsProvider =
+        Provider.of<ProductsProvider>(context, listen: false);
+    productsProvider.loadProduct(productId);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    Producto product; // = productTest();
+    final ProductsProvider productsProvider =
+        Provider.of<ProductsProvider>(context);
+    final int productId = ModalRoute.of(context).settings.arguments as int;
 
     return Scaffold(
       backgroundColor: CustomTheme.grey3Color,
@@ -26,77 +52,102 @@ class ProductPage extends StatelessWidget {
           CartIcon(),
         ],
       ),
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Column(
-                children: [
-                  _GalleryProduct(product: product),
-                  Container(
-                    margin: EdgeInsets.symmetric(
-                      horizontal: 20.0,
-                      vertical: 20.0,
-                    ),
-                    color: Colors.grey,
-                    width: double.infinity,
-                    height: 1.0,
-                  ),
-                  _ProductTitle(product: product),
-                  SizedBox(height: 20.0),
-                  SectionCard(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        SizedBox(height: 10.0),
-                        Text(
-                          product.descripcion,
-                          softWrap: true,
-                          textAlign: TextAlign.left,
-                          style: Theme.of(context).textTheme.bodyText1.copyWith(
-                                fontWeight: FontWeight.w400,
-                              ),
-                        ),
-                        SizedBox(height: 10.0),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 20.0),
-                  Ratings(),
-                  SizedBox(height: 20.0),
-                  Comments(),
-                  SizedBox(height: 120.0),
-                ],
-              ),
-            ),
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-              ),
-              padding: EdgeInsets.all(10.0),
-              width: double.infinity,
-              child: ElevatedButton(
-                child: Text('Añadir al pedido'),
-                onPressed: () => openStartOrder(context),
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                  ),
-                  primary: CustomTheme.green2Color,
+      body: productsProvider.isLoadingProduct
+          ? const LoadingContainer()
+          : productsProvider.product == null
+              ? EmptyMessage(
+                  onPressed: () => productsProvider.loadProduct(productId),
+                  message: 'No hay información.',
+                )
+              : RefreshIndicator(
+                  onRefresh: () => productsProvider.loadProduct(productId),
+                  color: Theme.of(context).primaryColor,
+                  child: _ProductContent(product: productsProvider.product),
                 ),
+    );
+  }
+}
+
+class _ProductContent extends StatelessWidget {
+  const _ProductContent({
+    Key key,
+    @required this.product,
+  }) : super(key: key);
+
+  final Producto product;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Column(
+              children: [
+                _GalleryProduct(product: product),
+                Container(
+                  margin: EdgeInsets.symmetric(
+                    horizontal: 20.0,
+                    vertical: 20.0,
+                  ),
+                  color: Colors.grey,
+                  width: double.infinity,
+                  height: 1.0,
+                ),
+                _ProductTitle(product: product),
+                SizedBox(height: 20.0),
+                SectionCard(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      SizedBox(height: 10.0),
+                      Text(
+                        product.descripcion,
+                        softWrap: true,
+                        textAlign: TextAlign.left,
+                        style: Theme.of(context).textTheme.bodyText1.copyWith(
+                              fontWeight: FontWeight.w400,
+                            ),
+                      ),
+                      SizedBox(height: 10.0),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 20.0),
+                Ratings(),
+                SizedBox(height: 20.0),
+                Comments(),
+                SizedBox(height: 120.0),
+              ],
+            ),
+          ),
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+            ),
+            padding: EdgeInsets.all(10.0),
+            width: double.infinity,
+            child: ElevatedButton(
+              child: Text('Añadir al pedido'),
+              onPressed: () => _openStartOrder(context),
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                primary: CustomTheme.green2Color,
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
-  void openStartOrder(BuildContext context) {
+  void _openStartOrder(BuildContext context) {
     showModalBottomSheet(
       context: context,
       shape: RoundedRectangleBorder(
@@ -109,14 +160,14 @@ class ProductPage extends StatelessWidget {
         return StartOrderModal(
           onPressed: () {
             Navigator.pop(context);
-            openAddProduct(context);
+            _openAddProduct(context);
           },
         );
       },
     );
   }
 
-  void openAddProduct(BuildContext context) {
+  void _openAddProduct(BuildContext context) {
     showModalBottomSheet(
       context: context,
       enableDrag: false,

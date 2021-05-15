@@ -17,7 +17,7 @@ class PqrsPage extends StatelessWidget {
         actions: [
           TextButton(
             child: Text(
-              'Listado de clientes',
+              'Listado de PQRS',
               style: Theme.of(context).textTheme.headline6.copyWith(
                     color: Colors.white,
                   ),

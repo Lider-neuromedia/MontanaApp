@@ -184,7 +184,7 @@ class _SubmitLoginButton extends StatelessWidget {
       child: Text(label),
       style: ElevatedButton.styleFrom(
         primary: Theme.of(context).primaryColor,
-        padding: EdgeInsets.symmetric(vertical: 20.0),
+        padding: EdgeInsets.symmetric(vertical: 12.0),
       ),
     );
   }

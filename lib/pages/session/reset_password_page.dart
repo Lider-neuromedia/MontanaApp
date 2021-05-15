@@ -150,7 +150,7 @@ class _SubmitButton extends StatelessWidget {
       child: Text('Reiniciar Contraseña'),
       style: ElevatedButton.styleFrom(
         primary: Theme.of(context).primaryColor,
-        padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+        padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 10.0),
       ),
       onPressed: onPressed,
     );

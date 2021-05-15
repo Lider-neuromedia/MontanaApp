@@ -21,6 +21,10 @@ class ProductsProvider with ChangeNotifier {
   List<Producto> get products => _products;
   List<Producto> get showRoomProducts => _showRoomProducts;
 
+  ProductsProvider() {
+    loadShowRoomProducts();
+  }
+
   Future<void> loadProducts(int catalogId) async {
     final preferences = Preferences();
     _products = [];

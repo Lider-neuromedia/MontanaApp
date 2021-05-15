@@ -14,7 +14,6 @@ class ShowRoomPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final ProductsProvider productsProvider =
         Provider.of<ProductsProvider>(context);
-    productsProvider.loadShowRoomProducts();
 
     return Scaffold(
       appBar: AppBar(
@@ -26,7 +25,7 @@ class ShowRoomPage extends StatelessWidget {
       backgroundColor: Color.fromRGBO(45, 45, 45, 1.0),
       body: productsProvider.isLoadingShowRoom
           ? const LoadingContainer()
-          : productsProvider.products.length == 0
+          : productsProvider.showRoomProducts.length == 0
               ? EmptyMessage(
                   onPressed: () => productsProvider.loadShowRoomProducts(),
                   message: 'No hay productos disponibles en ShowRoom.',

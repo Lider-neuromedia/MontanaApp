@@ -79,36 +79,3 @@ class _ClientsContent extends StatelessWidget {
     );
   }
 }
-
-class ClientTemporal {
-  int id;
-  String name;
-  String code;
-  ClientTemporal(this.id, this.name, this.code);
-
-  String get initials {
-    List<String> words = name.split(" ");
-
-    if (words.length == 1) {
-      return words[0].substring(0, 2).toUpperCase();
-    } else if (words.length > 1) {
-      String c1 = words[0].substring(0, 1);
-      String c2 = words[1].substring(0, 1);
-      return "$c1$c2";
-    }
-
-    return 'CL';
-  }
-}
-
-List<ClientTemporal> clientsListTest() {
-  return [
-    ClientTemporal(1, 'Bejarano Garavito Bladimiro Alfonso', '464648654'),
-    ClientTemporal(2, 'Ana María Urrutia Vasquez', '134467465'),
-    ClientTemporal(3, 'Alicia Maldonado', '213216545'),
-    ClientTemporal(4, 'Luis Restrepo', '798161354'),
-    ClientTemporal(5, 'Alfonso Sallas', '715689485'),
-    ClientTemporal(6, 'Julian Linarez Gonzalez', '363546156'),
-    ClientTemporal(7, 'Laura Osorio', '846434645'),
-  ];
-}

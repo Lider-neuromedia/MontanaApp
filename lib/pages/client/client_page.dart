@@ -1,63 +1,98 @@
 import 'package:flutter/material.dart';
-import 'package:montana_mobile/pages/catalogue/add_product_modal.dart';
+import 'package:montana_mobile/models/client.dart';
+import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/pages/client/partials/store_card.dart';
 import 'package:montana_mobile/pages/dashboard/partials/buyer_card.dart';
 import 'package:montana_mobile/pages/dashboard/partials/card_data.dart';
+import 'package:montana_mobile/providers/clients_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
+import 'package:provider/provider.dart';
 
 class ClientPage extends StatelessWidget {
   static final String route = 'client-detail';
 
   @override
   Widget build(BuildContext context) {
-    List<StoreStockTemporal> stores = storesListTest();
+    final ClientsProvider clientsProvider =
+        Provider.of<ClientsProvider>(context);
+    final Cliente client = ModalRoute.of(context).settings.arguments as Cliente;
 
     return Scaffold(
       appBar: AppBar(
         title: Text('Cliente'),
       ),
-      body: ListView.separated(
-        padding: EdgeInsets.only(bottom: 30.0),
-        itemCount: stores.length,
-        itemBuilder: (_, int index) {
-          if (index == 0) {
-            return ClientData(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 15.0,
-                  vertical: 0.0,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    SizedBox(height: 30.0),
-                    _StoresTitle(),
-                    SizedBox(height: 20.0),
-                    StoreCard(
-                      store: stores[index],
-                      index: index + 1,
-                    ),
-                  ],
-                ),
-              ),
+      body: FutureBuilder(
+        future: clientsProvider.getClient(client.id),
+        builder: (_, AsyncSnapshot<Cliente> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const LoadingContainer();
+          }
+
+          if (!snapshot.hasData) {
+            return Center(
+              child: Text('No hay información de cliente.'),
             );
           }
 
-          return Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 15.0,
-              vertical: 0.0,
-            ),
-            child: StoreCard(
-              store: stores[index],
-              index: index + 1,
-            ),
-          );
-        },
-        separatorBuilder: (_, int index) {
-          return SizedBox(height: 20.0);
+          return _ClientContent(client: snapshot.data);
         },
       ),
+    );
+  }
+}
+
+class _ClientContent extends StatelessWidget {
+  const _ClientContent({
+    Key key,
+    @required this.client,
+  }) : super(key: key);
+
+  final Cliente client;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+      padding: EdgeInsets.only(bottom: 30.0),
+      itemCount: client.tiendas.length,
+      itemBuilder: (_, int index) {
+        if (index == 0) {
+          return _ClientData(
+            client: client,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 15.0,
+                vertical: 0.0,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  SizedBox(height: 30.0),
+                  _StoresTitle(),
+                  SizedBox(height: 20.0),
+                  StoreCard(
+                    store: client.tiendas[index],
+                    index: index + 1,
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 15.0,
+            vertical: 0.0,
+          ),
+          child: StoreCard(
+            store: client.tiendas[index],
+            index: index + 1,
+          ),
+        );
+      },
+      separatorBuilder: (_, int index) {
+        return SizedBox(height: 20.0);
+      },
     );
   }
 }
@@ -81,12 +116,14 @@ class _StoresTitle extends StatelessWidget {
   }
 }
 
-class ClientData extends StatelessWidget {
-  const ClientData({
+class _ClientData extends StatelessWidget {
+  const _ClientData({
     Key key,
+    @required this.client,
     @required this.child,
   }) : super(key: key);
 
+  final Cliente client;
   final Widget child;
 
   @override
@@ -95,7 +132,7 @@ class ClientData extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         SizedBox(height: 20.0),
-        BuyerCard(),
+        BuyerCard(client: client),
         _CardDataList(
           children: [
             CardData(

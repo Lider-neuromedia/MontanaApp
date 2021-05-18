@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:montana_mobile/models/client.dart';
 import 'package:montana_mobile/pages/client/client_page.dart';
-import 'package:montana_mobile/pages/clients/clients_page.dart';
 import 'package:montana_mobile/theme/theme.dart';
 
 class ClientCard extends StatelessWidget {
@@ -67,7 +66,7 @@ class ClientCard extends StatelessWidget {
                   children: [
                     Text(client.nombreCompleto, style: boldStyle),
                     Text(
-                      "Nit. ${client.getData(Field.NIT)}",
+                      "Nit. ${client.getData('nit')}",
                       style: normalStyle,
                     ),
                   ],
@@ -96,6 +95,6 @@ class ClientCard extends StatelessWidget {
   }
 
   void goToDetailClient(BuildContext context) {
-    Navigator.of(context).pushNamed(ClientPage.route);
+    Navigator.of(context).pushNamed(ClientPage.route, arguments: client);
   }
 }

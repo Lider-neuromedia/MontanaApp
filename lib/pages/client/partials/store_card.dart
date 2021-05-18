@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:montana_mobile/pages/catalogue/add_product_modal.dart';
+import 'package:montana_mobile/models/client.dart';
 
 class StoreCard extends StatelessWidget {
   const StoreCard({
@@ -8,7 +8,7 @@ class StoreCard extends StatelessWidget {
     @required this.index,
   }) : super(key: key);
 
-  final StoreStockTemporal store;
+  final Tienda store;
   final int index;
 
   @override
@@ -17,6 +17,11 @@ class StoreCard extends StatelessWidget {
           color: Theme.of(context).textTheme.bodyText1.color,
           fontWeight: FontWeight.w900,
         );
+    final TextStyle subtitleStyle =
+        Theme.of(context).textTheme.subtitle1.copyWith(
+              color: Theme.of(context).textTheme.bodyText1.color,
+              fontWeight: FontWeight.w700,
+            );
     final TextStyle textStyle = Theme.of(context).textTheme.bodyText1.copyWith(
           color: Theme.of(context).textTheme.bodyText1.color,
           fontWeight: FontWeight.w400,
@@ -29,11 +34,11 @@ class StoreCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("${store.place} - ${store.local}", style: titleStyle),
+            Text("${store.nombre} - ${store.local}", style: titleStyle),
             Text("Tienda No. $index", style: textStyle),
             SizedBox(height: 10.0),
-            Text("${store.city} ${store.department}", style: textStyle),
-            Text(store.address, style: textStyle),
+            Text("${store.lugar}", style: subtitleStyle),
+            Text("${store.direccion}", style: textStyle),
           ],
         ),
       ),

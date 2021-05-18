@@ -1,20 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:montana_mobile/models/client.dart';
 import 'package:montana_mobile/theme/theme.dart';
 
 class BuyerCard extends StatefulWidget {
+  const BuyerCard({
+    Key key,
+    @required this.client,
+  }) : super(key: key);
+
+  final Cliente client;
+
   @override
   _BuyerCardState createState() => _BuyerCardState();
 }
 
 class _BuyerCardState extends State<BuyerCard> {
   bool _isOpen = false;
-  final client = getClientDataTest();
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.all(12.0),
-      padding: EdgeInsets.only(top: 10.0, left: 10.0),
+      padding: EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0),
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border.all(
@@ -36,14 +43,14 @@ class _BuyerCardState extends State<BuyerCard> {
             headerBuilder: (_, bool isOpen) {
               return Container(
                 child: _BuyerField(
-                  client.name,
-                  'Cliente No. ${client.code}',
+                  title: widget.client.nombreCompleto,
+                  description: 'Cliente Nit. ${widget.client.getData('nit')}',
                   titleBold: true,
                 ),
               );
             },
             body: Container(
-              height: 160.0,
+              padding: EdgeInsets.all(5.0),
               decoration: BoxDecoration(
                 border: Border(
                   top: BorderSide(
@@ -52,22 +59,45 @@ class _BuyerCardState extends State<BuyerCard> {
                   ),
                 ),
               ),
-              child: GridView.count(
-                physics: NeverScrollableScrollPhysics(),
-                padding: EdgeInsets.symmetric(vertical: 10.0),
-                childAspectRatio: 16 / 3.7,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                crossAxisCount: 2,
-                children: client.data
-                    .map(
-                      (item) => _BuyerField(
-                        item.key,
-                        item.value,
-                        titleBold: false,
-                      ),
-                    )
-                    .toList(),
+              child: Column(
+                children: [
+                  _CardDataRow([
+                    _BuyerField(
+                      title: 'Teléfono',
+                      description: widget.client.getData('telefono'),
+                      titleBold: false,
+                    ),
+                    _BuyerField(
+                      title: 'Correo electrónico',
+                      description: widget.client.email,
+                      titleBold: false,
+                    ),
+                  ]),
+                  _CardDataRow([
+                    _BuyerField(
+                      title: 'Tipo de documento',
+                      description: widget.client.tipoIdentificacion,
+                      titleBold: false,
+                    ),
+                    _BuyerField(
+                      title: 'Número de documento',
+                      description: widget.client.dni,
+                      titleBold: false,
+                    ),
+                  ]),
+                  _CardDataRow([
+                    _BuyerField(
+                      title: 'Dirección',
+                      description: widget.client.getData('direccion'),
+                      titleBold: false,
+                    ),
+                    _BuyerField(
+                      title: 'Nit',
+                      description: widget.client.getData('nit'),
+                      titleBold: false,
+                    ),
+                  ]),
+                ],
               ),
             ),
             isExpanded: _isOpen,
@@ -78,11 +108,40 @@ class _BuyerCardState extends State<BuyerCard> {
   }
 }
 
+class _CardDataRow extends StatelessWidget {
+  const _CardDataRow(this.children, {Key key}) : super(key: key);
+
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 5.0),
+            child: children[0],
+          ),
+        ),
+        SizedBox(width: 10.0),
+        Expanded(
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 5.0),
+            child: children[1],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _BuyerField extends StatelessWidget {
-  _BuyerField(
-    this.title,
-    this.description, {
+  _BuyerField({
     Key key,
+    @required this.title,
+    @required this.description,
     @required this.titleBold,
   }) : super(key: key);
 
@@ -114,39 +173,6 @@ class _BuyerField extends StatelessWidget {
       ],
     );
   }
-}
-
-ClientTemporal getClientDataTest() {
-  return ClientTemporal(
-    name: 'Alfonso Bejarando',
-    code: '338894840',
-    data: [
-      ClientDataTemporal(
-        key: 'Teléfono',
-        value: '3001008574',
-      ),
-      ClientDataTemporal(
-        key: 'Correo Electrónico',
-        value: 'alfonso@mail.com',
-      ),
-      ClientDataTemporal(
-        key: 'Tipo de Documento',
-        value: 'Cédula de Ciudadanía',
-      ),
-      ClientDataTemporal(
-        key: 'Número de Documento',
-        value: '1112456147',
-      ),
-      ClientDataTemporal(
-        key: 'Ciudad',
-        value: 'Cali',
-      ),
-      ClientDataTemporal(
-        key: 'Nit',
-        value: '1115741456-8',
-      ),
-    ],
-  );
 }
 
 class ClientTemporal {

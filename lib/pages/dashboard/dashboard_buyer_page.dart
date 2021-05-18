@@ -27,7 +27,7 @@ class DashboardBuyerPage extends StatelessWidget {
         child: Column(
           children: [
             SizedBox(height: 20.0),
-            BuyerCard(),
+            BuyerCard(), // TODO: traer datos del api
             _CardDataList(
               children: [
                 CardData(

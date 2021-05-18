@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 import 'package:montana_mobile/providers/validation_field.dart';
 import 'package:http/http.dart' as http;
+import 'package:montana_mobile/utils/preferences.dart';
 
 class ResetPasswordProvider with ChangeNotifier {
   final String _url = dotenv.env['API_URL'];
@@ -107,22 +108,17 @@ class ResetPasswordProvider with ChangeNotifier {
   }
 
   Future<bool> resetPassword() async {
-    Uri url = Uri.parse('$_url/password/reset');
-    Map<String, String> headers = {
-      'X-Requested-With': 'XMLHttpRequest',
-    };
-    Map<String, String> data = {
+    final preferences = Preferences();
+    final url = Uri.parse('$_url/password/reset');
+    final Map<String, String> data = {
       'token': _token.value,
       'email': _email.value,
       'password': _password.value,
       'password_confirmation': _passwordConfirmation.value,
     };
 
-    http.Response response = await http.post(
-      url,
-      headers: headers,
-      body: data,
-    );
+    http.Response response =
+        await http.post(url, headers: preferences.guestHeaders, body: data);
 
     return response.statusCode == 200;
   }

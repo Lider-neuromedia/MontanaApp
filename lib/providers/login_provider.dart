@@ -67,17 +67,15 @@ class LoginProvider with ChangeNotifier {
   }
 
   Future<void> login() async {
-    Uri url = Uri.parse('$_url/auth/login');
-    Map<String, String> headers = {
-      'X-Requested-With': 'XMLHttpRequest',
-    };
-    Map<String, String> data = {
+    final preferences = Preferences();
+    final url = Uri.parse('$_url/auth/login');
+    final Map<String, String> data = {
       'email': _email.value,
       'password': _password.value,
     };
 
-    http.Response response = await http.post(url, headers: headers, body: data);
-    final preferences = Preferences();
+    http.Response response =
+        await http.post(url, headers: preferences.guestHeaders, body: data);
 
     if (response.statusCode != 200) {
       preferences.token = null;

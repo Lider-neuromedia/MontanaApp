@@ -18,22 +18,20 @@ class CataloguesProvider with ChangeNotifier {
   List<Catalogo> get catalogues => _catalogues;
 
   Future<void> loadCatalogues() async {
-    final preferences = Preferences();
     _catalogues = [];
-
     _isLoading = true;
     notifyListeners();
-
-    Uri url = Uri.parse('$_url/catalogos');
-    final response = await http.get(url, headers: preferences.signedHeaders);
-
-    if (response.statusCode == 200) {
-      ResponseCatalogos responseCatalogos =
-          responseCatalogosFromJson(response.body);
-      _catalogues = responseCatalogos.catalogos;
-    }
-
+    _catalogues = await getCatalogues();
     _isLoading = false;
     notifyListeners();
+  }
+
+  Future<List<Catalogo>> getCatalogues() async {
+    final preferences = Preferences();
+    final url = Uri.parse('$_url/catalogos');
+    final response = await http.get(url, headers: preferences.signedHeaders);
+
+    if (response.statusCode != 200) return [];
+    return responseCatalogosFromJson(response.body).catalogos;
   }
 }

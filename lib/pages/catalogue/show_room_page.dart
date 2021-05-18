@@ -2,18 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:montana_mobile/pages/catalogue/partials/empty_message.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/pages/catalogue/partials/product_item.dart';
-import 'package:montana_mobile/providers/products_provider.dart';
+import 'package:montana_mobile/providers/show_room_provider.dart';
 import 'package:montana_mobile/widgets/cart_icon.dart';
 import 'package:montana_mobile/widgets/scaffold_logo.dart';
 import 'package:provider/provider.dart';
 
 class ShowRoomPage extends StatelessWidget {
-  static final String route = 'show-room';
-
   @override
   Widget build(BuildContext context) {
-    final ProductsProvider productsProvider =
-        Provider.of<ProductsProvider>(context);
+    final ShowRoomProvider showRoomProvider =
+        Provider.of<ShowRoomProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -23,15 +21,15 @@ class ShowRoomPage extends StatelessWidget {
         ],
       ),
       backgroundColor: Color.fromRGBO(45, 45, 45, 1.0),
-      body: productsProvider.isLoadingShowRoom
+      body: showRoomProvider.isLoading
           ? const LoadingContainer()
-          : productsProvider.showRoomProducts.length == 0
+          : showRoomProvider.products.length == 0
               ? EmptyMessage(
-                  onPressed: () => productsProvider.loadShowRoomProducts(),
+                  onPressed: () => showRoomProvider.loadShowRoomProducts(),
                   message: 'No hay productos disponibles en ShowRoom.',
                 )
               : RefreshIndicator(
-                  onRefresh: () => productsProvider.loadShowRoomProducts(),
+                  onRefresh: () => showRoomProvider.loadShowRoomProducts(),
                   color: Theme.of(context).primaryColor,
                   child: _ProductsList(),
                 ),
@@ -44,12 +42,12 @@ class _ProductsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ProductsProvider productsProvider =
-        Provider.of<ProductsProvider>(context);
+    final ShowRoomProvider showRoomProvider =
+        Provider.of<ShowRoomProvider>(context);
 
     return ListView.separated(
       padding: EdgeInsets.all(20.0),
-      itemCount: productsProvider.showRoomProducts.length,
+      itemCount: showRoomProvider.products.length,
       itemBuilder: (_, index) {
         if (index == 0) {
           return Column(
@@ -58,14 +56,14 @@ class _ProductsList extends StatelessWidget {
             children: [
               BannerShowRoom(),
               ProductItem(
-                product: productsProvider.showRoomProducts[index],
+                product: showRoomProvider.products[index],
                 isShowRoom: true,
               ),
             ],
           );
         }
         return ProductItem(
-          product: productsProvider.showRoomProducts[index],
+          product: showRoomProvider.products[index],
           isShowRoom: true,
         );
       },

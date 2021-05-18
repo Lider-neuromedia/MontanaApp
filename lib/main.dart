@@ -16,6 +16,7 @@ import 'package:montana_mobile/providers/orders_provider.dart';
 import 'package:montana_mobile/providers/password_provider.dart';
 import 'package:montana_mobile/providers/products_provider.dart';
 import 'package:montana_mobile/providers/reset_password_provider.dart';
+import 'package:montana_mobile/providers/show_room_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 import 'package:montana_mobile/utils/preferences.dart';
@@ -41,6 +42,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ResetPasswordProvider()),
         ChangeNotifierProvider(create: (_) => CataloguesProvider()),
         ChangeNotifierProvider(create: (_) => ProductsProvider()),
+        ChangeNotifierProvider(create: (_) => ShowRoomProvider()),
         ChangeNotifierProvider(create: (_) => OrdersProvider()),
       ],
       child: MaterialApp(

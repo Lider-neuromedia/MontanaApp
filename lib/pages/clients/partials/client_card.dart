@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:montana_mobile/models/client.dart';
 import 'package:montana_mobile/pages/client/client_page.dart';
 import 'package:montana_mobile/pages/clients/clients_page.dart';
 import 'package:montana_mobile/theme/theme.dart';
@@ -9,7 +10,7 @@ class ClientCard extends StatelessWidget {
     @required this.client,
   }) : super(key: key);
 
-  final ClientTemporal client;
+  final Cliente client;
 
   @override
   Widget build(BuildContext context) {
@@ -64,8 +65,11 @@ class ClientCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(client.name, style: boldStyle),
-                    Text("Cliente No. ${client.code}", style: normalStyle),
+                    Text(client.nombreCompleto, style: boldStyle),
+                    Text(
+                      "Nit. ${client.getData(Field.NIT)}",
+                      style: normalStyle,
+                    ),
                   ],
                 ),
               ),
@@ -82,7 +86,7 @@ class ClientCard extends StatelessWidget {
                 shape: BoxShape.circle,
               ),
               child: Center(
-                child: Text(client.initials, style: initialsStyle),
+                child: Text(client.iniciales, style: initialsStyle),
               ),
             ),
           ),

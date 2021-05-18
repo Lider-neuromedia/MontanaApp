@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:montana_mobile/models/product.dart';
 import 'package:montana_mobile/pages/catalogue/add_product_modal.dart';
 import 'package:montana_mobile/pages/catalogue/partials/comments.dart';
@@ -102,13 +103,18 @@ class _ProductContent extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       SizedBox(height: 10.0),
-                      Text(
-                        product.descripcion,
-                        softWrap: true,
-                        textAlign: TextAlign.left,
-                        style: Theme.of(context).textTheme.bodyText1.copyWith(
-                              fontWeight: FontWeight.w400,
-                            ),
+                      Html(
+                        data: product.descripcion,
+                        style: {
+                          'body': Style(
+                            margin: EdgeInsets.all(0.0),
+                            fontSize: FontSize(16),
+                          ),
+                          '*': Style(
+                            fontFamily: CustomTheme.primaryFont,
+                            color: CustomTheme.textColor1,
+                          ),
+                        },
                       ),
                       SizedBox(height: 10.0),
                     ],
@@ -135,6 +141,7 @@ class _ProductContent extends StatelessWidget {
               child: Text('Añadir al pedido'),
               onPressed: () => _openStartOrder(context),
               style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(vertical: 10.0),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30.0),
                 ),
@@ -226,13 +233,26 @@ class _ProductTitle extends StatelessWidget {
   }
 }
 
-class _GalleryProduct extends StatelessWidget {
+class _GalleryProduct extends StatefulWidget {
   const _GalleryProduct({
     Key key,
     @required this.product,
   }) : super(key: key);
 
   final Producto product;
+
+  @override
+  __GalleryProductState createState() => __GalleryProductState();
+}
+
+class __GalleryProductState extends State<_GalleryProduct> {
+  String selectedImage;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedImage = widget.product.image;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -250,34 +270,45 @@ class _GalleryProduct extends StatelessWidget {
               borderRadius: BorderRadius.circular(5.0),
               child: FadeInImage(
                 placeholder: AssetImage("assets/images/placeholder.png"),
-                image: NetworkImage(product.image),
+                image: NetworkImage(selectedImage),
                 width: double.infinity,
                 fit: BoxFit.contain,
               ),
             ),
           ),
           SizedBox(height: 10.0),
-          product.imagenes.length == 0
+          widget.product.imagenes.length == 0
               ? Container()
               : Container(
                   height: 50.0,
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
-                    itemCount: product.imagenes.length,
+                    itemCount: widget.product.imagenes.length,
                     itemBuilder: (_, int index) {
-                      return Container(
+                      final image = widget.product.imagenes[index].image;
+                      final imageWidget = Material(
                         child: InkWell(
                           onTap: () {
-                            print(product.imagenes[index].image);
+                            setState(() => selectedImage = image);
                           },
-                          child: FadeInImage(
-                            placeholder:
-                                AssetImage("assets/images/placeholder.png"),
-                            image: NetworkImage(product.imagenes[index].image),
+                          child: Ink.image(
+                            image: NetworkImage(image),
                             fit: BoxFit.cover,
+                            width: 100.0,
                           ),
                         ),
                       );
+
+                      if (index == 0) {
+                        return Row(
+                          children: [
+                            SizedBox(width: 10.0),
+                            imageWidget,
+                          ],
+                        );
+                      }
+
+                      return imageWidget;
                     },
                     separatorBuilder: (_, int index) {
                       return Center(

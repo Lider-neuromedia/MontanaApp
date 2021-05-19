@@ -6,10 +6,14 @@ import 'package:montana_mobile/utils/preferences.dart';
 
 class PqrsProvider with ChangeNotifier {
   final String _url = dotenv.env['API_URL'];
+  final List<SortValue> sortValues = _sortValues;
 
   PqrsProvider() {
     loadTickets();
   }
+
+  String _sortBy;
+  String get sortBy => _sortBy;
 
   List<Ticket> _tickets = [];
   List<Ticket> get tickets => _tickets;
@@ -22,6 +26,30 @@ class PqrsProvider with ChangeNotifier {
   bool get isLoadingTicket => _isLoadingTicket;
   bool get isLoadingMessages => _isLoadingMessages;
   bool get isLoadingMessage => _isLoadingMessage;
+
+  set sortBy(String value) {
+    _sortBy = value;
+    _sortOrders();
+    notifyListeners();
+  }
+
+  void _sortOrders() {
+    _tickets.sort((Ticket ticket, Ticket previus) {
+      if (_sortBy == SortValue.RECENT_FIRST) {
+        return ticket.fechaRegistro.compareTo(previus.fechaRegistro) * -1;
+      }
+      if (_sortBy == SortValue.LAST_FIRST) {
+        return ticket.fechaRegistro.compareTo(previus.fechaRegistro);
+      }
+      if (_sortBy == SortValue.STATUS) {
+        return ticket.estado.compareTo(previus.estado);
+      }
+      if (_sortBy == SortValue.STATUS_REVERSE) {
+        return ticket.estado.compareTo(previus.estado) * -1;
+      }
+      return 0;
+    });
+  }
 
   set isLoadingTickets(bool value) {
     _isLoadingTickets = value;
@@ -61,3 +89,22 @@ class PqrsProvider with ChangeNotifier {
     return responseTicketsFromJson(response.body).tickets;
   }
 }
+
+class SortValue {
+  static const RECENT_FIRST = "1";
+  static const LAST_FIRST = "2";
+  static const STATUS = "3";
+  static const STATUS_REVERSE = "4";
+
+  String id;
+  String value;
+
+  SortValue(this.id, this.value);
+}
+
+final List<SortValue> _sortValues = [
+  SortValue(SortValue.RECENT_FIRST, 'Más recientes'),
+  SortValue(SortValue.LAST_FIRST, 'Más antiguos'),
+  SortValue(SortValue.STATUS, 'Abiertos primero'),
+  SortValue(SortValue.STATUS_REVERSE, 'Cerrados primero'),
+];

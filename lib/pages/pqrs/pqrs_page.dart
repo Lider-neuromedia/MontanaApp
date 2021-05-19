@@ -160,38 +160,6 @@ class ClientTemporal {
   }
 }
 
-List<ClientTemporal> clientsListTest() {
-  return [
-    ClientTemporal(1, 'Bejarano Garavito Bladimiro Alfonso', '464648654'),
-    ClientTemporal(2, 'Ana María Urrutia Vasquez', '134467465'),
-    ClientTemporal(3, 'Alicia Maldonado', '213216545'),
-    ClientTemporal(4, 'Luis Restrepo', '798161354'),
-    ClientTemporal(5, 'Alfonso Sallas', '715689485'),
-    ClientTemporal(6, 'Julian Linarez Gonzalez', '363546156'),
-    ClientTemporal(7, 'Laura Osorio', '846434645'),
-  ];
-}
-
-List<PqrsTemporal> pqrsListTest() {
-  List clients = clientsListTest();
-  List<PqrsTemporal> pqrsList = [];
-
-  clients.asMap().forEach((index, client) {
-    final id = ((index + 1) * 2);
-    final code = ((index + 5) * 798).toString();
-    final datedAt = DateTime(2021, index + 1, index + 2 * 3);
-    final status = index % 2 == 0 ? 'cerrado' : 'abierto';
-
-    final pqrs = PqrsTemporal(id, code, datedAt, status);
-    pqrs.seller = PqrsSellerTemporal(1, 'Oscar', 'Delmiro');
-    pqrs.client = client;
-
-    pqrsList.add(pqrs);
-  });
-
-  return pqrsList;
-}
-
 PqrsTemporal pqrsWithMessagesTest() {
   Map<String, dynamic> data = messagesData();
 

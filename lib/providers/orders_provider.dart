@@ -6,29 +6,25 @@ import 'package:montana_mobile/utils/preferences.dart';
 
 class OrdersProvider with ChangeNotifier {
   final String _url = dotenv.env['API_URL'];
-  List<Pedido> _orders = [];
-  Pedido _order;
-
-  final sortValues = [
-    SortValue(SortValue.RECENT_FIRST, "Más Recientes"),
-    SortValue(SortValue.LAST_FIRST, "Más Antigüos"),
-    SortValue(SortValue.STATUS, "Entregados Primero"),
-    SortValue(SortValue.STATUS_REVERSE, "Cancelados Primero"),
-  ];
-
-  String _sortBy = SortValue.RECENT_FIRST;
-  bool _isLoading = false;
-  bool _isOrderLoading = false;
+  final List<SortValue> sortValues = _sortValues;
 
   OrdersProvider() {
     loadOrders();
   }
 
+  Pedido _order;
+  Pedido get order => _order;
+
+  List<Pedido> _orders = [];
+  List<Pedido> get orders => _orders;
+
+  String _sortBy;
+  String get sortBy => _sortBy;
+
+  bool _isLoading = false;
+  bool _isOrderLoading = false;
   bool get isLoading => _isLoading;
   bool get isOrderLoading => _isOrderLoading;
-  List<Pedido> get orders => _orders;
-  Pedido get order => _order;
-  String get sortBy => _sortBy;
 
   set sortBy(String value) {
     _sortBy = value;
@@ -120,3 +116,10 @@ class SortValue {
 
   SortValue(this.id, this.value);
 }
+
+final List<SortValue> _sortValues = [
+  SortValue(SortValue.RECENT_FIRST, "Más Recientes"),
+  SortValue(SortValue.LAST_FIRST, "Más Antigüos"),
+  SortValue(SortValue.STATUS, "Entregados Primero"),
+  SortValue(SortValue.STATUS_REVERSE, "Cancelados Primero"),
+];

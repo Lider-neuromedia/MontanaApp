@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:montana_mobile/providers/pqrs_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
+import 'package:provider/provider.dart';
 
 class PqrsFilter extends StatefulWidget {
   @override
@@ -7,17 +9,10 @@ class PqrsFilter extends StatefulWidget {
 }
 
 class _PqrsFilterState extends State<PqrsFilter> {
-  String dropdownValue = 'Más recientes';
-  final List<String> values = [
-    'Más recientes',
-    'Más antiguos',
-    'Abiertos primero',
-    'Cerrados primero',
-  ];
-
   @override
   Widget build(BuildContext context) {
-    TextStyle textStyle = Theme.of(context).textTheme.subtitle1;
+    final pqrsProvider = Provider.of<PqrsProvider>(context);
+    final textStyle = Theme.of(context).textTheme.subtitle1;
 
     return Container(
       padding: EdgeInsets.only(left: 15.0, right: 15.0, top: 5.0),
@@ -28,22 +23,23 @@ class _PqrsFilterState extends State<PqrsFilter> {
           Text('Ordenar por:', style: textStyle),
           SizedBox(width: 10.0),
           DropdownButton<String>(
-            value: dropdownValue,
+            value: pqrsProvider.sortBy,
             icon: const Icon(Icons.keyboard_arrow_down),
-            iconSize: 24,
-            elevation: 16,
             style: textStyle,
+            elevation: 16,
+            iconSize: 24,
             underline: Container(
-              height: 2,
               color: CustomTheme.greyColor,
+              height: 2,
             ),
             onChanged: (String newValue) {
-              setState(() => dropdownValue = newValue);
+              setState(() => pqrsProvider.sortBy = newValue);
             },
-            items: values.map<DropdownMenuItem<String>>((String value) {
+            items: pqrsProvider.sortValues
+                .map<DropdownMenuItem<String>>((SortValue value) {
               return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
+                child: Text(value.value),
+                value: value.id,
               );
             }).toList(),
           ),

@@ -1,38 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:montana_mobile/models/ticket.dart';
 import 'package:montana_mobile/pages/pqrs/messages_page.dart';
-import 'package:montana_mobile/pages/pqrs/pqrs_page.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:montana_mobile/utils/utils.dart';
 
 class PqrsCard extends StatelessWidget {
   const PqrsCard({
     Key key,
-    this.pqrs,
+    @required this.ticket,
   }) : super(key: key);
 
-  final PqrsTemporal pqrs;
+  final Ticket ticket;
 
   @override
   Widget build(BuildContext context) {
-    final TextStyle trailingText =
-        Theme.of(context).textTheme.bodyText1.copyWith(
-              fontWeight: FontWeight.w700,
-              color: CustomTheme.textColor3,
-            );
-    final TextStyle titleText = Theme.of(context).textTheme.subtitle1.copyWith(
+    final trailingText = Theme.of(context).textTheme.bodyText1.copyWith(
+          fontWeight: FontWeight.w700,
+          color: CustomTheme.textColor3,
+        );
+    final titleText = Theme.of(context).textTheme.subtitle1.copyWith(
           fontWeight: FontWeight.w700,
           color: CustomTheme.grey2Color,
         );
-    final TextStyle subtitleText =
-        Theme.of(context).textTheme.subtitle2.copyWith(
-              fontWeight: FontWeight.w400,
-              color: CustomTheme.grey2Color,
-            );
+    final subtitleText = Theme.of(context).textTheme.subtitle2.copyWith(
+          fontWeight: FontWeight.w400,
+          color: CustomTheme.grey2Color,
+        );
+
     return ListTile(
-      onTap: () => Navigator.of(context).pushNamed(MessagesPage.route),
-      title: Text(pqrs.client.name, style: titleText),
-      subtitle: Text("#${pqrs.client.code}", style: subtitleText),
-      leading: _IconPqrsCard(pqrs: pqrs),
+      onTap: () {
+        Navigator.of(context).pushNamed(
+          MessagesPage.route,
+          arguments: ticket,
+        );
+      },
+      title: Text(ticket.clienteNombre, style: titleText),
+      subtitle: Text("#${ticket.codigo}", style: subtitleText),
+      leading: _IconPqrsCard(ticket: ticket),
       trailing: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -42,7 +46,7 @@ class PqrsCard extends StatelessWidget {
             color: CustomTheme.textColor3,
           ),
           Text(
-            formatDate(pqrs.datedAt),
+            formatDate(ticket.fechaRegistro),
             style: trailingText,
           ),
         ],
@@ -54,13 +58,19 @@ class PqrsCard extends StatelessWidget {
 class _IconPqrsCard extends StatelessWidget {
   const _IconPqrsCard({
     Key key,
-    @required this.pqrs,
+    @required this.ticket,
   }) : super(key: key);
 
-  final PqrsTemporal pqrs;
+  final Ticket ticket;
 
   @override
   Widget build(BuildContext context) {
+    final textStyle = Theme.of(context).textTheme.headline4.copyWith(
+          fontWeight: FontWeight.w400,
+          fontFamily: CustomTheme.familySourceSansPro,
+          color: Colors.white,
+        );
+
     return Container(
       height: 65.0,
       width: 65.0,
@@ -74,23 +84,17 @@ class _IconPqrsCard extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             child: Center(
-              child: Text(
-                pqrs.client.initials,
-                style: Theme.of(context).textTheme.headline4.copyWith(
-                      fontWeight: FontWeight.w400,
-                      fontFamily: CustomTheme.familySourceSansPro,
-                      color: Colors.white,
-                    ),
-              ),
+              child: Text(ticket.iniciales, style: textStyle),
             ),
           ),
           Positioned(
             left: 0.0,
             top: 0.0,
             child: _CircleStatus(
-                color: pqrs.status == 'cerrado'
-                    ? CustomTheme.redColor
-                    : CustomTheme.green3Color),
+              color: ticket.estado == 'cerrado'
+                  ? CustomTheme.redColor
+                  : CustomTheme.green3Color,
+            ),
           ),
         ],
       ),

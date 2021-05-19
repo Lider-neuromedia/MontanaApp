@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttericon/linecons_icons.dart';
 import 'package:fluttericon/web_symbols_icons.dart';
+import 'package:montana_mobile/models/ticket.dart';
 import 'package:montana_mobile/pages/pqrs/partials/message_card.dart';
 import 'package:montana_mobile/pages/pqrs/pqrs_page.dart';
 import 'package:montana_mobile/theme/theme.dart';
@@ -10,6 +11,7 @@ class MessagesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Ticket ticket = ModalRoute.of(context).settings.arguments as Ticket;
     PqrsTemporal pqrs = pqrsWithMessagesTest();
     List<int> users = [];
 

@@ -9,42 +9,44 @@ class ClientsProvider with ChangeNotifier {
   List<Cliente> _clients = [];
   List<Cliente> _searchClients = [];
   bool _isLoading = false;
-  String _search;
+  String _search = '';
 
   ClientsProvider() {
     loadClients();
   }
 
   List<Cliente> get clients => _clients;
+  List<Cliente> get searchClients => _searchClients;
   bool get isLoading => _isLoading;
   String get search => _search;
 
   set search(String value) {
-    _search = value;
-    _searchClients = [];
+    _search = value.toLowerCase();
 
     if (_search.isNotEmpty) {
+      _searchClients = [];
       _searchClients = _clients.where((client) {
         bool match = false;
+        String name = client.nombreCompleto.toLowerCase();
+        String email = client.email.toLowerCase();
+        String dni = client.dni.toLowerCase();
+        String id = client.id.toString().toLowerCase();
+        String nit = client.getData('nit').toLowerCase();
+        String razonSocial = client.getData('razon_social').toLowerCase();
+        String phone = client.getData('telefono').toLowerCase();
 
-        if (client.nombreCompleto.indexOf(value) != -1) {
-          match = true;
-        } else if (client.email.indexOf(value) != -1) {
-          match = true;
-        } else if (client.dni.indexOf(value) != -1) {
-          match = true;
-        } else if (client.id.toString().indexOf(value) != -1) {
-          match = true;
-        } else if (client.getData('nit').indexOf(value) != -1) {
-          match = true;
-        } else if (client.getData('razon_social').indexOf(value) != -1) {
-          match = true;
-        } else if (client.getData('telefono').indexOf(value) != -1) {
+        if (name.indexOf(_search) != -1 ||
+            email.indexOf(_search) != -1 ||
+            dni.indexOf(_search) != -1 ||
+            id.indexOf(_search) != -1 ||
+            nit.indexOf(_search) != -1 ||
+            razonSocial.indexOf(_search) != -1 ||
+            phone.indexOf(_search) != -1) {
           match = true;
         }
 
         return match;
-      });
+      }).toList();
     }
 
     notifyListeners();

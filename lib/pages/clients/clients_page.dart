@@ -42,16 +42,42 @@ class ClientsPage extends StatelessWidget {
               : RefreshIndicator(
                   onRefresh: () => clientsProvider.loadClients(),
                   color: Theme.of(context).primaryColor,
-                  child: _ClientsContent(
-                    clients: clientsProvider.clients,
-                  ),
+                  child: _ClientsContent(),
                 ),
     );
   }
 }
 
 class _ClientsContent extends StatelessWidget {
-  const _ClientsContent({
+  const _ClientsContent({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final ClientsProvider clientsProvider =
+        Provider.of<ClientsProvider>(context);
+
+    return Column(
+      children: [
+        SearchBox(),
+        clientsProvider.search.isNotEmpty &&
+                clientsProvider.searchClients.length == 0
+            ? Center(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10.0),
+                  child: Text('No hay coincidencias.'),
+                ),
+              )
+            : Container(),
+        clientsProvider.search.isEmpty
+            ? ClientsListResults(clients: clientsProvider.clients)
+            : ClientsListResults(clients: clientsProvider.searchClients),
+      ],
+    );
+  }
+}
+
+class ClientsListResults extends StatelessWidget {
+  const ClientsListResults({
     Key key,
     @required this.clients,
   }) : super(key: key);
@@ -60,22 +86,19 @@ class _ClientsContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SearchBox(),
-        Expanded(
-          child: ListView.separated(
-            itemCount: clients.length,
-            padding: EdgeInsets.all(15.0),
-            itemBuilder: (_, int index) => ClientCard(
-              client: clients[index],
-            ),
-            separatorBuilder: (_, int index) {
-              return SizedBox(height: 5.0);
-            },
-          ),
-        ),
-      ],
+    return Expanded(
+      child: ListView.separated(
+        itemCount: clients.length,
+        padding: EdgeInsets.all(15.0),
+        itemBuilder: (_, int index) {
+          return ClientCard(
+            client: clients[index],
+          );
+        },
+        separatorBuilder: (_, int index) {
+          return SizedBox(height: 5.0);
+        },
+      ),
     );
   }
 }

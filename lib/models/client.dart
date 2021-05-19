@@ -66,7 +66,7 @@ class Cliente {
 
     userData.forEach((data) {
       if (data.fieldKey == key) {
-        value = data.valueKey;
+        value = data.valueKey != null ? data.valueKey : '';
       }
     });
 

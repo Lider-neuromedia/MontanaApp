@@ -1,61 +1,100 @@
 import 'package:flutter/material.dart';
 import 'package:fluttericon/linecons_icons.dart';
-import 'package:fluttericon/web_symbols_icons.dart';
 import 'package:montana_mobile/models/ticket.dart';
+import 'package:montana_mobile/pages/catalogue/partials/empty_message.dart';
+import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/pages/pqrs/partials/message_card.dart';
-import 'package:montana_mobile/pages/pqrs/pqrs_page.dart';
+import 'package:montana_mobile/providers/pqrs_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
+import 'package:provider/provider.dart';
 
-class MessagesPage extends StatelessWidget {
+class MessagesPage extends StatefulWidget {
   static final String route = '/pqrs-messages';
 
   @override
-  Widget build(BuildContext context) {
-    Ticket ticket = ModalRoute.of(context).settings.arguments as Ticket;
-    PqrsTemporal pqrs = pqrsWithMessagesTest();
-    List<int> users = [];
+  _MessagesPageState createState() => _MessagesPageState();
+}
 
-    pqrs.messages.forEach((message) => users.add(message.userId));
-    users = users.toSet().toList();
+class _MessagesPageState extends State<MessagesPage> {
+  @override
+  void initState() {
+    super.initState();
+
+    () async {
+      await Future.delayed(Duration.zero);
+      _loadData(context);
+    }();
+  }
+
+  void _loadData(BuildContext context) {
+    Ticket ticket = ModalRoute.of(context).settings.arguments as Ticket;
+    PqrsProvider pqrsProvider =
+        Provider.of<PqrsProvider>(context, listen: false);
+    pqrsProvider.loadTicket(ticket.idPqrs);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    PqrsProvider pqrsProvider = Provider.of<PqrsProvider>(context);
+    Ticket ticket = ModalRoute.of(context).settings.arguments as Ticket;
 
     return Scaffold(
       backgroundColor: CustomTheme.grey3Color,
       appBar: AppBar(
         title: Text('PQRS'),
-        actions: [
-          IconButton(
-            icon: Icon(WebSymbols.arrows_cw),
-            onPressed: () {},
-          ),
-        ],
       ),
-      body: Stack(
-        children: [
-          ListView.separated(
-            itemCount: pqrs.messages.length,
-            padding: EdgeInsets.only(
-              left: 10.0,
-              top: 10.0,
-              right: 10.0,
-              bottom: 100.0,
-            ),
-            itemBuilder: (_, int index) {
-              final message = pqrs.messages[index];
-              return MessageCard(
-                message: message,
-                leftSide: users.indexOf(message.userId) % 2 == 0,
-              );
-            },
-            separatorBuilder: (_, int index) {
-              return SizedBox(height: 20.0);
-            },
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: _SendMessageForm(),
-          ),
-        ],
-      ),
+      body: pqrsProvider.isLoadingTicket
+          ? const LoadingContainer()
+          : pqrsProvider.ticket == null
+              ? EmptyMessage(
+                  onPressed: () => pqrsProvider.loadTicket(ticket.idPqrs),
+                  message: 'No hay información disponible.',
+                )
+              : Column(
+                  children: [
+                    Expanded(
+                      child: RefreshIndicator(
+                        onRefresh: () => pqrsProvider.loadTicket(ticket.idPqrs),
+                        color: Theme.of(context).primaryColor,
+                        child: _MessagesList(
+                            messages: pqrsProvider.ticket.mensajes),
+                      ),
+                    ),
+                    _SendMessageForm(),
+                  ],
+                ),
+    );
+  }
+}
+
+class _MessagesList extends StatelessWidget {
+  const _MessagesList({
+    Key key,
+    @required this.messages,
+  }) : super(key: key);
+
+  final List<Mensaje> messages;
+
+  @override
+  Widget build(BuildContext context) {
+    List<int> users = messages != null
+        ? messages.map<int>((message) => message.idUsuario).toSet().toList()
+        : [];
+
+    return ListView.separated(
+      reverse: true,
+      itemCount: messages.length,
+      padding: EdgeInsets.all(10.0),
+      itemBuilder: (_, int index) {
+        final message = messages[index];
+        return MessageCard(
+          message: message,
+          leftSide: users.indexOf(message.idUsuario) % 2 == 0,
+        );
+      },
+      separatorBuilder: (_, int index) {
+        return SizedBox(height: 20.0);
+      },
     );
   }
 }

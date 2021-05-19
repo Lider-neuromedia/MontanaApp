@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:montana_mobile/pages/pqrs/pqrs_page.dart';
+import 'package:montana_mobile/models/ticket.dart';
 import 'package:montana_mobile/theme/theme.dart';
 
 class MessageCard extends StatelessWidget {
@@ -9,7 +9,7 @@ class MessageCard extends StatelessWidget {
     @required this.leftSide,
   }) : super(key: key);
 
-  final PqrsMessageTemporal message;
+  final Mensaje message;
   final bool leftSide;
 
   @override
@@ -40,7 +40,7 @@ class _MessageBox extends StatelessWidget {
     @required this.leftSide,
   }) : super(key: key);
 
-  final PqrsMessageTemporal message;
+  final Mensaje message;
   final bool leftSide;
 
   @override
@@ -58,10 +58,7 @@ class _MessageBox extends StatelessWidget {
             width: double.infinity,
             child: Container(
               padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
-              child: Text(
-                message.message,
-                style: textStyle,
-              ),
+              child: Text("${message.mensaje}", style: textStyle),
             ),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(5.0)),
@@ -91,7 +88,7 @@ class _AvatarMessage extends StatelessWidget {
     @required this.leftSide,
   }) : super(key: key);
 
-  final PqrsMessageTemporal message;
+  final Mensaje message;
   final bool leftSide;
 
   @override
@@ -114,11 +111,11 @@ class _AvatarMessage extends StatelessWidget {
             shape: BoxShape.circle,
           ),
           child: Center(
-            child: Text(message.initials, style: avatarStyle),
+            child: Text("${message.iniciales}", style: avatarStyle),
           ),
         ),
         SizedBox(height: 5.0),
-        Text(message.hour, style: timeStyle),
+        Text("${message.hora}", style: timeStyle),
       ],
     );
   }

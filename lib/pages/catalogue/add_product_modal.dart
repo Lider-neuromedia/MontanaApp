@@ -6,7 +6,7 @@ class AddProductModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final List<StoreStockTemporal> stores = storesListTest();
+    final List<_StoreStock> stores = _storesListTest;
 
     List<Widget> list = [
       _LabelField(label: 'REFERENCIA'),
@@ -94,7 +94,7 @@ class _ProductStoreStock extends StatelessWidget {
     this.storeStock,
   }) : super(key: key);
 
-  final StoreStockTemporal storeStock;
+  final _StoreStock storeStock;
 
   @override
   Widget build(BuildContext context) {
@@ -203,49 +203,47 @@ class _BoxField extends StatelessWidget {
   }
 }
 
-List<StoreStockTemporal> storesListTest() {
-  return [
-    StoreStockTemporal(
-      1,
-      'CC Único',
-      'L 204',
-      102,
-      'Cali',
-      'Valle del Cauca',
-      'Calle 13 No. 4 - 66',
-    ),
-    StoreStockTemporal(
-      2,
-      'San Andresito',
-      'L 118',
-      102,
-      'Cali',
-      'Valle del Cauca',
-      'Avenida 13 No. 4 - 66',
-    ),
-    StoreStockTemporal(
-      3,
-      'CC Unicentro',
-      'L 204',
-      102,
-      'Medellín',
-      'Antioquia',
-      'Carrera 13 No. 4 - 66',
-    ),
-    StoreStockTemporal(
-      4,
-      'Granada',
-      'Calle 4 No. 6 - 89',
-      102,
-      'Bogotá',
-      'Cundinamarca',
-      'Calle 4 No. 33 - 6',
-    ),
-  ];
-}
+final List<_StoreStock> _storesListTest = [
+  _StoreStock(
+    1,
+    'CC Único',
+    'L 204',
+    102,
+    'Cali',
+    'Valle del Cauca',
+    'Calle 13 No. 4 - 66',
+  ),
+  _StoreStock(
+    2,
+    'San Andresito',
+    'L 118',
+    102,
+    'Cali',
+    'Valle del Cauca',
+    'Avenida 13 No. 4 - 66',
+  ),
+  _StoreStock(
+    3,
+    'CC Unicentro',
+    'L 204',
+    102,
+    'Medellín',
+    'Antioquia',
+    'Carrera 13 No. 4 - 66',
+  ),
+  _StoreStock(
+    4,
+    'Granada',
+    'Calle 4 No. 6 - 89',
+    102,
+    'Bogotá',
+    'Cundinamarca',
+    'Calle 4 No. 33 - 6',
+  ),
+];
 
-class StoreStockTemporal {
-  StoreStockTemporal(
+class _StoreStock {
+  _StoreStock(
     this.id,
     this.place,
     this.local,

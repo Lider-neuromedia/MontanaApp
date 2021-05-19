@@ -174,25 +174,3 @@ class _BuyerField extends StatelessWidget {
     );
   }
 }
-
-class ClientTemporal {
-  String name;
-  String code;
-  List<ClientDataTemporal> data;
-
-  ClientTemporal({
-    @required this.name,
-    @required this.code,
-    @required this.data,
-  });
-}
-
-class ClientDataTemporal {
-  String key;
-  String value;
-
-  ClientDataTemporal({
-    @required this.key,
-    @required this.value,
-  });
-}

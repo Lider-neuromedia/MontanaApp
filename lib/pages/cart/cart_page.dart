@@ -10,7 +10,7 @@ class CartPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final OrderTemporal order = cartDataTest();
+    final _Order order = cartDataTest();
     return Scaffold(
       appBar: AppBar(
         title: Text('Bolsa de Compras'),
@@ -43,7 +43,7 @@ class _CartTotals extends StatelessWidget {
     @required this.order,
   }) : super(key: key);
 
-  final OrderTemporal order;
+  final _Order order;
 
   @override
   Widget build(BuildContext context) {
@@ -139,7 +139,7 @@ class _CartItem extends StatelessWidget {
     @required this.orderItem,
   }) : super(key: key);
 
-  final OrderItemTemporal orderItem;
+  final _OrderItem orderItem;
 
   @override
   Widget build(BuildContext context) {
@@ -197,7 +197,7 @@ class _CartItemHeader extends StatelessWidget {
     this.orderItem,
   }) : super(key: key);
 
-  final OrderItemTemporal orderItem;
+  final _OrderItem orderItem;
 
   @override
   Widget build(BuildContext context) {
@@ -234,7 +234,7 @@ class _CartItemStock extends StatelessWidget {
     this.stockStore,
   }) : super(key: key);
 
-  final OrderStockStoreTemporal stockStore;
+  final _OrderStockStore stockStore;
 
   @override
   Widget build(BuildContext context) {
@@ -262,24 +262,24 @@ class _CartItemStock extends StatelessWidget {
   }
 }
 
-class OrderTemporal {
-  OrderTemporal({this.id, this.items});
+class _Order {
+  _Order({this.id, this.items});
 
   int id;
-  List<OrderItemTemporal> items;
+  List<_OrderItem> items;
 }
 
-class OrderItemTemporal {
-  OrderItemTemporal({this.id, this.reference, this.image, this.stockStores});
+class _OrderItem {
+  _OrderItem({this.id, this.reference, this.image, this.stockStores});
 
   int id;
   String reference;
   String image;
-  List<OrderStockStoreTemporal> stockStores;
+  List<_OrderStockStore> stockStores;
 }
 
-class OrderStockStoreTemporal {
-  OrderStockStoreTemporal({
+class _OrderStockStore {
+  _OrderStockStore({
     this.place,
     this.local,
     this.quantity,
@@ -292,73 +292,73 @@ class OrderStockStoreTemporal {
   int subtotal;
 }
 
-OrderTemporal cartDataTest() {
-  return OrderTemporal(
+_Order cartDataTest() {
+  return _Order(
     id: 1,
     items: [
-      OrderItemTemporal(
+      _OrderItem(
         id: 1,
         reference: '389y903uweiru',
         image:
             'http://pruebasneuro.co/N-1010/montana_backend/public/storage/productos/3/002/002-0.jpeg',
         stockStores: [
-          OrderStockStoreTemporal(
+          _OrderStockStore(
               place: 'CC Único',
               local: 'L 204',
               subtotal: 200000,
               quantity: 20),
-          OrderStockStoreTemporal(
+          _OrderStockStore(
               place: 'San Andresito',
               local: 'L 118',
               subtotal: 200000,
               quantity: 55),
-          OrderStockStoreTemporal(
+          _OrderStockStore(
               place: 'CC Unicentro',
               local: 'L 204',
               subtotal: 200000,
               quantity: 23),
-          OrderStockStoreTemporal(
+          _OrderStockStore(
               place: 'Granada',
               local: 'Calle 4 No. 6 - 89',
               subtotal: 200000,
               quantity: 23),
         ],
       ),
-      OrderItemTemporal(
+      _OrderItem(
         id: 2,
         reference: '3hyd938y38938',
         image:
             'http://pruebasneuro.co/N-1010/montana_backend/public/storage/productos/3/001/001-0.png',
         stockStores: [
-          OrderStockStoreTemporal(
+          _OrderStockStore(
               place: 'San Andresito',
               local: 'L 118',
               subtotal: 200000,
               quantity: 55),
-          OrderStockStoreTemporal(
+          _OrderStockStore(
               place: 'CC Único',
               local: 'L 204',
               subtotal: 200000,
               quantity: 20),
         ],
       ),
-      OrderItemTemporal(
+      _OrderItem(
         id: 3,
         reference: '28dy93gd393e3',
         image:
             'http://pruebasneuro.co/N-1010/montana_backend/public/storage/productos/3/002/002-0.jpeg',
         stockStores: [
-          OrderStockStoreTemporal(
+          _OrderStockStore(
               place: 'Granada',
               local: 'Calle 4 No. 6 - 89',
               subtotal: 200000,
               quantity: 23),
-          OrderStockStoreTemporal(
+          _OrderStockStore(
               place: 'CC Unicentro',
               local: 'L 204',
               subtotal: 200000,
               quantity: 23),
-          OrderStockStoreTemporal(
+          _OrderStockStore(
               place: 'CC Único',
               local: 'L 204',
               subtotal: 200000,

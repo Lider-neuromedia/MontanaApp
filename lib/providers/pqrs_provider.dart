@@ -18,6 +18,9 @@ class PqrsProvider with ChangeNotifier {
   List<Ticket> _tickets = [];
   List<Ticket> get tickets => _tickets;
 
+  Ticket _ticket;
+  Ticket get ticket => _ticket;
+
   bool _isLoadingTickets = false;
   bool _isLoadingTicket = false;
   bool _isLoadingMessages = false;
@@ -80,6 +83,20 @@ class PqrsProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> loadTicket(int id) async {
+    _ticket = null;
+    _isLoadingTicket = true;
+    notifyListeners();
+
+    _ticket = await getTicketWithMessages(id);
+    _ticket.mensajes.sort((Mensaje mensaje, Mensaje previus) {
+      return mensaje.createdAt.compareTo(previus.createdAt) * -1;
+    });
+
+    _isLoadingTicket = false;
+    notifyListeners();
+  }
+
   Future<List<Ticket>> getTickets() async {
     final preferences = Preferences();
     final url = Uri.parse('$_url/pqrs');
@@ -87,6 +104,15 @@ class PqrsProvider with ChangeNotifier {
 
     if (response.statusCode != 200) return [];
     return responseTicketsFromJson(response.body).tickets;
+  }
+
+  Future<Ticket> getTicketWithMessages(int id) async {
+    final preferences = Preferences();
+    final url = Uri.parse('$_url/pqrs/$id');
+    final response = await http.get(url, headers: preferences.signedHeaders);
+
+    if (response.statusCode != 200) return null;
+    return responseTicketFromJson(response.body).ticket;
   }
 }
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:montana_mobile/models/ticket.dart';
+import 'package:montana_mobile/models/message.dart';
 import 'package:montana_mobile/theme/theme.dart';
 
 class MessageCard extends StatelessWidget {

@@ -51,6 +51,7 @@ class Preferences {
 
   Map<String, String> get signedHeaders {
     Map<String, String> headers = {
+      'content-type': 'application/json',
       'X-Requested-With': 'XMLHttpRequest',
       'Authorization': 'Bearer $token',
     };

@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:montana_mobile/models/message.dart';
+
 ResponseTickets responseTicketsFromJson(String str) =>
     ResponseTickets.fromJson(json.decode(str));
 
@@ -160,66 +162,6 @@ class Ticket {
         "estado": estado,
         "messages_pqrs": List<dynamic>.from(mensajes.map((x) => x.toJson())),
         "pedidos": List<dynamic>.from(pedidos.map((x) => x.toJson())),
-      };
-}
-
-class Mensaje {
-  Mensaje({
-    this.idSeguimiento,
-    this.idUsuario,
-    this.idTicket,
-    this.mensaje,
-    this.hora,
-    this.createdAt,
-    this.updatedAt,
-    this.name,
-    this.apellidos,
-    this.rolId,
-    this.iniciales,
-    this.addressee,
-  });
-
-  int idSeguimiento;
-  int idUsuario;
-  int idTicket;
-  String mensaje;
-  String hora;
-  DateTime createdAt;
-  DateTime updatedAt;
-  String name;
-  String apellidos;
-  int rolId;
-  String iniciales;
-  bool addressee;
-
-  factory Mensaje.fromJson(Map<String, dynamic> json) => Mensaje(
-        idSeguimiento: json["id_seguimiento"],
-        idUsuario: json["usuario"],
-        idTicket: json["pqrs"],
-        mensaje: json["mensaje"],
-        hora: json["hora"],
-        createdAt: DateTime.parse(json["created_at"]),
-        updatedAt: DateTime.parse(json["updated_at"]),
-        name: json["name"],
-        apellidos: json["apellidos"],
-        rolId: json["rol_id"],
-        iniciales: json["iniciales"],
-        addressee: json["addressee"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "id_seguimiento": idSeguimiento,
-        "usuario": idUsuario,
-        "pqrs": idTicket,
-        "mensaje": mensaje,
-        "hora": hora,
-        "created_at": createdAt.toIso8601String(),
-        "updated_at": updatedAt.toIso8601String(),
-        "name": name,
-        "apellidos": apellidos,
-        "rol_id": rolId,
-        "iniciales": iniciales,
-        "addressee": addressee,
       };
 }
 

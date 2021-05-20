@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
+import 'package:montana_mobile/models/message.dart';
 import 'package:montana_mobile/models/ticket.dart';
 import 'package:montana_mobile/utils/preferences.dart';
 
@@ -71,6 +72,21 @@ class PqrsProvider with ChangeNotifier {
 
   set isLoadingMessage(bool value) {
     _isLoadingMessage = value;
+    notifyListeners();
+  }
+
+  Future<void> addCreatedMessage(Mensaje mensaje) async {
+    _isLoadingTicket = true;
+    notifyListeners();
+
+    await Future.delayed(Duration(milliseconds: 100));
+
+    _ticket.mensajes.add(mensaje);
+    _ticket.mensajes.sort((Mensaje mensaje, Mensaje previus) {
+      return mensaje.createdAt.compareTo(previus.createdAt) * -1;
+    });
+
+    _isLoadingTicket = false;
     notifyListeners();
   }
 

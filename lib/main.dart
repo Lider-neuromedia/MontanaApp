@@ -13,6 +13,7 @@ import 'package:montana_mobile/pages/session/reset_password_page.dart';
 import 'package:montana_mobile/providers/catalogues_provider.dart';
 import 'package:montana_mobile/providers/clients_provider.dart';
 import 'package:montana_mobile/providers/login_provider.dart';
+import 'package:montana_mobile/providers/message_provider.dart';
 import 'package:montana_mobile/providers/orders_provider.dart';
 import 'package:montana_mobile/providers/password_provider.dart';
 import 'package:montana_mobile/providers/pqrs_provider.dart';
@@ -48,6 +49,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => OrdersProvider()),
         ChangeNotifierProvider(create: (_) => ClientsProvider()),
         ChangeNotifierProvider(create: (_) => PqrsProvider()),
+        ChangeNotifierProvider(create: (_) => MessageProvider()),
       ],
       child: MaterialApp(
         title: 'Athletic Air',

@@ -4,6 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 import 'package:montana_mobile/models/message.dart';
 import 'package:montana_mobile/models/ticket.dart';
 import 'package:montana_mobile/utils/preferences.dart';
+import 'package:montana_mobile/utils/utils.dart';
 
 class PqrsProvider with ChangeNotifier {
   final String _url = dotenv.env['API_URL'];
@@ -72,6 +73,41 @@ class PqrsProvider with ChangeNotifier {
 
   set isLoadingMessage(bool value) {
     _isLoadingMessage = value;
+    notifyListeners();
+  }
+
+  List<Ticket> _searchTickets = [];
+  List<Ticket> get searchTickets => _searchTickets;
+  String _search = '';
+  String get search => _search;
+
+  set search(String value) {
+    _search = value.toLowerCase();
+
+    if (_search.isNotEmpty) {
+      _searchTickets = [];
+      _searchTickets = _tickets.where((ticket) {
+        bool match = false;
+        String nombreCliente = "${ticket.clienteNombre.toLowerCase()}";
+        String nombreVendedor = "${ticket.vendedorNombre.toLowerCase()}";
+        String codigo = "${ticket.codigo}";
+        String estado = "${ticket.estado}";
+        String fechaRegistro = "${formatDate(ticket.fechaRegistro)}";
+        String idPqrs = "${ticket.idPqrs}";
+
+        if (nombreCliente.indexOf(_search) != -1 ||
+            nombreVendedor.indexOf(_search) != -1 ||
+            codigo.indexOf(_search) != -1 ||
+            estado.indexOf(_search) != -1 ||
+            fechaRegistro.indexOf(_search) != -1 ||
+            idPqrs.indexOf(_search) != -1) {
+          match = true;
+        }
+
+        return match;
+      }).toList();
+    }
+
     notifyListeners();
   }
 

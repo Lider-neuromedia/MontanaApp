@@ -27,13 +27,13 @@ class ClientsProvider with ChangeNotifier {
       _searchClients = [];
       _searchClients = _clients.where((client) {
         bool match = false;
-        String name = client.nombreCompleto.toLowerCase();
-        String email = client.email.toLowerCase();
-        String dni = client.dni.toLowerCase();
-        String id = client.id.toString().toLowerCase();
-        String nit = client.getData('nit').toLowerCase();
-        String razonSocial = client.getData('razon_social').toLowerCase();
-        String phone = client.getData('telefono').toLowerCase();
+        String name = "${client.nombreCompleto.toLowerCase()}";
+        String email = "${client.email.toLowerCase()}";
+        String dni = "${client.dni.toLowerCase()}";
+        String id = "${client.id.toString().toLowerCase()}";
+        String nit = "${client.getData('nit').toLowerCase()}";
+        String razonSocial = "${client.getData('razon_social').toLowerCase()}";
+        String phone = "${client.getData('telefono').toLowerCase()}";
 
         if (name.indexOf(_search) != -1 ||
             email.indexOf(_search) != -1 ||

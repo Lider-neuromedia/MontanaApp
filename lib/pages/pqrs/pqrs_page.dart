@@ -61,16 +61,30 @@ class _PqrsContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final PqrsProvider pqrsProvider = Provider.of<PqrsProvider>(context);
+    final tickets = pqrsProvider.search.isEmpty
+        ? pqrsProvider.tickets
+        : pqrsProvider.searchTickets;
+    final isEmptySearch = pqrsProvider.search.isNotEmpty &&
+        pqrsProvider.searchTickets.length == 0;
+
     return Column(
       children: [
         SearchBox(),
         PqrsFilter(),
+        isEmptySearch
+            ? Center(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10.0),
+                  child: Text('No hay coincidencias.'),
+                ),
+              )
+            : Container(),
         Expanded(
           child: ListView.separated(
-            itemCount: pqrsProvider.tickets.length,
+            itemCount: tickets.length,
             padding: EdgeInsets.only(top: 15.0, bottom: 100.0),
             itemBuilder: (_, int index) {
-              return PqrsCard(ticket: pqrsProvider.tickets[index]);
+              return PqrsCard(ticket: tickets[index]);
             },
             separatorBuilder: (_, int index) {
               return SizedBox(height: 20.0);

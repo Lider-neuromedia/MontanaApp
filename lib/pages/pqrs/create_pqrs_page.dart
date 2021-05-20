@@ -1,110 +1,185 @@
 import 'package:flutter/material.dart';
+import 'package:montana_mobile/models/client.dart';
+import 'package:montana_mobile/models/session.dart';
+import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
+import 'package:montana_mobile/pages/pqrs/partials/dropdown_pqrs.dart';
+import 'package:montana_mobile/providers/clients_provider.dart';
+import 'package:montana_mobile/providers/pqrs_provider.dart';
+import 'package:montana_mobile/providers/pqrs_ticket_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
+import 'package:montana_mobile/utils/preferences.dart';
+import 'package:montana_mobile/utils/utils.dart';
+import 'package:provider/provider.dart';
 
-class CreatePqrsPage extends StatelessWidget {
+class CreatePqrsPage extends StatefulWidget {
   static final String route = '/create-pqrs';
 
   @override
+  _CreatePqrsPageState createState() => _CreatePqrsPageState();
+}
+
+class _CreatePqrsPageState extends State<CreatePqrsPage> {
+  final TextEditingController _messageController =
+      TextEditingController(text: '');
+
+  @override
+  void initState() {
+    super.initState();
+
+    () async {
+      await Future.delayed(Duration.zero);
+
+      final preferences = Preferences();
+      final user = preferences.session as Session;
+      final pqrsTicketProvider = Provider.of<PqrsTicketProvider>(
+        context,
+        listen: false,
+      );
+      final clientsProvider = Provider.of<ClientsProvider>(
+        context,
+        listen: false,
+      );
+
+      pqrsTicketProvider.clientes = [];
+      clientsProvider.getClients().then((clients) {
+        pqrsTicketProvider.clientes = clients;
+      });
+
+      pqrsTicketProvider.message = '';
+      pqrsTicketProvider.clienteId = null;
+      pqrsTicketProvider.pqrsType = null;
+      pqrsTicketProvider.vendedorId = user.id;
+    }();
+  }
+
+  @override
+  void dispose() {
+    _messageController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    PqrsTicketProvider pqrsTicketProvider =
+        Provider.of<PqrsTicketProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('PQRS'),
       ),
-      body: Padding(
+      body: ListView(
         padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _TitlePqrs(title: 'Nuevo PQRS'),
-            SizedBox(height: 25.0),
-            _LabelField(label: 'Tipo de PQRS'),
-            SizedBox(height: 10.0),
-            _DropdownType(),
-            SizedBox(height: 20.0),
-            _LabelField(label: 'Mensaje'),
-            SizedBox(height: 10.0),
-            TextField(
-              maxLines: 5,
-              decoration: InputDecoration(
-                isCollapsed: true,
-                contentPadding: EdgeInsets.all(10.0),
-                border: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: CustomTheme.greyColor,
-                    width: 1.0,
+        children: [
+          _TitlePqrs(title: 'Nuevo PQRS'),
+          SizedBox(height: 25.0),
+          _LabelField(label: 'Tipo de PQRS'),
+          SizedBox(height: 10.0),
+          DropdownPqrs(
+            onChanged: (dynamic value) {
+              pqrsTicketProvider.pqrsType = value as String;
+            },
+            value: pqrsTicketProvider.pqrsType,
+            items: pqrsTicketProvider.pqrsTypes.map<DropdownMenuItem<String>>(
+              (PqrsType value) {
+                return DropdownMenuItem<String>(
+                  value: value.id,
+                  child: Text(
+                    value.value,
+                    style: Theme.of(context).textTheme.bodyText1,
+                  ),
+                );
+              },
+            ).toList(),
+          ),
+          SizedBox(height: 25.0),
+          _LabelField(label: 'Cliente'),
+          SizedBox(height: 10.0),
+          DropdownPqrs(
+            onChanged: (dynamic value) {
+              pqrsTicketProvider.clienteId = value as int;
+            },
+            value: pqrsTicketProvider.clienteId,
+            items: pqrsTicketProvider.clientes.map<DropdownMenuItem<int>>(
+              (Cliente client) {
+                return DropdownMenuItem<int>(
+                  value: client.id,
+                  child: Text(
+                    client.nombreCompleto,
+                    style: Theme.of(context).textTheme.bodyText1,
+                  ),
+                );
+              },
+            ).toList(),
+          ),
+          SizedBox(height: 20.0),
+          _LabelField(label: 'Mensaje'),
+          SizedBox(height: 10.0),
+          TextField(
+            maxLines: 5,
+            controller: _messageController,
+            onChanged: (String value) {
+              pqrsTicketProvider.message = value;
+            },
+            decoration: InputDecoration(
+              isCollapsed: true,
+              contentPadding: EdgeInsets.all(10.0),
+              border: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: CustomTheme.greyColor,
+                  width: 1.0,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 40.0),
+          pqrsTicketProvider.isLoading
+              ? LoadingContainer()
+              : Center(
+                  child: SizedBox(
+                    width: 160.0,
+                    child: _ContinueButton(
+                      label: 'Enviar',
+                      icon: Icons.arrow_forward,
+                      onPressed: pqrsTicketProvider.canSend
+                          ? () => _createMessage(context, pqrsTicketProvider)
+                          : null,
+                    ),
                   ),
                 ),
-              ),
-            ),
-            SizedBox(height: 40.0),
-            Center(
-              child: SizedBox(
-                width: 160.0,
-                child: _ContinueButton(
-                  label: 'Enviar',
-                  icon: Icons.arrow_forward,
-                  onPressed: () {},
-                ),
-              ),
-            ),
-          ],
-        ),
+        ],
       ),
     );
   }
-}
 
-class _DropdownType extends StatefulWidget {
-  const _DropdownType({
-    Key key,
-  }) : super(key: key);
+  Future<void> _createMessage(
+      BuildContext context, PqrsTicketProvider pqrsTicketProvider) async {
+    pqrsTicketProvider.isLoading = true;
+    bool success = await pqrsTicketProvider.createPqrs();
+    pqrsTicketProvider.isLoading = false;
 
-  @override
-  __DropdownTypeState createState() => __DropdownTypeState();
-}
+    if (!success) {
+      showMessageDialog(
+        context,
+        'Aviso',
+        'No se pudo registrar el PQRS',
+      );
+    } else {
+      showMessageDialog(
+        context,
+        'Listo',
+        'PQRS creado correctamente.',
+        onAccept: () {
+          _messageController.clear();
+          pqrsTicketProvider.message = '';
+          Navigator.pop(context);
 
-class __DropdownTypeState extends State<_DropdownType> {
-  String value = 'Queja por retrasos';
-  List<String> values = ['Queja por retrasos'];
-
-  @override
-  Widget build(BuildContext context) {
-    final TextStyle valueStyle = Theme.of(context).textTheme.bodyText1.copyWith(
-          fontWeight: FontWeight.w700,
-        );
-
-    final border = OutlineInputBorder(
-      borderSide: BorderSide(
-        color: CustomTheme.greyColor,
-        width: 2.0,
-      ),
-    );
-
-    return DropdownButtonFormField(
-      icon: const Icon(Icons.keyboard_arrow_down),
-      isExpanded: true,
-      style: valueStyle,
-      elevation: 16,
-      iconSize: 24,
-      value: value,
-      decoration: InputDecoration(
-        contentPadding: EdgeInsets.symmetric(
-          horizontal: 10.0,
-          vertical: 0.0,
-        ),
-        enabledBorder: border,
-        border: border,
-      ),
-      onChanged: (String newValue) {
-        setState(() => value = newValue);
-      },
-      items: values.map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          child: Text(value, style: Theme.of(context).textTheme.bodyText1),
-          value: value,
-        );
-      }).toList(),
-    );
+          final pqrsProvider =
+              Provider.of<PqrsProvider>(context, listen: false);
+          pqrsProvider.sortBy = SortValue.RECENT_FIRST;
+          pqrsProvider.loadTickets();
+        },
+      );
+    }
   }
 }
 
@@ -124,8 +199,8 @@ class _TitlePqrs extends StatelessWidget {
         );
     return Text(
       title,
-      textAlign: TextAlign.center,
       style: titleStyle,
+      textAlign: TextAlign.center,
     );
   }
 }
@@ -161,6 +236,16 @@ class _ContinueButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isBlocked = onPressed == null;
+
+    final shadow = [
+      BoxShadow(
+        blurRadius: 3.0,
+        color: Colors.red,
+        offset: Offset(2.0, 0.0),
+      ),
+    ];
+
     return ElevatedButton(
       onPressed: onPressed,
       child: Row(
@@ -169,15 +254,9 @@ class _ContinueButton extends StatelessWidget {
         children: [
           Container(
             decoration: BoxDecoration(
-              color: Theme.of(context).primaryColor,
               shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  blurRadius: 3.0,
-                  color: Colors.red,
-                  offset: Offset(2.0, 0.0),
-                ),
-              ],
+              color: isBlocked ? Colors.grey : Theme.of(context).primaryColor,
+              boxShadow: isBlocked ? [] : shadow,
             ),
             padding: EdgeInsets.all(5.0),
             child: Icon(icon, color: Colors.white),
@@ -185,23 +264,22 @@ class _ContinueButton extends StatelessWidget {
           Text(label),
           Container(
             width: 30,
-            decoration: BoxDecoration(shape: BoxShape.circle),
             child: Icon(icon, color: Colors.transparent),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+            ),
           ),
         ],
       ),
       style: ElevatedButton.styleFrom(
-        padding: EdgeInsets.only(
-          left: 0.0,
-          right: 0.0,
-        ),
-        side: BorderSide(
-          color: Theme.of(context).primaryColor,
-        ),
+        padding: EdgeInsets.only(left: 0.0, right: 0.0),
+        primary: Theme.of(context).primaryColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30.0),
         ),
-        primary: Theme.of(context).primaryColor,
+        side: BorderSide(
+          color: isBlocked ? Colors.grey : Theme.of(context).primaryColor,
+        ),
       ),
     );
   }

@@ -62,7 +62,6 @@ class MessageProvider with ChangeNotifier {
     final preferences = Preferences();
     final url = Uri.parse('$_url/newMessage');
     final Map<String, dynamic> data = {
-      'test': false,
       'mensaje': _message.value,
       'usuario': _userId,
       'pqrs': _pqrsId,

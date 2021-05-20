@@ -95,6 +95,7 @@ class PqrsProvider with ChangeNotifier {
     _isLoadingTickets = true;
     notifyListeners();
     _tickets = await getTickets();
+    _sortOrders();
     _isLoadingTickets = false;
     notifyListeners();
   }

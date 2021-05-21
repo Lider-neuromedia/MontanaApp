@@ -37,6 +37,7 @@ dependencies:
   intl: ^0.17.0
   fluttericon: ^2.0.0
   flutter_html: ^2.0.0
+  image_picker: ^0.7.5+2
 
 dev_dependencies:
   flutter_test:

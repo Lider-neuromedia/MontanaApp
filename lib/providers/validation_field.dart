@@ -24,6 +24,19 @@ class ValidationField {
     return null;
   }
 
+  static String validateIntRange(String value, {int min, int max}) {
+    if (int.tryParse(value) == null) {
+      return 'El campo debe ser un número';
+    }
+    if (min != null && int.parse(value) < min) {
+      return 'El campo debe ser mínimo $min';
+    }
+    if (max != null && int.parse(value) > max) {
+      return 'El campo debe ser máximo $max';
+    }
+    return null;
+  }
+
   static String validateLength(String value, {int min, int max}) {
     if (min != null && value.length < min) {
       return 'La longitud del campo debe ser mayor a $min.';

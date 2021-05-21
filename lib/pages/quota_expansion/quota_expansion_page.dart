@@ -1,190 +1,176 @@
-import 'package:flutter/material.dart';
-import 'package:fluttericon/font_awesome5_icons.dart';
-import 'package:montana_mobile/theme/theme.dart';
+import 'dart:io';
 
-class QuotaExpansionPage extends StatelessWidget {
+import 'package:flutter/material.dart';
+import 'package:montana_mobile/models/client.dart';
+import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
+import 'package:montana_mobile/pages/pqrs/partials/dropdown_pqrs.dart';
+import 'package:montana_mobile/pages/quota_expansion/partials/continue_button.dart';
+import 'package:montana_mobile/pages/quota_expansion/partials/file_button.dart';
+import 'package:montana_mobile/providers/clients_provider.dart';
+import 'package:montana_mobile/providers/quota_provider.dart';
+import 'package:montana_mobile/theme/theme.dart';
+import 'package:provider/provider.dart';
+
+class QuotaExpansionPage extends StatefulWidget {
+  @override
+  _QuotaExpansionPageState createState() => _QuotaExpansionPageState();
+}
+
+class _QuotaExpansionPageState extends State<QuotaExpansionPage> {
+  @override
+  void initState() {
+    super.initState();
+
+    () async {
+      await Future.delayed(Duration.zero);
+      final quotaProvider = Provider.of<QuotaProvider>(context, listen: false);
+      final clientsProvider = Provider.of<ClientsProvider>(
+        context,
+        listen: false,
+      );
+
+      quotaProvider.clienteId = null;
+      quotaProvider.monto = '0';
+      quotaProvider.docIdentidad = null;
+      quotaProvider.docRut = null;
+      quotaProvider.docCamaraCom = null;
+      quotaProvider.clientes = [];
+
+      clientsProvider.getClients().then((clients) {
+        quotaProvider.clientes = clients;
+      });
+    }();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final quotaProvider = Provider.of<QuotaProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Ampliación de cupo'),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _TitleQuota(title: 'Realiza tu Solicitud', size: 30.0),
-              SizedBox(height: 30.0),
-              _LabelField(label: 'CLIENTE'),
-              SizedBox(height: 10.0),
-              _DropdownType(),
-              SizedBox(height: 20.0),
-              _LabelField(label: 'Adjuntar documento de identidad'),
-              SizedBox(height: 10.0),
-              _FileButton(value: '', onTap: () => print('file 1')),
-              SizedBox(height: 20.0),
-              _LabelField(label: 'Adjuntar RUT'),
-              SizedBox(height: 10.0),
-              _FileButton(value: '', onTap: () => print('file 2')),
-              SizedBox(height: 20.0),
-              _LabelField(label: 'Adjuntar cámara de comercio'),
-              SizedBox(height: 10.0),
-              _FileButton(value: '', onTap: () => print('file 3')),
-              SizedBox(height: 30.0),
-              _TitleQuota(
-                title:
-                    'Por favor coloque el monto por el cual desea solicitar ampliación de cupo',
-                size: 20.0,
-              ),
-              SizedBox(height: 30.0),
-              _LabelField(label: 'Monto'),
-              SizedBox(height: 10.0),
-              TextField(
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  isCollapsed: true,
-                  contentPadding: EdgeInsets.all(10.0),
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: CustomTheme.greyColor,
-                      width: 1.0,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 30.0),
-              Center(
-                child: SizedBox(
-                  width: 160.0,
-                  child: _ContinueButton(
-                    label: 'Enviar',
-                    icon: Icons.arrow_forward,
-                    onPressed: () {},
-                  ),
-                ),
-              ),
-              SizedBox(height: 30.0),
-            ],
+      body: ListView(
+        padding: const EdgeInsets.all(20.0),
+        children: [
+          _TitleQuota(title: 'Realiza tu Solicitud', size: 30.0),
+          SizedBox(height: 30.0),
+          _LabelField(label: 'CLIENTE'),
+          SizedBox(height: 10.0),
+          _ClientsDropdown(),
+          SizedBox(height: 20.0),
+          _LabelField(label: 'Adjuntar documento de identidad'),
+          SizedBox(height: 10.0),
+          FileButton(
+            value: quotaProvider.descriptionIdentidad,
+            onSelected: (File file) {
+              quotaProvider.docIdentidad = file;
+            },
           ),
-        ),
+          SizedBox(height: 20.0),
+          _LabelField(label: 'Adjuntar RUT'),
+          SizedBox(height: 10.0),
+          FileButton(
+            value: quotaProvider.descriptionRut,
+            onSelected: (File file) {
+              quotaProvider.docRut = file;
+            },
+          ),
+          SizedBox(height: 20.0),
+          _LabelField(label: 'Adjuntar cámara de comercio'),
+          SizedBox(height: 10.0),
+          FileButton(
+            value: quotaProvider.descriptionCamaraCom,
+            onSelected: (File file) {
+              quotaProvider.docCamaraCom = file;
+            },
+          ),
+          SizedBox(height: 30.0),
+          _TitleQuota(
+            title:
+                'Por favor coloque el monto por el cual desea solicitar ampliación de cupo',
+            size: 20.0,
+          ),
+          SizedBox(height: 30.0),
+          _LabelField(label: 'Monto'),
+          SizedBox(height: 10.0),
+          TextField(
+            keyboardType: TextInputType.number,
+            controller: quotaProvider.montoController,
+            onChanged: (String value) {
+              quotaProvider.monto = value;
+            },
+            decoration: InputDecoration(
+              isCollapsed: true,
+              contentPadding: EdgeInsets.all(10.0),
+              errorText: quotaProvider.montoError,
+              border: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: CustomTheme.greyColor,
+                  width: 1.0,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 30.0),
+          _SubmitAction(),
+          SizedBox(height: 30.0),
+        ],
       ),
     );
   }
 }
 
-class _FileButton extends StatelessWidget {
-  const _FileButton({
-    Key key,
-    @required this.value,
-    @required this.onTap,
-  }) : super(key: key);
-  final String value;
-  final Function onTap;
-
+class _SubmitAction extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Material(
-      borderRadius: BorderRadius.all(Radius.circular(10.0)),
-      child: InkWell(
-        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-        onTap: onTap,
-        child: Ink(
-          color: Colors.white,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                child: Container(
-                  height: 50.0,
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: CustomTheme.greyColor,
-                      width: 1.0,
-                    ),
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(10.0),
-                      topLeft: Radius.circular(10.0),
-                    ),
-                  ),
-                  padding: EdgeInsets.all(10.0),
-                  child: Text(value),
-                ),
+    final quotaProvider = Provider.of<QuotaProvider>(context);
+    return quotaProvider.isLoading
+        ? LoadingContainer()
+        : Center(
+            child: SizedBox(
+              width: 160.0,
+              child: ContinueButton(
+                label: 'Enviar',
+                icon: Icons.arrow_forward,
+                onPressed: quotaProvider.canSend
+                    ? () => _createQuota(context, quotaProvider)
+                    : null,
               ),
-              Container(
-                height: 50.0,
-                padding: EdgeInsets.all(10.0),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor,
-                  borderRadius: BorderRadius.only(
-                    bottomRight: Radius.circular(10.0),
-                    topRight: Radius.circular(10.0),
-                  ),
-                ),
-                child: Icon(
-                  FontAwesome5.file_image,
-                  color: Colors.white,
-                ),
-              )
-            ],
-          ),
-        ),
-      ),
-    );
+            ),
+          );
+  }
+
+  Future<void> _createQuota(
+      BuildContext context, QuotaProvider pqrsTicketProvider) async {
+    // TODO:
   }
 }
 
-class _DropdownType extends StatefulWidget {
-  const _DropdownType({
-    Key key,
-  }) : super(key: key);
-
-  @override
-  __DropdownTypeState createState() => __DropdownTypeState();
-}
-
-class __DropdownTypeState extends State<_DropdownType> {
-  String value = 'Noreña Loaiza William';
-  List<String> values = ['Noreña Loaiza William'];
+class _ClientsDropdown extends StatelessWidget {
+  const _ClientsDropdown({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final TextStyle valueStyle = Theme.of(context).textTheme.bodyText1.copyWith(
-          fontWeight: FontWeight.w700,
-        );
-    final border = OutlineInputBorder(
-      borderSide: BorderSide(
-        color: CustomTheme.greyColor,
-        width: 1.0,
-      ),
-    );
+    final quotaProvider = Provider.of<QuotaProvider>(context);
+    final dropdownStyle = Theme.of(context).textTheme.bodyText1;
 
-    return DropdownButtonFormField(
-      icon: const Icon(Icons.keyboard_arrow_down),
-      isExpanded: true,
-      style: valueStyle,
-      elevation: 16,
-      iconSize: 24,
-      value: value,
-      decoration: InputDecoration(
-        contentPadding: EdgeInsets.symmetric(
-          horizontal: 10.0,
-          vertical: 0.0,
-        ),
-        enabledBorder: border,
-        border: border,
-      ),
-      onChanged: (String newValue) {
-        setState(() => value = newValue);
+    return DropdownPqrs(
+      onChanged: (dynamic value) {
+        quotaProvider.clienteId = value as int;
       },
-      items: values.map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          child: Text(value, style: Theme.of(context).textTheme.bodyText1),
-          value: value,
-        );
-      }).toList(),
+      value: quotaProvider.clienteId,
+      items: quotaProvider.clientes.map<DropdownMenuItem<int>>(
+        (Cliente cliente) {
+          return DropdownMenuItem<int>(
+            value: cliente.id,
+            child: Text(
+              cliente.nombreCompleto,
+              style: dropdownStyle,
+            ),
+          );
+        },
+      ).toList(),
     );
   }
 }
@@ -228,65 +214,5 @@ class _LabelField extends StatelessWidget {
           color: Theme.of(context).primaryColor,
         );
     return Text(label, style: labelStyle);
-  }
-}
-
-class _ContinueButton extends StatelessWidget {
-  const _ContinueButton({
-    Key key,
-    @required this.label,
-    @required this.icon,
-    @required this.onPressed,
-  }) : super(key: key);
-
-  final Function onPressed;
-  final IconData icon;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).primaryColor,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  blurRadius: 3.0,
-                  color: Colors.red,
-                  offset: Offset(2.0, 0.0),
-                ),
-              ],
-            ),
-            padding: EdgeInsets.all(5.0),
-            child: Icon(icon, color: Colors.white),
-          ),
-          Text(label),
-          Container(
-            width: 30,
-            decoration: BoxDecoration(shape: BoxShape.circle),
-            child: Icon(icon, color: Colors.transparent),
-          ),
-        ],
-      ),
-      style: ElevatedButton.styleFrom(
-        padding: EdgeInsets.only(
-          left: 0.0,
-          right: 0.0,
-        ),
-        side: BorderSide(
-          color: Theme.of(context).primaryColor,
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30.0),
-        ),
-        primary: Theme.of(context).primaryColor,
-      ),
-    );
   }
 }

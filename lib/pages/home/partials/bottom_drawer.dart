@@ -74,7 +74,7 @@ class BottomDrawer extends StatelessWidget {
             ),
             SizedBox(width: 20.0),
             DrawerItem(
-              title: 'Logout',
+              title: 'Cerrar Sesión',
               iconData: WebSymbols.logout,
               active: false,
               onTap: () {

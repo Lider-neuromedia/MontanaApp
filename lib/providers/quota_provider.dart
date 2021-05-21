@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
+import 'package:mime_type/mime_type.dart';
 import 'package:montana_mobile/models/client.dart';
 import 'package:montana_mobile/models/session.dart';
 import 'package:montana_mobile/providers/validation_field.dart';
@@ -101,24 +103,48 @@ class QuotaProvider with ChangeNotifier {
   }
 
   Future<bool> createQuotaExpansion() async {
+    final fileDocIdentidad = await http.MultipartFile.fromPath(
+      'doc_identidad',
+      docIdentidad.path,
+      contentType: MediaType(
+        mime(docIdentidad.path).split('/')[0],
+        mime(docIdentidad.path).split('/')[1],
+      ),
+    );
+    final fileDocRut = await http.MultipartFile.fromPath(
+      'doc_rut',
+      docRut.path,
+      contentType: MediaType(
+        mime(docRut.path).split('/')[0],
+        mime(docRut.path).split('/')[1],
+      ),
+    );
+    final fileDocCamaraCom = await http.MultipartFile.fromPath(
+      'doc_camara_com',
+      docCamaraCom.path,
+      contentType: MediaType(
+        mime(docCamaraCom.path).split('/')[0],
+        mime(docCamaraCom.path).split('/')[1],
+      ),
+    );
+
     final preferences = Preferences();
     final user = preferences.session as Session;
     final url = Uri.parse('$_url/ampliacion-cupo');
-    final Map<String, dynamic> data = {
-      'monto': _monto.value,
-      'vendedor': user.id,
-      'cliente': clienteId,
-      'doc_identidad': null,
-      'doc_rut': null,
-      'doc_camara_com': null,
-    };
 
-    final response = await http.post(
-      url,
-      headers: preferences.guestHeaders,
-      body: jsonEncode(data),
-    );
+    final request = http.MultipartRequest('POST', url);
+    request.headers.addAll(preferences.signedHeaders);
 
-    return response.statusCode == 200;
+    request.fields['monto'] = _monto.value;
+    request.fields['vendedor'] = "${user.id}";
+    request.fields['cliente'] = "$clienteId";
+    request.files.add(fileDocIdentidad);
+    request.files.add(fileDocRut);
+    request.files.add(fileDocCamaraCom);
+
+    final responseStream = await request.send();
+    final response = await http.Response.fromStream(responseStream);
+
+    return response.statusCode == 200 || response.statusCode == 201;
   }
 }

@@ -9,6 +9,7 @@ import 'package:montana_mobile/pages/quota_expansion/partials/file_button.dart';
 import 'package:montana_mobile/providers/clients_provider.dart';
 import 'package:montana_mobile/providers/quota_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
+import 'package:montana_mobile/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 class QuotaExpansionPage extends StatefulWidget {
@@ -142,8 +143,31 @@ class _SubmitAction extends StatelessWidget {
   }
 
   Future<void> _createQuota(
-      BuildContext context, QuotaProvider pqrsTicketProvider) async {
-    // TODO:
+      BuildContext context, QuotaProvider quotaProvider) async {
+    quotaProvider.isLoading = true;
+    final success = await quotaProvider.createQuotaExpansion();
+    quotaProvider.isLoading = false;
+
+    if (!success) {
+      showMessageDialog(
+        context,
+        'Aviso',
+        'No se pudieron guardar los datos.',
+      );
+    } else {
+      showMessageDialog(
+        context,
+        'Listo',
+        'Solicitud guardada correctamente.',
+        onAccept: () {
+          quotaProvider.montoController.text = '0';
+          quotaProvider.monto = '0';
+          quotaProvider.docIdentidad = null;
+          quotaProvider.docRut = null;
+          quotaProvider.docCamaraCom = null;
+        },
+      );
+    }
   }
 }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:montana_mobile/pages/session/reset_password_page.dart';
 import 'package:montana_mobile/providers/password_provider.dart';
+import 'package:montana_mobile/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 class PasswordPage extends StatelessWidget {
@@ -61,66 +62,17 @@ class PasswordPage extends StatelessWidget {
       _emailController.clear();
       provider.email = '';
 
-      _showSuccessDialog(context, () {
-        Navigator.of(context).pushNamed(ResetPasswordPage.route);
-      });
+      showMessageDialog(
+        context,
+        'Listo',
+        'Correo con token de reinicio de contraseña enviado.',
+        onAccept: () {
+          Navigator.of(context).pushNamed(ResetPasswordPage.route);
+        },
+      );
     } else {
-      _showWarningDialog(context);
+      showMessageDialog(context, 'Aviso', 'Correo incorrecto.');
     }
-  }
-
-  Future<void> _showSuccessDialog(
-      BuildContext context, Function onAccept) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Listo'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text('Correo con token de reinicio de contraseña enviado.'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                onAccept();
-              },
-              child: Text('Aceptar'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<void> _showWarningDialog(BuildContext context) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Aviso'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text('Correo incorrecto.'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('Aceptar'),
-            ),
-          ],
-        );
-      },
-    );
   }
 }
 

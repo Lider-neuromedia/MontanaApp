@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:montana_mobile/pages/session/login_page.dart';
 import 'package:montana_mobile/providers/reset_password_provider.dart';
+import 'package:montana_mobile/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 class ResetPasswordPage extends StatelessWidget {
@@ -75,64 +76,17 @@ class ResetPasswordPage extends StatelessWidget {
       provider.password = '';
       provider.passwordConfirmation = '';
 
-      _showSuccessDialog(context, () {
-        Navigator.of(context).pushReplacementNamed(LoginPage.route);
-      });
+      showMessageDialog(
+        context,
+        'Listo',
+        'Contraseña actualizada correctamente, ahora puede iniciar sesión.',
+        onAccept: () {
+          Navigator.of(context).pushReplacementNamed(LoginPage.route);
+        },
+      );
     } else {
-      _showWarningDialog(context);
+      showMessageDialog(context, 'Aviso', 'Datos de reinicio incorrectos.');
     }
-  }
-
-  Future<void> _showWarningDialog(BuildContext context) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Aviso'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text('Datos de reinicio incorrectos.'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text('Aceptar'),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<void> _showSuccessDialog(
-      BuildContext context, Function onAccept) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Listo'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text(
-                    'Contraseña actualizada correctamente, ahora puede iniciar sesión.'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: onAccept,
-              child: Text('Aceptar'),
-            ),
-          ],
-        );
-      },
-    );
   }
 }
 

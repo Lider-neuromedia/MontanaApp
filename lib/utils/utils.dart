@@ -26,7 +26,7 @@ Future<void> showMessageDialog(
     barrierDismissible: false,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Text('Aviso'),
+        title: Text('$title'),
         content: SingleChildScrollView(
           child: ListBody(
             children: [
@@ -36,7 +36,7 @@ Future<void> showMessageDialog(
         ),
         actions: <Widget>[
           TextButton(
-            child: Text("$title"),
+            child: Text("Aceptar"),
             onPressed: () {
               Navigator.of(context).pop();
 

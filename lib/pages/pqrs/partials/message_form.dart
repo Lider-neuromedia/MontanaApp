@@ -8,6 +8,7 @@ import 'package:montana_mobile/providers/message_provider.dart';
 import 'package:montana_mobile/providers/pqrs_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:montana_mobile/utils/preferences.dart';
+import 'package:montana_mobile/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 class MessageForm extends StatefulWidget {
@@ -92,36 +93,11 @@ class _MessageFormState extends State<MessageForm> {
     mp.isLoading = false;
 
     if (mensaje == null) {
-      _showWarningDialog(context);
+      showMessageDialog(context, 'Aviso', 'El mensaje no se pudo enviar.');
     } else {
       _messageController.clear();
       mp.message = '';
       pp.addCreatedMessage(mensaje);
     }
-  }
-
-  Future<void> _showWarningDialog(BuildContext context) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Aviso'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: [
-                Text('El mensaje no se pudo enviar.'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('Aceptar'),
-            ),
-          ],
-        );
-      },
-    );
   }
 }

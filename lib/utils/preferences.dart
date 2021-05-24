@@ -30,7 +30,7 @@ class Preferences {
   }
 
   get session {
-    var value = _prefs.getString('session') ?? null;
+    final value = _prefs.getString('session') ?? null;
     return value != null ? sessionFromJson(value) : null;
   }
 

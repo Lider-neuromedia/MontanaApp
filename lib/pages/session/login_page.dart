@@ -3,6 +3,7 @@ import 'package:montana_mobile/pages/home/home_page.dart';
 import 'package:montana_mobile/pages/session/password_page.dart';
 import 'package:montana_mobile/providers/login_provider.dart';
 import 'package:montana_mobile/utils/preferences.dart';
+import 'package:montana_mobile/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 class LoginPage extends StatelessWidget {
@@ -10,8 +11,7 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var mediaSize = MediaQuery.of(context).size;
-
+    final mediaSize = MediaQuery.of(context).size;
     return Scaffold(
       body: Stack(
         children: [
@@ -37,7 +37,7 @@ class LoginPage extends StatelessWidget {
 class _BackgroundBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var mediaSize = MediaQuery.of(context).size;
+    final mediaSize = MediaQuery.of(context).size;
     return Transform(
       transform: Matrix4.skewY(0.15),
       child: Container(
@@ -75,7 +75,7 @@ class _LoginCardState extends State<LoginCard> {
 
   @override
   Widget build(BuildContext context) {
-    var mediaSize = MediaQuery.of(context).size;
+    final mediaSize = MediaQuery.of(context).size;
     _loginProvider = Provider.of<LoginProvider>(context);
 
     return Container(
@@ -137,33 +137,8 @@ class _LoginCardState extends State<LoginCard> {
 
       Navigator.of(context).pushReplacementNamed(HomePage.route);
     } else {
-      _showWarningDialog(context);
+      showMessageDialog(context, 'Aviso', 'Usuario y contraseña incorrectos.');
     }
-  }
-
-  Future<void> _showWarningDialog(BuildContext context) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Aviso'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text('Usuario y contraseña incorrectos.'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text('Aceptar'),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
-        );
-      },
-    );
   }
 }
 

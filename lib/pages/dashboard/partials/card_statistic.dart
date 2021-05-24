@@ -23,18 +23,17 @@ class CardStatistic extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
-
-    final Color mainColor = Theme.of(context).primaryColor;
-    final Color textColor = isMain ? Colors.white : mainColor;
-    final Color bgColor = isMain ? mainColor : Colors.white;
-
-    final TextStyle titleStyle = Theme.of(context)
-        .textTheme
-        .bodyText1
-        .copyWith(color: textColor, fontWeight: FontWeight.w700);
-    final TextStyle subtitleStyle =
-        Theme.of(context).textTheme.bodyText1.copyWith(color: textColor);
+    final size = MediaQuery.of(context).size;
+    final mainColor = Theme.of(context).primaryColor;
+    final textColor = isMain ? Colors.white : mainColor;
+    final bgColor = isMain ? mainColor : Colors.white;
+    final titleStyle = Theme.of(context).textTheme.bodyText1.copyWith(
+          color: textColor,
+          fontWeight: FontWeight.w700,
+        );
+    final subtitleStyle = Theme.of(context).textTheme.bodyText1.copyWith(
+          color: textColor,
+        );
 
     return Container(
       padding: EdgeInsets.all(10.0),

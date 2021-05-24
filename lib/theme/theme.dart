@@ -31,7 +31,7 @@ class CustomTheme {
 
   static ThemeData theme() {
     ThemeData original = ThemeData.light();
-    var textTheme = original.textTheme;
+    final textTheme = original.textTheme;
 
     return original.copyWith(
       primaryColor: mainColor,

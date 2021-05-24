@@ -61,7 +61,7 @@ class _MethodOption extends StatelessWidget {
               : Theme.of(context).textTheme.bodyText1.color,
         );
 
-    var borderRadius;
+    BorderRadius borderRadius;
     if (hasBorderLeft) {
       borderRadius = borderLeft;
     }

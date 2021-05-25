@@ -116,6 +116,7 @@ class ProductItem extends StatelessWidget {
       ),
       builder: (_) {
         return StartOrderModal(
+          showCatalogue: false,
           onPressed: () {
             Navigator.pop(context);
             openAddProduct(context);

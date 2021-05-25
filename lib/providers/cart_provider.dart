@@ -29,6 +29,7 @@ class CartProvider with ChangeNotifier {
 
   set clientId(int value) {
     _cart.clientId = value;
+    _cart.clean();
     notifyListeners();
   }
 
@@ -123,6 +124,13 @@ class Cart {
   List<CartProduct> products;
 
   Cart() {
+    reference = '';
+    paymentMethod = '';
+    discount = 0;
+    products = [];
+  }
+
+  void clean() {
     reference = '';
     paymentMethod = '';
     discount = 0;

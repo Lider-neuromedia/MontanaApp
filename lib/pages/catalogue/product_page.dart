@@ -164,6 +164,7 @@ class _ProductContent extends StatelessWidget {
       ),
       builder: (_) {
         return StartOrderModal(
+          showCatalogue: false,
           onPressed: () {
             Navigator.pop(context);
             _openAddProduct(context);

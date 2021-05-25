@@ -97,6 +97,7 @@ class _CreateOrderButton extends StatelessWidget {
       ),
       builder: (_) {
         return StartOrderModal(
+          showCatalogue: false,
           onPressed: () {
             Navigator.pop(context);
             Navigator.of(context).pushNamed(CartPage.route);

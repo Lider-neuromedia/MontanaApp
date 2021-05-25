@@ -13,9 +13,11 @@ class StartOrderModal extends StatefulWidget {
   const StartOrderModal({
     Key key,
     @required this.onPressed,
+    @required this.showCatalogue,
   }) : super(key: key);
 
   final Function onPressed;
+  final bool showCatalogue;
 
   @override
   _StartOrderModalState createState() => _StartOrderModalState();
@@ -59,7 +61,7 @@ class _StartOrderModalState extends State<StartOrderModal> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final cartProvider = Provider.of<CartProvider>(context, listen: false);
+    final cartProvider = Provider.of<CartProvider>(context);
 
     return Container(
       height: size.height / 2,
@@ -99,30 +101,35 @@ class _StartOrderModalState extends State<StartOrderModal> {
                         ),
                 ],
               ),
-              _FieldBox(
-                children: [
-                  _LabelField(label: 'CATALOGO'),
-                  SizedBox(height: 10.0),
-                  _loading
-                      ? LoadingContainer()
-                      : DropdownList(
-                          onChanged: (dynamic value) {
-                            cartProvider.catalogueId = value as int;
-                          },
-                          value: cartProvider.catalogueId,
-                          items: _catalogues
-                              .map<Map<String, dynamic>>((Catalogo cliente) => {
-                                    'id': cliente.id,
-                                    'value': cliente.titulo,
-                                  })
-                              .toList(),
-                        ),
-                ],
-              ),
+              !widget.showCatalogue
+                  ? Container()
+                  : _FieldBox(
+                      children: [
+                        _LabelField(label: 'CATALOGO'),
+                        SizedBox(height: 10.0),
+                        _loading
+                            ? LoadingContainer()
+                            : DropdownList(
+                                onChanged: (dynamic value) {
+                                  cartProvider.catalogueId = value as int;
+                                },
+                                value: cartProvider.catalogueId,
+                                items: _catalogues
+                                    .map<Map<String, dynamic>>(
+                                      (Catalogo cliente) => {
+                                        'id': cliente.id,
+                                        'value': cliente.titulo,
+                                      },
+                                    )
+                                    .toList(),
+                              ),
+                      ],
+                    ),
               _ContinueButton(
                 icon: Icons.add,
                 label: 'Continuar',
-                onPressed: widget.onPressed,
+                onPressed:
+                    cartProvider.clientId == null ? null : widget.onPressed,
               ),
             ],
           ),
@@ -205,6 +212,7 @@ class _ContinueButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cartProvider = Provider.of<CartProvider>(context);
+    final bool isBlocked = onPressed == null;
 
     return ElevatedButton(
       onPressed: cartProvider.clientId == null ? null : onPressed,
@@ -214,7 +222,7 @@ class _ContinueButton extends StatelessWidget {
         children: [
           Container(
             decoration: BoxDecoration(
-              color: Theme.of(context).primaryColor,
+              color: isBlocked ? Colors.grey : Theme.of(context).primaryColor,
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
@@ -240,7 +248,7 @@ class _ContinueButton extends StatelessWidget {
           right: 10.0,
         ),
         side: BorderSide(
-          color: Theme.of(context).primaryColor,
+          color: isBlocked ? Colors.grey : Theme.of(context).primaryColor,
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30.0),

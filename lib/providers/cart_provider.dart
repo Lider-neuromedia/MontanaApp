@@ -8,10 +8,28 @@ import 'package:mime_type/mime_type.dart';
 import 'package:montana_mobile/models/product.dart';
 import 'package:montana_mobile/models/session.dart';
 import 'package:montana_mobile/models/store.dart';
+import 'package:montana_mobile/providers/validation_field.dart';
 import 'package:montana_mobile/utils/preferences.dart';
 
 class CartProvider with ChangeNotifier {
   final String _url = dotenv.env['API_URL'];
+  final List<PaymentMethod> paymentMethods = _paymentMethods;
+
+  ValidationField _notes = ValidationField();
+  String get notes => _notes.value;
+  String get notesError => _notes.error;
+
+  set notes(String value) {
+    final errorLength = ValidationField.validateLength(value, max: 120);
+
+    if (errorLength != null) {
+      _notes = ValidationField(error: errorLength);
+    } else {
+      _notes = ValidationField(value: value);
+    }
+
+    notifyListeners();
+  }
 
   Cart _cart = Cart();
   Cart get cart => _cart;
@@ -22,6 +40,20 @@ class CartProvider with ChangeNotifier {
 
   set catalogueId(int value) {
     _catalogueId = value;
+    notifyListeners();
+  }
+
+  String get paymentMethod => _cart.paymentMethod;
+
+  set paymentMethod(String value) {
+    _cart.paymentMethod = value;
+    notifyListeners();
+  }
+
+  int get discount => _cart.discount;
+
+  set discount(int value) {
+    _cart.discount = value;
     notifyListeners();
   }
 
@@ -60,6 +92,12 @@ class CartProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  bool get canFinalize {
+    if (_cart.products.length == 0) return false;
+    if (_cart.clientId == null) return false;
+    return true;
+  }
+
   bool get canSend {
     if (_isLoading) return false;
     if (!_cart.isValid) return false;
@@ -76,7 +114,20 @@ class CartProvider with ChangeNotifier {
     return responseTiendasFromJson(response.body);
   }
 
+  Future<String> getOrderCode() async {
+    final preferences = Preferences();
+    final url = Uri.parse('$_url/generate-code');
+    final response = await http.get(url, headers: preferences.signedHeaders);
+    final decodedResponse = json.decode(response.body);
+
+    if (response.statusCode != 200) return '';
+    return decodedResponse['code'];
+  }
+
   Future<bool> createOrder() async {
+    final orderCode = await getOrderCode();
+    if (orderCode.isEmpty) return false;
+
     final fileFirma = await http.MultipartFile.fromPath(
       'firma',
       sign.path,
@@ -95,7 +146,7 @@ class CartProvider with ChangeNotifier {
     request.files.add(fileFirma);
     request.fields['cliente'] = "${_cart.clientId}";
     request.fields['vendedor'] = "${user.id}";
-    request.fields['codigo_pedido'] = "${_cart.reference}";
+    request.fields['codigo_pedido'] = "$orderCode";
     request.fields['descuento'] = "${_cart.discount}";
     request.fields['total_pedido'] = "${_cart.total}";
     request.fields['forma_pago'] = "${_cart.paymentMethod}";
@@ -118,35 +169,30 @@ class CartProvider with ChangeNotifier {
 
 class Cart {
   int clientId;
-  String reference;
   String paymentMethod;
   int discount;
   List<CartProduct> products;
 
   Cart() {
-    reference = '';
-    paymentMethod = '';
+    paymentMethod = 'contado';
     discount = 0;
     products = [];
   }
 
   void clean() {
-    reference = '';
-    paymentMethod = '';
+    paymentMethod = 'contado';
     discount = 0;
     products = [];
   }
 
   bool get isValid {
     if (total == null) return false;
-    if (total < 0) return false;
     if (discount == null) return false;
-    if (discount < 0) return false;
     if (paymentMethod == null) return false;
-    if (paymentMethod.isEmpty) return false;
-    if (reference == null) return false;
-    if (reference.isEmpty) return false;
     if (clientId == null) return false;
+    if (total < 0) return false;
+    if (discount < 0 || discount > 100) return false;
+    if (paymentMethod.isEmpty) return false;
     if (products.length == 0) return false;
     return true;
   }
@@ -283,3 +329,18 @@ class CartStore {
         "cantidad": quantity,
       };
 }
+
+class PaymentMethod {
+  static const CONTADO = "contado";
+  static const CREDITO = "credito";
+
+  String id;
+  String value;
+
+  PaymentMethod(this.id, this.value);
+}
+
+final List<PaymentMethod> _paymentMethods = [
+  PaymentMethod(PaymentMethod.CONTADO, 'Contado'),
+  PaymentMethod(PaymentMethod.CREDITO, 'Crédito 45 días'),
+];

@@ -81,6 +81,8 @@ class _CartTotals extends StatelessWidget {
 class _CartActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final cartProvider = Provider.of<CartProvider>(context);
+
     return Container(
       color: Colors.grey[100],
       padding: EdgeInsets.symmetric(
@@ -97,7 +99,9 @@ class _CartActions extends StatelessWidget {
             backgroundColor: CustomTheme.green2Color,
             iconColor: Colors.white,
             textColor: Colors.white,
-            onPressed: () => openFinalizeOrder(context),
+            onPressed: cartProvider.canFinalize
+                ? () => openFinalizeOrder(context)
+                : null,
           ),
           ActionButton(
             label: "Cancelar",

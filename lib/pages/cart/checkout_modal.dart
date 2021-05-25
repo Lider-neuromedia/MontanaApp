@@ -1,12 +1,19 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:montana_mobile/pages/cart/partials/payment_methods_field.dart';
 import 'package:montana_mobile/pages/catalogue/partials/action_button.dart';
+import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
+import 'package:montana_mobile/pages/quota_expansion/partials/file_button.dart';
+import 'package:montana_mobile/providers/cart_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
+import 'package:montana_mobile/utils/utils.dart';
+import 'package:montana_mobile/widgets/DropdownList.dart';
+import 'package:provider/provider.dart';
 
 class CheckoutModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final cartProvider = Provider.of<CartProvider>(context);
     final size = MediaQuery.of(context).size;
 
     return Container(
@@ -21,16 +28,72 @@ class CheckoutModal extends StatelessWidget {
       child: Column(
         children: [
           _CheckoutForm(),
-          _CheckoutActions(),
+          cartProvider.isLoading
+              ? LoadingContainer()
+              : _CheckoutActions(
+                  onFinish: cartProvider.canSend
+                      ? () => finishOrder(context, cartProvider)
+                      : null,
+                ),
         ],
       ),
     );
   }
+
+  Future<void> finishOrder(
+      BuildContext context, CartProvider cartProvider) async {
+    cartProvider.isLoading = true;
+    bool success = await cartProvider.createOrder();
+    cartProvider.isLoading = false;
+
+    if (success) {
+      cartProvider.notes = '';
+
+      cartProvider.cart.clean();
+
+      showMessageDialog(context, 'Listo', 'Pedido creado.', onAccept: () {
+        Navigator.pop(context);
+      });
+    } else {
+      showMessageDialog(context, 'Aviso', 'Datos de pedido incorrectos.');
+    }
+  }
 }
 
-class _CheckoutForm extends StatelessWidget {
+class _CheckoutForm extends StatefulWidget {
+  const _CheckoutForm({Key key}) : super(key: key);
+
+  @override
+  __CheckoutFormState createState() => __CheckoutFormState();
+}
+
+class __CheckoutFormState extends State<_CheckoutForm> {
+  TextEditingController _notesController;
+
+  @override
+  void initState() {
+    final cartProvider = Provider.of<CartProvider>(context, listen: false);
+    super.initState();
+    _notesController = TextEditingController(text: cartProvider.notes);
+  }
+
+  @override
+  void dispose() {
+    _notesController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final discountList = Iterable<int>.generate(100).toList();
+    final cartProvider = Provider.of<CartProvider>(context);
+    final counterTheme = Theme.of(context).textTheme.bodyText1.copyWith(
+          color: CustomTheme.mainColor,
+        );
+
+    const minSpace = const SizedBox(height: 10.0);
+    const maxSpace = const SizedBox(height: 15.0);
+
     return Expanded(
       child: SingleChildScrollView(
         child: Container(
@@ -39,34 +102,55 @@ class _CheckoutForm extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               _TitleCheckout(),
-              SizedBox(height: 10.0),
+              const SizedBox(height: 20.0),
               _LabelField(label: 'Forma de pago'),
-              SizedBox(height: 5.0),
+              minSpace,
               PaymentMethodsField(),
-              SizedBox(height: 15.0),
+              maxSpace,
+              _LabelField(label: 'Firma'),
+              minSpace,
+              FileButton(
+                value: cartProvider.descriptionSign,
+                onSelected: (File file) {
+                  cartProvider.sign = file;
+                },
+              ),
+              maxSpace,
               _LabelField(label: 'Descuento asignado'),
-              SizedBox(height: 10.0),
-              TextField(
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  isCollapsed: true,
-                  contentPadding: EdgeInsets.all(10.0),
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: CustomTheme.greyColor,
-                      width: 1.0,
-                    ),
-                  ),
-                ),
+              minSpace,
+              DropdownList(
+                onChanged: (dynamic value) {
+                  cartProvider.discount = value as int;
+                },
+                value: cartProvider.discount,
+                items: discountList
+                    .map<Map<String, dynamic>>((int discount) => {
+                          'id': discount,
+                          'value': "$discount%",
+                        })
+                    .toList(),
               ),
-              SizedBox(height: 10.0),
+              maxSpace,
               _LabelField(label: 'Notas adicionales'),
-              SizedBox(height: 10.0),
+              minSpace,
               TextField(
-                maxLines: 5,
+                controller: _notesController,
+                maxLines: 4,
+                maxLength: 120,
+                buildCounter: (_,
+                    {int currentLength, int maxLength, bool isFocused}) {
+                  return Text(
+                    "$currentLength/$maxLength",
+                    style: counterTheme,
+                  );
+                },
+                onChanged: (String value) {
+                  cartProvider.notes = value;
+                },
                 decoration: InputDecoration(
                   isCollapsed: true,
                   contentPadding: EdgeInsets.all(10.0),
+                  errorText: cartProvider.notesError,
                   border: OutlineInputBorder(
                     borderSide: BorderSide(
                       color: CustomTheme.greyColor,
@@ -75,7 +159,7 @@ class _CheckoutForm extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: 5.0),
+              maxSpace,
             ],
           ),
         ),
@@ -118,6 +202,13 @@ class _LabelField extends StatelessWidget {
 }
 
 class _CheckoutActions extends StatelessWidget {
+  const _CheckoutActions({
+    Key key,
+    @required this.onFinish,
+  }) : super(key: key);
+
+  final Function onFinish;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -136,7 +227,7 @@ class _CheckoutActions extends StatelessWidget {
             backgroundColor: CustomTheme.green2Color,
             iconColor: Colors.white,
             textColor: Colors.white,
-            onPressed: () => Navigator.pop(context),
+            onPressed: onFinish,
           ),
           ActionButton(
             label: "Cancelar",

@@ -1,30 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:montana_mobile/providers/cart_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
+import 'package:provider/provider.dart';
 
 class PaymentMethodsField extends StatelessWidget {
-  final List<String> paymentMethods = ['Contado', 'Crédito 45 días'];
-
   @override
   Widget build(BuildContext context) {
-    paymentMethods.asMap().forEach((key, value) {});
-    List<Widget> methodsOptions = [];
-    String selected = 'Contado';
-
-    paymentMethods.asMap().forEach(
-      (int index, String method) {
-        methodsOptions.add(_MethodOption(
-          method: method,
-          selected: selected == method,
-          hasBorderLeft: index == 0,
-          hasBorderRight: index == paymentMethods.length - 1,
-        ));
-      },
-    );
+    final cartProvider = Provider.of<CartProvider>(context);
+    final countMethods = cartProvider.paymentMethods.length;
+    int index = -1;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       crossAxisAlignment: CrossAxisAlignment.center,
-      children: methodsOptions,
+      children: cartProvider.paymentMethods
+          .map<_MethodOption>((PaymentMethod method) {
+        index++;
+        final bool isSelected = cartProvider.paymentMethod == method.id;
+
+        return _MethodOption(
+          onTap: () => cartProvider.paymentMethod = method.id,
+          method: method,
+          selected: isSelected,
+          hasBorderRight: index == countMethods - 1,
+          hasBorderLeft: index == 0,
+        );
+      }).toList(),
     );
   }
 }
@@ -36,12 +37,14 @@ class _MethodOption extends StatelessWidget {
     @required this.selected,
     @required this.hasBorderLeft,
     @required this.hasBorderRight,
+    @required this.onTap,
   }) : super(key: key);
 
-  final String method;
+  final PaymentMethod method;
   final bool selected;
   final bool hasBorderLeft;
   final bool hasBorderRight;
+  final Function onTap;
 
   final borderLeft = BorderRadius.only(
     bottomLeft: Radius.circular(10.0),
@@ -62,6 +65,7 @@ class _MethodOption extends StatelessWidget {
         );
 
     BorderRadius borderRadius;
+
     if (hasBorderLeft) {
       borderRadius = borderLeft;
     }
@@ -85,7 +89,7 @@ class _MethodOption extends StatelessWidget {
           clipBehavior: Clip.hardEdge,
           borderRadius: borderRadius,
           child: InkWell(
-            onTap: () => print(method),
+            onTap: onTap,
             borderRadius: borderRadius,
             child: Ink(
               padding: EdgeInsets.symmetric(
@@ -97,7 +101,7 @@ class _MethodOption extends StatelessWidget {
                 color: normalColor,
               ),
               child: Text(
-                method,
+                method.value,
                 style: textStyle,
                 textAlign: TextAlign.center,
               ),

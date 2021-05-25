@@ -1,100 +1,167 @@
 import 'package:flutter/material.dart';
+import 'package:montana_mobile/models/product.dart';
+import 'package:montana_mobile/models/store.dart';
 import 'package:montana_mobile/pages/catalogue/partials/action_button.dart';
+import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
+import 'package:montana_mobile/providers/cart_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
+import 'package:provider/provider.dart';
 
-class AddProductModal extends StatelessWidget {
+class AddProductModal extends StatefulWidget {
+  const AddProductModal({
+    Key key,
+    @required this.product,
+  }) : super(key: key);
+
+  final Producto product;
+
+  @override
+  _AddProductModalState createState() => _AddProductModalState();
+}
+
+class _AddProductModalState extends State<AddProductModal> {
+  CartProvider _cartProvider;
+  List<Tienda> _stores = [];
+  bool _loading = false;
+
+  int get totalAddStock => _stores.length > 0
+      ? _stores.map((store) => store.stock).reduce((a, b) => a + b)
+      : 0;
+
+  int get availableStock {
+    int productStock = _cartProvider != null
+        ? _cartProvider.cart.getProductStock(widget.product.idProducto)
+        : 0;
+    return widget.product.stock - (totalAddStock + productStock);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    () async {
+      await Future.delayed(Duration.zero);
+      _cartProvider = Provider.of<CartProvider>(context, listen: false);
+      setState(() => _loading = true);
+
+      final stores = await _cartProvider.getStores(_cartProvider.clientId);
+
+      setState(() {
+        _stores = stores;
+        _loading = false;
+      });
+    }();
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final List<_StoreStock> stores = _storesListTest;
 
-    List<Widget> list = [
-      _LabelField(label: 'REFERENCIA'),
-      SizedBox(height: 5.0),
+    List<Widget> storesList = [
+      const _LabelField(label: 'REFERENCIA'),
+      const SizedBox(height: 5.0),
       _BoxField(
-        child: _ValueField(
-          value: 'KLI-39823098209',
-        ),
+        child: _ValueField(value: widget.product.referencia),
       ),
-      SizedBox(height: 20.0),
-      _LabelField(label: 'TIENDAS'),
+      const SizedBox(height: 15.0),
+      const _LabelField(label: 'STOCK DISPONIBLE'),
+      const SizedBox(height: 5.0),
+      _BoxField(
+        child: _ValueField(value: "$availableStock"),
+      ),
+      const SizedBox(height: 15.0),
+      const _LabelField(label: 'TIENDAS'),
     ];
 
-    stores.asMap().forEach((int index, storeStock) {
-      list.add(SizedBox(height: 15.0));
-      list.add(_BoxField(
+    _stores.asMap().forEach((int index, store) {
+      storesList.add(const SizedBox(height: 15.0));
+      storesList.add(_BoxField(
         child: _ProductStoreStock(
-          storeStock: storeStock,
+          store: store,
+          onChangeStock: (int stock) {
+            setState(() => store.stock = stock);
+          },
         ),
       ));
     });
 
-    list.add(SizedBox(height: 25.0));
+    storesList.add(const SizedBox(height: 25.0));
 
     return Container(
       height: size.height * 0.85,
       color: Colors.white,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Expanded(
-            child: SingleChildScrollView(
-              child: Container(
-                color: Colors.white,
-                padding: EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: list,
+      child: _loading
+          ? const LoadingContainer()
+          : Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Expanded(
+                  child: ListView(
+                    children: storesList,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 20.0,
+                      vertical: 25.0,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ),
-          Container(
-            color: Colors.grey[100],
-            padding: EdgeInsets.symmetric(
-              horizontal: 10.0,
-              vertical: 20.0,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                ActionButton(
-                  label: "Añadir al pedido",
-                  icon: Icons.add,
-                  borderColor: CustomTheme.green2Color,
-                  backgroundColor: CustomTheme.green2Color,
-                  iconColor: Colors.white,
-                  textColor: Colors.white,
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                ActionButton(
-                  label: "Cancelar",
-                  icon: Icons.close,
-                  borderColor: CustomTheme.redColor,
-                  backgroundColor: Colors.grey[200],
-                  iconColor: CustomTheme.redColor,
-                  textColor: CustomTheme.redColor,
-                  onPressed: () => Navigator.pop(context),
+                Container(
+                  color: Colors.grey[100],
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 10.0,
+                    vertical: 20.0,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      ActionButton(
+                        label: "Añadir al pedido",
+                        icon: Icons.add,
+                        borderColor: CustomTheme.green2Color,
+                        backgroundColor: CustomTheme.green2Color,
+                        iconColor: Colors.white,
+                        textColor: Colors.white,
+                        onPressed: totalAddStock > 0 && availableStock >= 0
+                            ? () => _addProduct(context, _cartProvider)
+                            : null,
+                      ),
+                      ActionButton(
+                        label: "Cancelar",
+                        icon: Icons.close,
+                        borderColor: CustomTheme.redColor,
+                        backgroundColor: Colors.grey[200],
+                        iconColor: CustomTheme.redColor,
+                        textColor: CustomTheme.redColor,
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
-          ),
-        ],
-      ),
     );
+  }
+
+  void _addProduct(BuildContext context, CartProvider cartProvider) {
+    _stores.asMap().forEach((int index, Tienda store) {
+      if (store.stock > 0) {
+        cartProvider.addProduct(widget.product, store, store.stock);
+      }
+    });
+
+    Navigator.pop(context);
   }
 }
 
 class _ProductStoreStock extends StatelessWidget {
   const _ProductStoreStock({
     Key key,
-    this.storeStock,
+    @required this.store,
+    @required this.onChangeStock,
   }) : super(key: key);
 
-  final _StoreStock storeStock;
+  final Tienda store;
+  final Function(int) onChangeStock;
 
   @override
   Widget build(BuildContext context) {
@@ -102,42 +169,55 @@ class _ProductStoreStock extends StatelessWidget {
     final boldStyle = Theme.of(context).textTheme.bodyText1.copyWith(
           fontWeight: FontWeight.bold,
         );
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(storeStock.place, style: boldStyle),
-            Text(storeStock.local, style: regularStyle),
+            Text("${store.lugar}", style: boldStyle),
+            Text("${store.local}", style: regularStyle),
           ],
         ),
         Expanded(child: Container()),
-        ElevatedButton(
-          child: Icon(Icons.remove, size: 20.0),
-          style: ElevatedButton.styleFrom(
-            primary: Theme.of(context).primaryColor,
-            padding: EdgeInsets.all(3.0),
-            minimumSize: Size(0, 0),
-          ),
-          onPressed: () {},
+        _StockButton(
+          icon: Icons.remove,
+          onPressed:
+              store.stock > 0 ? () => onChangeStock(store.stock - 1) : null,
         ),
         _BoxField(
-          child: Text(
-            storeStock.stock.toString(),
-            style: regularStyle,
-          ),
+          child: Text("${store.stock}", style: regularStyle),
         ),
-        ElevatedButton(
-          child: Icon(Icons.add, size: 20.0),
-          style: ElevatedButton.styleFrom(
-            primary: Theme.of(context).primaryColor,
-            padding: EdgeInsets.all(3.0),
-            minimumSize: Size(0, 0),
-          ),
-          onPressed: () {},
+        _StockButton(
+          icon: Icons.add,
+          onPressed: () => onChangeStock(store.stock + 1),
         ),
       ],
+    );
+  }
+}
+
+class _StockButton extends StatelessWidget {
+  const _StockButton({
+    Key key,
+    @required this.icon,
+    @required this.onPressed,
+  }) : super(key: key);
+
+  final Function onPressed;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      child: Icon(icon, size: 20.0),
+      style: ElevatedButton.styleFrom(
+        primary: Theme.of(context).primaryColor,
+        padding: EdgeInsets.all(3.0),
+        minimumSize: Size(0, 0),
+      ),
     );
   }
 }
@@ -179,7 +259,7 @@ class _ValueField extends StatelessWidget {
 class _BoxField extends StatelessWidget {
   const _BoxField({
     Key key,
-    this.child,
+    @required this.child,
   }) : super(key: key);
 
   final Widget child;
@@ -201,63 +281,4 @@ class _BoxField extends StatelessWidget {
       ),
     );
   }
-}
-
-final List<_StoreStock> _storesListTest = [
-  _StoreStock(
-    1,
-    'CC Único',
-    'L 204',
-    102,
-    'Cali',
-    'Valle del Cauca',
-    'Calle 13 No. 4 - 66',
-  ),
-  _StoreStock(
-    2,
-    'San Andresito',
-    'L 118',
-    102,
-    'Cali',
-    'Valle del Cauca',
-    'Avenida 13 No. 4 - 66',
-  ),
-  _StoreStock(
-    3,
-    'CC Unicentro',
-    'L 204',
-    102,
-    'Medellín',
-    'Antioquia',
-    'Carrera 13 No. 4 - 66',
-  ),
-  _StoreStock(
-    4,
-    'Granada',
-    'Calle 4 No. 6 - 89',
-    102,
-    'Bogotá',
-    'Cundinamarca',
-    'Calle 4 No. 33 - 6',
-  ),
-];
-
-class _StoreStock {
-  _StoreStock(
-    this.id,
-    this.place,
-    this.local,
-    this.stock,
-    this.city,
-    this.department,
-    this.address,
-  );
-
-  int id;
-  String place;
-  String local;
-  int stock;
-  String city;
-  String department;
-  String address;
 }

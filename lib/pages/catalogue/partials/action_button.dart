@@ -31,7 +31,7 @@ class ActionButton extends StatelessWidget {
           right: 10.0,
         ),
         side: BorderSide(
-          color: borderColor,
+          color: onPressed == null ? Colors.grey : borderColor,
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30.0),
@@ -44,10 +44,10 @@ class ActionButton extends StatelessWidget {
         children: [
           Container(
             decoration: BoxDecoration(
-              color: backgroundColor,
+              color: onPressed == null ? Colors.grey : backgroundColor,
               shape: BoxShape.circle,
               border: Border.all(
-                color: borderColor,
+                color: onPressed == null ? Colors.grey : borderColor,
                 width: 2.0,
               ),
               boxShadow: [

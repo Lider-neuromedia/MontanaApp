@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:montana_mobile/models/catalogue.dart';
+import 'package:montana_mobile/models/client.dart';
+import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
+import 'package:montana_mobile/providers/cart_provider.dart';
+import 'package:montana_mobile/providers/catalogues_provider.dart';
+import 'package:montana_mobile/providers/clients_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
+import 'package:montana_mobile/widgets/DropdownList.dart';
+import 'package:provider/provider.dart';
 
-class StartOrderModal extends StatelessWidget {
+class StartOrderModal extends StatefulWidget {
   const StartOrderModal({
     Key key,
     @required this.onPressed,
@@ -10,8 +18,48 @@ class StartOrderModal extends StatelessWidget {
   final Function onPressed;
 
   @override
+  _StartOrderModalState createState() => _StartOrderModalState();
+}
+
+class _StartOrderModalState extends State<StartOrderModal> {
+  ClientsProvider _clientsProvider;
+  CataloguesProvider _cataloguesProvider;
+
+  List<Cliente> _clients = [];
+  List<Catalogo> _catalogues = [];
+  bool _loading = false;
+
+  @override
+  void initState() {
+    _clientsProvider = Provider.of<ClientsProvider>(
+      context,
+      listen: false,
+    );
+    _cataloguesProvider = Provider.of<CataloguesProvider>(
+      context,
+      listen: false,
+    );
+    _loadData();
+    super.initState();
+  }
+
+  void _loadData() async {
+    setState(() => _loading = true);
+
+    final clients = await _clientsProvider.getClients();
+    final catalogues = await _cataloguesProvider.getCatalogues();
+
+    setState(() {
+      _loading = false;
+      _clients = clients;
+      _catalogues = catalogues;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final cartProvider = Provider.of<CartProvider>(context, listen: false);
 
     return Container(
       height: size.height / 2,
@@ -35,31 +83,46 @@ class StartOrderModal extends StatelessWidget {
                 children: [
                   _LabelField(label: 'CLIENTE'),
                   SizedBox(height: 10.0),
-                  _DropdownList(
-                    values: [
-                      'Noreña Loaiza William',
-                      'Otro Cliente',
-                    ],
-                  ),
+                  _loading
+                      ? LoadingContainer()
+                      : DropdownList(
+                          onChanged: (dynamic value) {
+                            cartProvider.clientId = value as int;
+                          },
+                          value: cartProvider.clientId,
+                          items: _clients
+                              .map<Map<String, dynamic>>((Cliente cliente) => {
+                                    'id': cliente.id,
+                                    'value': cliente.nombreCompleto,
+                                  })
+                              .toList(),
+                        ),
                 ],
               ),
               _FieldBox(
                 children: [
                   _LabelField(label: 'CATALOGO'),
                   SizedBox(height: 10.0),
-                  _DropdownList(
-                    values: [
-                      'Catalogo 1',
-                      'Catalogo 2',
-                      'Catalogo 3',
-                    ],
-                  ),
+                  _loading
+                      ? LoadingContainer()
+                      : DropdownList(
+                          onChanged: (dynamic value) {
+                            cartProvider.catalogueId = value as int;
+                          },
+                          value: cartProvider.catalogueId,
+                          items: _catalogues
+                              .map<Map<String, dynamic>>((Catalogo cliente) => {
+                                    'id': cliente.id,
+                                    'value': cliente.titulo,
+                                  })
+                              .toList(),
+                        ),
                 ],
               ),
               _ContinueButton(
                 icon: Icons.add,
                 label: 'Continuar',
-                onPressed: onPressed,
+                onPressed: widget.onPressed,
               ),
             ],
           ),
@@ -127,58 +190,6 @@ class _LabelField extends StatelessWidget {
   }
 }
 
-class _DropdownList extends StatefulWidget {
-  _DropdownList({
-    Key key,
-    this.values,
-  }) : super(key: key);
-
-  final List<String> values;
-
-  @override
-  __DropdownListState createState() => __DropdownListState();
-}
-
-class __DropdownListState extends State<_DropdownList> {
-  String value;
-
-  @override
-  Widget build(BuildContext context) {
-    final valueStyle = Theme.of(context).textTheme.bodyText1.copyWith(
-          fontWeight: FontWeight.w700,
-        );
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: 20.0,
-      ),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.0),
-        border: Border.all(
-          color: CustomTheme.greyColor,
-        ),
-      ),
-      child: DropdownButton<String>(
-        icon: const Icon(Icons.keyboard_arrow_down),
-        underline: Container(height: 0),
-        isExpanded: true,
-        style: valueStyle,
-        elevation: 16,
-        iconSize: 24,
-        value: value,
-        onChanged: (String newValue) {
-          setState(() => value = newValue);
-        },
-        items: widget.values.map<DropdownMenuItem<String>>((String value) {
-          return DropdownMenuItem<String>(
-            child: Text(value),
-            value: value,
-          );
-        }).toList(),
-      ),
-    );
-  }
-}
-
 class _ContinueButton extends StatelessWidget {
   const _ContinueButton({
     Key key,
@@ -193,8 +204,10 @@ class _ContinueButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cartProvider = Provider.of<CartProvider>(context);
+
     return ElevatedButton(
-      onPressed: onPressed,
+      onPressed: cartProvider.clientId == null ? null : onPressed,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,

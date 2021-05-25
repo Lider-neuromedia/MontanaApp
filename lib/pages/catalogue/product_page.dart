@@ -41,9 +41,8 @@ class _ProductPageState extends State<ProductPage> {
 
   @override
   Widget build(BuildContext context) {
-    final ProductsProvider productsProvider =
-        Provider.of<ProductsProvider>(context);
-    final int productId = ModalRoute.of(context).settings.arguments as int;
+    final productsProvider = Provider.of<ProductsProvider>(context);
+    final productId = ModalRoute.of(context).settings.arguments as int;
 
     return Scaffold(
       backgroundColor: CustomTheme.grey3Color,
@@ -185,9 +184,7 @@ class _ProductContent extends StatelessWidget {
           topRight: Radius.circular(30.0),
         ),
       ),
-      builder: (_) {
-        return AddProductModal();
-      },
+      builder: (_) => AddProductModal(product: product),
     );
   }
 }

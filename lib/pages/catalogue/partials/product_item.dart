@@ -136,9 +136,7 @@ class ProductItem extends StatelessWidget {
           topRight: Radius.circular(30.0),
         ),
       ),
-      builder: (_) {
-        return AddProductModal();
-      },
+      builder: (_) => AddProductModal(product: product),
     );
   }
 }

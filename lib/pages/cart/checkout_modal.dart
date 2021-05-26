@@ -1,9 +1,8 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:montana_mobile/pages/cart/partials/payment_methods_field.dart';
+import 'package:montana_mobile/pages/cart/partials/sign_box.dart';
 import 'package:montana_mobile/pages/catalogue/partials/action_button.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
-import 'package:montana_mobile/pages/quota_expansion/partials/file_button.dart';
 import 'package:montana_mobile/providers/cart_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:montana_mobile/utils/utils.dart';
@@ -17,7 +16,7 @@ class CheckoutModal extends StatelessWidget {
     final size = MediaQuery.of(context).size;
 
     return Container(
-      height: size.height * 0.80,
+      height: size.height * 0.90,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
@@ -103,20 +102,15 @@ class __CheckoutFormState extends State<_CheckoutForm> {
             children: [
               _TitleCheckout(),
               const SizedBox(height: 20.0),
-              _LabelField(label: 'Forma de pago'),
+              const _LabelField(label: 'Forma de pago'),
               minSpace,
               PaymentMethodsField(),
               maxSpace,
-              _LabelField(label: 'Firma'),
+              const _LabelField(label: 'Firma'),
               minSpace,
-              FileButton(
-                value: cartProvider.descriptionSign,
-                onSelected: (File file) {
-                  cartProvider.sign = file;
-                },
-              ),
+              SignBox(),
               maxSpace,
-              _LabelField(label: 'Descuento asignado'),
+              const _LabelField(label: 'Descuento asignado'),
               minSpace,
               DropdownList(
                 onChanged: (dynamic value) {
@@ -131,7 +125,7 @@ class __CheckoutFormState extends State<_CheckoutForm> {
                     .toList(),
               ),
               maxSpace,
-              _LabelField(label: 'Notas adicionales'),
+              const _LabelField(label: 'Notas adicionales'),
               minSpace,
               TextField(
                 controller: _notesController,

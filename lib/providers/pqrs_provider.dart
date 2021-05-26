@@ -76,39 +76,36 @@ class PqrsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  List<Ticket> _searchTickets = [];
-  List<Ticket> get searchTickets => _searchTickets;
   String _search = '';
   String get search => _search;
+  bool get isSearchActive => _search.isNotEmpty && searchTickets.length == 0;
 
   set search(String value) {
     _search = value.toLowerCase();
-
-    if (_search.isNotEmpty) {
-      _searchTickets = [];
-      _searchTickets = _tickets.where((ticket) {
-        bool match = false;
-        String nombreCliente = "${ticket.clienteNombre.toLowerCase()}";
-        String nombreVendedor = "${ticket.vendedorNombre.toLowerCase()}";
-        String codigo = "${ticket.codigo}";
-        String estado = "${ticket.estado}";
-        String fechaRegistro = "${formatDate(ticket.fechaRegistro)}";
-        String idPqrs = "${ticket.idPqrs}";
-
-        if (nombreCliente.indexOf(_search) != -1 ||
-            nombreVendedor.indexOf(_search) != -1 ||
-            codigo.indexOf(_search) != -1 ||
-            estado.indexOf(_search) != -1 ||
-            fechaRegistro.indexOf(_search) != -1 ||
-            idPqrs.indexOf(_search) != -1) {
-          match = true;
-        }
-
-        return match;
-      }).toList();
-    }
-
     notifyListeners();
+  }
+
+  List<Ticket> get searchTickets {
+    return _tickets.where((ticket) {
+      bool match = false;
+      String nombreCliente = "${ticket.clienteNombre.toLowerCase()}";
+      String nombreVendedor = "${ticket.vendedorNombre.toLowerCase()}";
+      String codigo = "${ticket.codigo}";
+      String estado = "${ticket.estado}";
+      String fechaRegistro = "${formatDate(ticket.fechaRegistro)}";
+      String idPqrs = "${ticket.idPqrs}";
+
+      if (nombreCliente.indexOf(_search) != -1 ||
+          nombreVendedor.indexOf(_search) != -1 ||
+          codigo.indexOf(_search) != -1 ||
+          estado.indexOf(_search) != -1 ||
+          fechaRegistro.indexOf(_search) != -1 ||
+          idPqrs.indexOf(_search) != -1) {
+        match = true;
+      }
+
+      return match;
+    }).toList();
   }
 
   Future<void> addCreatedMessage(Mensaje mensaje) async {

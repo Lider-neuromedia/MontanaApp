@@ -4,9 +4,9 @@ import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/pages/pqrs/create_pqrs_page.dart';
 import 'package:montana_mobile/pages/pqrs/partials/pqrs_card.dart';
 import 'package:montana_mobile/pages/pqrs/partials/pqrs_filter.dart';
-import 'package:montana_mobile/pages/pqrs/partials/search_box.dart';
 import 'package:montana_mobile/providers/pqrs_provider.dart';
 import 'package:montana_mobile/widgets/scaffold_logo.dart';
+import 'package:montana_mobile/widgets/search_box.dart';
 import 'package:provider/provider.dart';
 
 class PqrsPage extends StatelessWidget {
@@ -64,14 +64,17 @@ class _PqrsContent extends StatelessWidget {
     final tickets = pqrsProvider.search.isEmpty
         ? pqrsProvider.tickets
         : pqrsProvider.searchTickets;
-    final isEmptySearch = pqrsProvider.search.isNotEmpty &&
-        pqrsProvider.searchTickets.length == 0;
 
     return Column(
       children: [
-        SearchBox(),
+        SearchBox(
+          value: pqrsProvider.search,
+          onChanged: (String value) {
+            pqrsProvider.search = value;
+          },
+        ),
         PqrsFilter(),
-        isEmptySearch
+        pqrsProvider.isSearchActive
             ? Center(
                 child: Padding(
                   padding: EdgeInsets.symmetric(vertical: 10.0),

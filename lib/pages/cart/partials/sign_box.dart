@@ -1,5 +1,3 @@
-import 'dart:io';
-import 'dart:ui' as ui;
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
@@ -15,18 +13,10 @@ class SignBox extends StatefulWidget {
 
 class _SignBoxState extends State<SignBox> {
   final SignatureController _controller = SignatureController(
-    penStrokeWidth: 2,
-    penColor: Colors.black,
     exportBackgroundColor: Colors.white,
-    // onDrawStart: () => print('onDrawStart called!'),
-    // onDrawEnd: () => print('onDrawEnd called!'),
+    penColor: Colors.black,
+    penStrokeWidth: 2,
   );
-
-  @override
-  void initState() {
-    super.initState();
-    // _controller.addListener(() => print('Value changed'));
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,21 +29,8 @@ class _SignBoxState extends State<SignBox> {
       ),
       child: Column(
         children: <Widget>[
-          Signature(
-            controller: _controller,
-            backgroundColor: Colors.white,
-            height: 250,
-          ),
           Container(
-            padding: EdgeInsets.all(10.0),
-            decoration: BoxDecoration(
-              border: Border(
-                top: BorderSide(
-                  color: CustomTheme.greyColor,
-                  width: 1.0,
-                ),
-              ),
-            ),
+            padding: EdgeInsets.only(top: 5.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               mainAxisSize: MainAxisSize.max,
@@ -64,14 +41,19 @@ class _SignBoxState extends State<SignBox> {
                   onPressed: () => _acceptSign(context),
                 ),
                 _ActionButton(
-                  FontAwesome5.trash_alt,
+                  Icons.cancel,
                   isMain: false,
                   onPressed: () => _cleanSign(),
                 ),
               ],
             ),
           ),
-          // CurrentSign(),
+          Divider(thickness: 1.0, color: CustomTheme.greyColor),
+          Signature(
+            controller: _controller,
+            backgroundColor: Colors.white,
+            height: 250,
+          ),
         ],
       ),
     );
@@ -86,32 +68,11 @@ class _SignBoxState extends State<SignBox> {
       final Uint8List data = await _controller.toPngBytes();
 
       if (data != null) {
-        setState(() {
-          _controller.clear();
-        });
-
+        setState(() => _controller.clear());
         final cartProvider = Provider.of<CartProvider>(context, listen: false);
-        cartProvider.sign = null;
-
-        cartProvider.sign = File.fromRawPath(data);
+        cartProvider.signData = data;
       }
     }
-  }
-}
-
-class CurrentSign extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final cartProvider = Provider.of<CartProvider>(context);
-
-    return cartProvider.sign == null
-        ? Container(child: Text('No hay firma todavía.'))
-        : FadeInImage(
-            placeholder: AssetImage("assets/images/placeholder.png"),
-            image: MemoryImage(cartProvider.sign.readAsBytesSync()),
-            width: double.infinity,
-            fit: BoxFit.contain,
-          );
   }
 }
 
@@ -134,7 +95,7 @@ class _ActionButton extends StatelessWidget {
         icon: Icon(icon),
         color: isMain ? CustomTheme.mainColor : CustomTheme.textColor1,
         onPressed: onPressed,
-        iconSize: 34.0,
+        iconSize: 30.0,
       ),
     );
   }

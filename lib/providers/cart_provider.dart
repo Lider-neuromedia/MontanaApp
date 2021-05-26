@@ -1,10 +1,9 @@
 import 'dart:convert';
-import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 import 'package:http_parser/http_parser.dart';
-import 'package:mime_type/mime_type.dart';
 import 'package:montana_mobile/models/product.dart';
 import 'package:montana_mobile/models/session.dart';
 import 'package:montana_mobile/models/store.dart';
@@ -65,12 +64,11 @@ class CartProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  File _sign;
-  File get sign => _sign;
-  String get descriptionSign => _getFileName(_sign);
+  Uint8List _signData;
+  Uint8List get signData => _signData;
 
-  set sign(File value) {
-    _sign = value;
+  set signData(Uint8List value) {
+    _signData = value;
     notifyListeners();
   }
 
@@ -101,7 +99,7 @@ class CartProvider with ChangeNotifier {
   bool get canSend {
     if (_isLoading) return false;
     if (!_cart.isValid) return false;
-    if (_sign == null) return false;
+    if (_signData == null) return false;
     return true;
   }
 
@@ -128,13 +126,11 @@ class CartProvider with ChangeNotifier {
     final orderCode = await getOrderCode();
     if (orderCode.isEmpty) return false;
 
-    final fileFirma = await http.MultipartFile.fromPath(
+    final fileFirma = http.MultipartFile.fromBytes(
       'firma',
-      sign.path,
-      contentType: MediaType(
-        mime(sign.path).split('/')[0],
-        mime(sign.path).split('/')[1],
-      ),
+      signData,
+      filename: 'firma.png',
+      contentType: MediaType('image', 'image/png'),
     );
 
     final preferences = Preferences();
@@ -144,26 +140,32 @@ class CartProvider with ChangeNotifier {
     final request = http.MultipartRequest('POST', url);
     request.headers.addAll(preferences.signedHeaders);
     request.files.add(fileFirma);
+
     request.fields['cliente'] = "${_cart.clientId}";
     request.fields['vendedor'] = "${user.id}";
     request.fields['codigo_pedido'] = "$orderCode";
     request.fields['descuento'] = "${_cart.discount}";
     request.fields['total_pedido'] = "${_cart.total}";
     request.fields['forma_pago'] = "${_cart.paymentMethod}";
-    request.fields['productos'] = json.encode(
-      List<dynamic>.from(_cart.products.map((x) => x.toJson())),
-    );
+
+    if (_notes.value.isNotEmpty) {
+      request.fields['notas'] = "${_notes.value}";
+    }
+
+    _cart.products.asMap().forEach((int i, CartProduct product) {
+      request.fields['productos[$i][id_producto]'] = "${product.productId}";
+      product.stores.asMap().forEach((int j, CartStore store) {
+        request.fields['productos[$i][tiendas][$j][id_tienda]'] =
+            "${store.storeId}";
+        request.fields['productos[$i][tiendas][$j][cantidad]'] =
+            "${store.quantity}";
+      });
+    });
 
     final responseStream = await request.send();
     final response = await http.Response.fromStream(responseStream);
 
     return response.statusCode == 200 || response.statusCode == 201;
-  }
-
-  String _getFileName(File file) {
-    if (file == null) return null;
-    List list = List.from(file.path.split('/').reversed);
-    return list[0];
   }
 }
 

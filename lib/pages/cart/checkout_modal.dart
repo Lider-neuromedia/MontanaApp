@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:montana_mobile/pages/cart/partials/current_sign.dart';
 import 'package:montana_mobile/pages/cart/partials/payment_methods_field.dart';
 import 'package:montana_mobile/pages/cart/partials/sign_box.dart';
 import 'package:montana_mobile/pages/catalogue/partials/action_button.dart';
@@ -28,7 +29,10 @@ class CheckoutModal extends StatelessWidget {
         children: [
           _CheckoutForm(),
           cartProvider.isLoading
-              ? LoadingContainer()
+              ? Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: LoadingContainer(),
+                )
               : _CheckoutActions(
                   onFinish: cartProvider.canSend
                       ? () => finishOrder(context, cartProvider)
@@ -46,13 +50,22 @@ class CheckoutModal extends StatelessWidget {
     cartProvider.isLoading = false;
 
     if (success) {
+      cartProvider.clientId = null;
+      cartProvider.catalogueId = null;
       cartProvider.notes = '';
-
+      cartProvider.signData = null;
       cartProvider.cart.clean();
 
-      showMessageDialog(context, 'Listo', 'Pedido creado.', onAccept: () {
-        Navigator.pop(context);
-      });
+      showMessageDialog(
+        context,
+        'Listo',
+        'Pedido creado correctamente.',
+        onAccept: () {
+          Navigator.pop(context);
+          Navigator.pop(context);
+          Navigator.pop(context);
+        },
+      );
     } else {
       showMessageDialog(context, 'Aviso', 'Datos de pedido incorrectos.');
     }
@@ -94,75 +107,77 @@ class __CheckoutFormState extends State<_CheckoutForm> {
     const maxSpace = const SizedBox(height: 15.0);
 
     return Expanded(
-      child: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _TitleCheckout(),
-              const SizedBox(height: 20.0),
-              const _LabelField(label: 'Forma de pago'),
-              minSpace,
-              PaymentMethodsField(),
-              maxSpace,
-              const _LabelField(label: 'Firma'),
-              minSpace,
-              SignBox(),
-              maxSpace,
-              const _LabelField(label: 'Descuento asignado'),
-              minSpace,
-              DropdownList(
-                onChanged: (dynamic value) {
-                  cartProvider.discount = value as int;
-                },
-                value: cartProvider.discount,
-                items: discountList
-                    .map<Map<String, dynamic>>((int discount) => {
-                          'id': discount,
-                          'value': "$discount%",
-                        })
-                    .toList(),
-              ),
-              maxSpace,
-              const _LabelField(label: 'Notas adicionales'),
-              minSpace,
-              TextField(
-                controller: _notesController,
-                maxLines: 4,
-                maxLength: 120,
-                buildCounter: (_,
-                    {int currentLength, int maxLength, bool isFocused}) {
-                  return Text(
-                    "$currentLength/$maxLength",
-                    style: counterTheme,
-                  );
-                },
-                onChanged: (String value) {
-                  cartProvider.notes = value;
-                },
-                decoration: InputDecoration(
-                  isCollapsed: true,
-                  contentPadding: EdgeInsets.all(10.0),
-                  errorText: cartProvider.notesError,
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: CustomTheme.greyColor,
-                      width: 1.0,
-                    ),
-                  ),
+      child: ListView(
+        padding: EdgeInsets.all(20.0),
+        children: [
+          _TitleCheckout(label: 'Método de Pago'),
+          const SizedBox(height: 20.0),
+          const _LabelField(label: 'Forma de pago'),
+          minSpace,
+          PaymentMethodsField(),
+          maxSpace,
+          const _LabelField(label: 'Descuento asignado'),
+          minSpace,
+          DropdownList(
+            onChanged: (dynamic value) {
+              cartProvider.discount = value as int;
+            },
+            value: cartProvider.discount,
+            items: discountList
+                .map<Map<String, dynamic>>((int discount) => {
+                      'id': discount,
+                      'value': "$discount%",
+                    })
+                .toList(),
+          ),
+          maxSpace,
+          const _LabelField(label: 'Notas adicionales'),
+          minSpace,
+          TextField(
+            controller: _notesController,
+            maxLines: 4,
+            maxLength: 120,
+            buildCounter: (_,
+                {int currentLength, int maxLength, bool isFocused}) {
+              return Text(
+                "$currentLength/$maxLength",
+                style: counterTheme,
+              );
+            },
+            onChanged: (String value) {
+              cartProvider.notes = value;
+            },
+            decoration: InputDecoration(
+              isCollapsed: true,
+              contentPadding: EdgeInsets.all(10.0),
+              errorText: cartProvider.notesError,
+              border: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: CustomTheme.greyColor,
+                  width: 1.0,
                 ),
               ),
-              maxSpace,
-            ],
+            ),
           ),
-        ),
+          maxSpace,
+          const _LabelField(label: 'Firma'),
+          minSpace,
+          cartProvider.signData != null ? CurrentSign() : SignBox(),
+          maxSpace,
+        ],
       ),
     );
   }
 }
 
 class _TitleCheckout extends StatelessWidget {
+  const _TitleCheckout({
+    Key key,
+    @required this.label,
+  }) : super(key: key);
+
+  final String label;
+
   @override
   Widget build(BuildContext context) {
     final titleStyle = Theme.of(context).textTheme.headline4.copyWith(
@@ -171,7 +186,7 @@ class _TitleCheckout extends StatelessWidget {
         );
 
     return Text(
-      'Método de Pago',
+      label,
       style: titleStyle,
       textAlign: TextAlign.center,
     );

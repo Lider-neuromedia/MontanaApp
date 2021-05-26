@@ -80,53 +80,49 @@ class _ProductContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Column(
-              children: [
-                _GalleryProduct(product: product),
-                Container(
-                  margin: EdgeInsets.symmetric(
-                    horizontal: 20.0,
-                    vertical: 20.0,
-                  ),
-                  color: Colors.grey,
-                  width: double.infinity,
-                  height: 1.0,
-                ),
-                _ProductTitle(product: product),
-                SizedBox(height: 20.0),
-                SectionCard(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      SizedBox(height: 10.0),
-                      Html(
-                        data: product.descripcion,
-                        style: {
-                          'body': Style(
-                            margin: EdgeInsets.all(0.0),
-                            fontSize: FontSize(16),
-                          ),
-                          '*': Style(
-                            fontFamily: CustomTheme.primaryFont,
-                            color: CustomTheme.textColor1,
-                          ),
-                        },
-                      ),
-                      SizedBox(height: 10.0),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 20.0),
-                Ratings(),
-                SizedBox(height: 20.0),
-                Comments(),
-                SizedBox(height: 120.0),
-              ],
+        ListView(
+          padding: const EdgeInsets.all(15.0),
+          children: [
+            _GalleryProduct(product: product),
+            Container(
+              margin: EdgeInsets.symmetric(
+                horizontal: 20.0,
+                vertical: 20.0,
+              ),
+              color: Colors.grey,
+              width: double.infinity,
+              height: 1.0,
             ),
-          ),
+            _ProductTitle(product: product),
+            SizedBox(height: 20.0),
+            SectionCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  SizedBox(height: 10.0),
+                  Html(
+                    data: product.descripcion,
+                    style: {
+                      'body': Style(
+                        margin: EdgeInsets.all(0.0),
+                        fontSize: FontSize(16),
+                      ),
+                      '*': Style(
+                        fontFamily: CustomTheme.primaryFont,
+                        color: CustomTheme.textColor1,
+                      ),
+                    },
+                  ),
+                  SizedBox(height: 10.0),
+                ],
+              ),
+            ),
+            SizedBox(height: 20.0),
+            Ratings(),
+            SizedBox(height: 20.0),
+            Comments(),
+            SizedBox(height: 120.0),
+          ],
         ),
         Align(
           alignment: Alignment.bottomCenter,

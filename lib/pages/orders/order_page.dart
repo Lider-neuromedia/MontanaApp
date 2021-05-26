@@ -73,65 +73,54 @@ class _OrderDetailContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      physics: AlwaysScrollableScrollPhysics(),
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(
-              top: 20.0,
+    return ListView(
+      padding: const EdgeInsets.only(top: 20.0),
+      children: [
+        _OrderTitle(order: order),
+        SizedBox(height: 20.0),
+        _OrderDataList(
+          children: [
+            _OrderDetailData(
+              title: 'Fecha de emisión del pedido:',
+              value: formatDate(order.fecha),
             ),
-            child: Column(
-              children: [
-                _OrderTitle(order: order),
-                SizedBox(height: 20.0),
-                _OrderDataList(
-                  children: [
-                    _OrderDetailData(
-                      title: 'Fecha de emisión del pedido:',
-                      value: formatDate(order.fecha),
-                    ),
-                    SizedBox(height: 10.0),
-                    _OrderDetailData(
-                      title: 'Nombre comercial:',
-                      value: order.cliente.nombreCompleto,
-                    ),
-                    SizedBox(height: 10.0),
-                    _OrderDetailData(
-                      title: 'Nit:',
-                      value: order.cliente.nit,
-                    ),
-                  ],
-                ),
-                SizedBox(height: 20.0),
-                _OrderDetailCards(
-                  height: 270.0,
-                  children: [
-                    OrderDetailCard(
-                      title: 'Valor del pedido',
-                      value: formatMoney(order.total),
-                    ),
-                    OrderDetailCard(
-                      title: 'Método de pago',
-                      value: order.metodoPago,
-                    ),
-                    OrderDetailCard(
-                      title: 'Estado del pedido',
-                      value: order.estadoFormatted,
-                    ),
-                    OrderDetailCard(
-                      title: 'Descuento',
-                      value: "${order.descuento}%",
-                    ),
-                  ],
-                ),
-                SizedBox(height: 20.0),
-                ProductsTable(products: order.productos),
-              ],
+            SizedBox(height: 10.0),
+            _OrderDetailData(
+              title: 'Nombre comercial:',
+              value: order.cliente.nombreCompleto,
             ),
-          ),
-        ],
-      ),
+            SizedBox(height: 10.0),
+            _OrderDetailData(
+              title: 'Nit:',
+              value: order.cliente.nit,
+            ),
+          ],
+        ),
+        SizedBox(height: 20.0),
+        _OrderDetailCards(
+          height: 270.0,
+          children: [
+            OrderDetailCard(
+              title: 'Valor del pedido',
+              value: formatMoney(order.total),
+            ),
+            OrderDetailCard(
+              title: 'Método de pago',
+              value: order.metodoPago,
+            ),
+            OrderDetailCard(
+              title: 'Estado del pedido',
+              value: order.estadoFormatted,
+            ),
+            OrderDetailCard(
+              title: 'Descuento',
+              value: "${order.descuento}%",
+            ),
+          ],
+        ),
+        SizedBox(height: 20.0),
+        ProductsTable(products: order.productos),
+      ],
     );
   }
 }

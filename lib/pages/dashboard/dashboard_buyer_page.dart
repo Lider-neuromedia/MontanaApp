@@ -23,70 +23,72 @@ class DashboardBuyerPage extends StatelessWidget {
           CartIcon(),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(height: 20.0),
-            BuyerCard(), // TODO: traer datos del api
-            _CardDataList(
-              children: [
-                CardData(
-                  title: 'Cupo preaprobado',
-                  value: '\$4.300.400',
-                  icon: Icons.sentiment_neutral_rounded,
-                  color: CustomTheme.yellowColor,
-                  isMain: false,
-                ),
-                CardData(
-                  title: 'Cupo disponible',
-                  value: '\$3.500.400',
-                  icon: Icons.sentiment_very_satisfied,
-                  color: CustomTheme.greenColor,
-                  isMain: false,
-                ),
-              ],
-            ),
-            _CardDataList(
-              children: [
-                CardData(
-                  title: 'Saldo total deuda',
-                  value: '\$4.300.400',
-                  icon: Icons.error_outline,
-                  color: CustomTheme.purpleColor,
-                  isMain: false,
-                ),
-                CardData(
-                  title: 'Saldo en mora',
-                  value: '\$3.500.400',
-                  icon: Icons.sentiment_dissatisfied_rounded,
-                  color: CustomTheme.redColor,
-                  isMain: false,
-                ),
-              ],
-            ),
-            _CardDataList(children: [
-              CardStatistic(
-                isMain: true,
-                title: 'Tiendas Creadas',
-                value: 12,
-                label: 'Tiendas',
-                icon: Icons.storefront,
-              ),
-              CardStatistic(
+      body: ListView(
+        children: [
+          SizedBox(height: 20.0),
+          // BuyerCard(), // TODO: traer datos del api
+          _CardDataList(
+            children: [
+              CardData(
+                title: 'Cupo preaprobado',
+                value: '\$4.300.400',
+                icon: Icons.sentiment_neutral_rounded,
+                color: CustomTheme.yellowColor,
                 isMain: false,
-                icon: Octicons.comment_discussion,
-                title: 'PQRS Generados',
-                value: 50,
-                label: 'Tiendas',
               ),
-            ]),
-            SizedBox(height: 20.0),
-            Text('CONSOLIDADO PEDIDOS', style: titleStyle),
-            SizedBox(height: 20.0),
-            ConsolidatedOrders(),
-            SizedBox(height: 50.0),
-          ],
-        ),
+              CardData(
+                title: 'Cupo disponible',
+                value: '\$3.500.400',
+                icon: Icons.sentiment_very_satisfied,
+                color: CustomTheme.greenColor,
+                isMain: false,
+              ),
+            ],
+          ),
+          _CardDataList(
+            children: [
+              CardData(
+                title: 'Saldo total deuda',
+                value: '\$4.300.400',
+                icon: Icons.error_outline,
+                color: CustomTheme.purpleColor,
+                isMain: false,
+              ),
+              CardData(
+                title: 'Saldo en mora',
+                value: '\$3.500.400',
+                icon: Icons.sentiment_dissatisfied_rounded,
+                color: CustomTheme.redColor,
+                isMain: false,
+              ),
+            ],
+          ),
+          _CardDataList(children: [
+            CardStatistic(
+              isMain: true,
+              title: 'Tiendas Creadas',
+              value: 12,
+              label: 'Tiendas',
+              icon: Icons.storefront,
+            ),
+            CardStatistic(
+              isMain: false,
+              icon: Octicons.comment_discussion,
+              title: 'PQRS Generados',
+              value: 50,
+              label: 'Tiendas',
+            ),
+          ]),
+          SizedBox(height: 20.0),
+          Text(
+            'CONSOLIDADO PEDIDOS',
+            style: titleStyle,
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 20.0),
+          ConsolidatedOrders(),
+          SizedBox(height: 50.0),
+        ],
       ),
     );
   }

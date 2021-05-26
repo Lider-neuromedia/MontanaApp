@@ -21,48 +21,52 @@ class DashboardSellerPage extends StatelessWidget {
           CartIcon(),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(height: 30.0),
-            Text('CONSOLIDADO COMISIONES', style: titleStyle),
-            SizedBox(height: 20.0),
-            CardData(
+      body: ListView(
+        children: [
+          SizedBox(height: 30.0),
+          Text(
+            'CONSOLIDADO COMISIONES',
+            style: titleStyle,
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 20.0),
+          Center(
+            child: CardData(
               title: 'Comisiones perdidas',
               value: '\$3.300.400',
               icon: Icons.sentiment_dissatisfied_rounded,
               color: CustomTheme.yellowColor,
               isMain: true,
             ),
-            _CommisionsList(
-              children: [
-                CardData(
-                  title: 'Próximas a perder',
-                  value: '\$4.300.400',
-                  icon: Icons.sentiment_neutral_rounded,
-                  color: CustomTheme.yellowColor,
-                  isMain: false,
-                ),
-                CardData(
-                  title: 'Comisiones ganadas',
-                  value: '\$3.500.400',
-                  icon: Icons.sentiment_very_satisfied,
-                  color: CustomTheme.greenColor,
-                  isMain: false,
-                ),
-              ],
-            ),
-            SizedBox(height: 20.0),
-            Text('CONSOLIDADO CLIENTES', style: titleStyle),
-            SizedBox(height: 20.0),
-            _ConsolidatedClients(),
-            SizedBox(height: 40.0),
-            Text('CONSOLIDADO PEDIDOS', style: titleStyle),
-            SizedBox(height: 20.0),
-            ConsolidatedOrders(),
-            SizedBox(height: 50.0),
-          ],
-        ),
+          ),
+          _CommisionsList(
+            children: [
+              CardData(
+                title: 'Próximas a perder',
+                value: '\$4.300.400',
+                icon: Icons.sentiment_neutral_rounded,
+                color: CustomTheme.yellowColor,
+                isMain: false,
+              ),
+              CardData(
+                title: 'Comisiones ganadas',
+                value: '\$3.500.400',
+                icon: Icons.sentiment_very_satisfied,
+                color: CustomTheme.greenColor,
+                isMain: false,
+              ),
+            ],
+          ),
+          SizedBox(height: 20.0),
+          Text('CONSOLIDADO CLIENTES', style: titleStyle),
+          SizedBox(height: 20.0),
+          _ConsolidatedClients(),
+          SizedBox(height: 40.0),
+          Text('CONSOLIDADO PEDIDOS', style: titleStyle),
+          SizedBox(height: 20.0),
+          ConsolidatedOrders(),
+          SizedBox(height: 50.0),
+        ],
       ),
     );
   }

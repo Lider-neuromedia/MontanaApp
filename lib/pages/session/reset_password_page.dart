@@ -24,37 +24,31 @@ class ResetPasswordPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Reiniciar Contraseña'),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              _TokenInput(controller: _tokenController),
-              SizedBox(height: 30.0),
-              _EmailInput(controller: _emailController),
-              SizedBox(height: 30.0),
-              _PasswordInput(controller: _passwordController),
-              SizedBox(height: 30.0),
-              _PasswordConfirmationInput(
-                  controller: _passwordConfirmationController),
-              SizedBox(height: 30.0),
-              resetPasswordProvider.isLoading
-                  ? Center(
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                            Theme.of(context).primaryColor),
-                      ),
-                    )
-                  : _SubmitButton(
-                      onPressed: !resetPasswordProvider.canSend
-                          ? null
-                          : () =>
-                              _resetPassword(context, resetPasswordProvider),
-                    ),
-            ],
-          ),
-        ),
+      body: ListView(
+        padding: const EdgeInsets.all(20.0),
+        children: [
+          _TokenInput(controller: _tokenController),
+          SizedBox(height: 30.0),
+          _EmailInput(controller: _emailController),
+          SizedBox(height: 30.0),
+          _PasswordInput(controller: _passwordController),
+          SizedBox(height: 30.0),
+          _PasswordConfirmationInput(
+              controller: _passwordConfirmationController),
+          SizedBox(height: 30.0),
+          resetPasswordProvider.isLoading
+              ? Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                        Theme.of(context).primaryColor),
+                  ),
+                )
+              : _SubmitButton(
+                  onPressed: !resetPasswordProvider.canSend
+                      ? null
+                      : () => _resetPassword(context, resetPasswordProvider),
+                ),
+        ],
       ),
     );
   }

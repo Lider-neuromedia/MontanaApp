@@ -16,6 +16,42 @@ class ProductsProvider with ChangeNotifier {
   Producto get product => _product;
   List<Producto> get products => _products;
 
+  String _search = '';
+  String get search => _search;
+  bool get isSearchActive => _search.isNotEmpty && searchProducts.length == 0;
+
+  set search(String value) {
+    _search = value;
+    notifyListeners();
+  }
+
+  List<Producto> get searchProducts {
+    return _products.where((product) {
+      bool match = false;
+      String codigo = "${product.codigo.toLowerCase()}";
+      String descripcion = "${product.descripcion.toLowerCase()}";
+      String nombre = "${product.nombre.toLowerCase()}";
+      String marca = "${product.nombreMarca.toLowerCase()}";
+      String sku = "${product.sku.toString().toLowerCase()}";
+      String referencia = "${product.referencia.toLowerCase()}";
+      String precio = "${product.precio.toString().toLowerCase()}";
+      String total = "${product.total.toString().toLowerCase()}";
+
+      if (codigo.indexOf(_search) != -1 ||
+          descripcion.indexOf(_search) != -1 ||
+          nombre.indexOf(_search) != -1 ||
+          marca.indexOf(_search) != -1 ||
+          sku.indexOf(_search) != -1 ||
+          referencia.indexOf(_search) != -1 ||
+          precio.indexOf(_search) != -1 ||
+          total.indexOf(_search) != -1) {
+        match = true;
+      }
+
+      return match;
+    }).toList();
+  }
+
   Future<void> loadProducts(int catalogId) async {
     _products = [];
     _isLoadingProducts = true;

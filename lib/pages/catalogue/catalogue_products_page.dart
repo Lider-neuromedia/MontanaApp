@@ -3,6 +3,7 @@ import 'package:montana_mobile/models/catalogue.dart';
 import 'package:montana_mobile/pages/catalogue/partials/empty_message.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/pages/catalogue/partials/product_item.dart';
+import 'package:montana_mobile/widgets/search_box.dart';
 import 'package:montana_mobile/providers/products_provider.dart';
 import 'package:montana_mobile/widgets/cart_icon.dart';
 import 'package:provider/provider.dart';
@@ -36,14 +37,15 @@ class _CatalogueProductsPageState extends State<CatalogueProductsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final ProductsScreenArguments args =
+    final args =
         ModalRoute.of(context).settings.arguments as ProductsScreenArguments;
-    final Catalogo catalogue = args.catalogue;
-    ProductsProvider productsProvider = Provider.of<ProductsProvider>(context);
+    final catalogue = args.catalogue;
+    final productsProvider = Provider.of<ProductsProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
         title: Text(catalogue.titulo),
+        elevation: 0.0,
         actions: [
           CartIcon(),
         ],
@@ -58,7 +60,25 @@ class _CatalogueProductsPageState extends State<CatalogueProductsPage> {
               : RefreshIndicator(
                   onRefresh: () => productsProvider.loadProducts(catalogue.id),
                   color: Theme.of(context).primaryColor,
-                  child: _ProductsList(),
+                  child: Column(
+                    children: [
+                      SearchBox(
+                        value: productsProvider.search,
+                        onChanged: (String value) {
+                          productsProvider.search = value;
+                        },
+                      ),
+                      productsProvider.isSearchActive
+                          ? Center(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(vertical: 10.0),
+                                child: Text('No hay coincidencias.'),
+                              ),
+                            )
+                          : Container(),
+                      Expanded(child: _ProductsList()),
+                    ],
+                  ),
                 ),
     );
   }
@@ -70,12 +90,16 @@ class _ProductsList extends StatelessWidget {
     final ProductsProvider productsProvider =
         Provider.of<ProductsProvider>(context);
 
+    final products = productsProvider.search.isEmpty
+        ? productsProvider.products
+        : productsProvider.searchProducts;
+
     return ListView.separated(
       padding: EdgeInsets.all(20.0),
-      itemCount: productsProvider.products.length,
+      itemCount: products.length,
       itemBuilder: (_, index) {
         return ProductItem(
-          product: productsProvider.products[index],
+          product: products[index],
           isShowRoom: false,
         );
       },

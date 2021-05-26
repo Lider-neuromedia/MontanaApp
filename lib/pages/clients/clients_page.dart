@@ -3,9 +3,9 @@ import 'package:montana_mobile/models/client.dart';
 import 'package:montana_mobile/pages/catalogue/partials/empty_message.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/pages/clients/partials/client_card.dart';
-import 'package:montana_mobile/pages/clients/partials/search_box.dart';
 import 'package:montana_mobile/providers/clients_provider.dart';
 import 'package:montana_mobile/widgets/scaffold_logo.dart';
+import 'package:montana_mobile/widgets/search_box.dart';
 import 'package:provider/provider.dart';
 
 class ClientsPage extends StatelessWidget {
@@ -22,11 +22,11 @@ class ClientsPage extends StatelessWidget {
         title: ScaffoldLogo(),
         actions: [
           TextButton(
+            onPressed: null,
             child: Text('Listado de clientes', style: titleStyle),
             style: TextButton.styleFrom(
               primary: Colors.white,
             ),
-            onPressed: null,
           ),
           SizedBox(width: 10.0),
         ],
@@ -58,9 +58,13 @@ class _ClientsContent extends StatelessWidget {
 
     return Column(
       children: [
-        SearchBox(),
-        clientsProvider.search.isNotEmpty &&
-                clientsProvider.searchClients.length == 0
+        SearchBox(
+          value: clientsProvider.search,
+          onChanged: (String value) {
+            clientsProvider.search = value;
+          },
+        ),
+        clientsProvider.isSearchActive
             ? Center(
                 child: Padding(
                   padding: EdgeInsets.symmetric(vertical: 10.0),

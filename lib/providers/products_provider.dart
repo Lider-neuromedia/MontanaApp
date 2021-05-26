@@ -21,7 +21,7 @@ class ProductsProvider with ChangeNotifier {
   bool get isSearchActive => _search.isNotEmpty && searchProducts.length == 0;
 
   set search(String value) {
-    _search = value;
+    _search = value.toLowerCase();
     notifyListeners();
   }
 

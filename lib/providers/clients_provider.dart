@@ -6,50 +6,49 @@ import 'package:montana_mobile/utils/preferences.dart';
 
 class ClientsProvider with ChangeNotifier {
   final String _url = dotenv.env['API_URL'];
-  List<Cliente> _clients = [];
-  List<Cliente> _searchClients = [];
-  bool _isLoading = false;
-  String _search = '';
 
   ClientsProvider() {
     loadClients();
   }
 
+  List<Cliente> _clients = [];
   List<Cliente> get clients => _clients;
-  List<Cliente> get searchClients => _searchClients;
+
+  bool _isLoading = false;
   bool get isLoading => _isLoading;
+
+  String _search = '';
   String get search => _search;
+  bool get isSearchActive => _search.isNotEmpty && searchClients.length == 0;
 
   set search(String value) {
     _search = value.toLowerCase();
-
-    if (_search.isNotEmpty) {
-      _searchClients = [];
-      _searchClients = _clients.where((client) {
-        bool match = false;
-        String name = "${client.nombreCompleto.toLowerCase()}";
-        String email = "${client.email.toLowerCase()}";
-        String dni = "${client.dni.toLowerCase()}";
-        String id = "${client.id.toString().toLowerCase()}";
-        String nit = "${client.getData('nit').toLowerCase()}";
-        String razonSocial = "${client.getData('razon_social').toLowerCase()}";
-        String phone = "${client.getData('telefono').toLowerCase()}";
-
-        if (name.indexOf(_search) != -1 ||
-            email.indexOf(_search) != -1 ||
-            dni.indexOf(_search) != -1 ||
-            id.indexOf(_search) != -1 ||
-            nit.indexOf(_search) != -1 ||
-            razonSocial.indexOf(_search) != -1 ||
-            phone.indexOf(_search) != -1) {
-          match = true;
-        }
-
-        return match;
-      }).toList();
-    }
-
     notifyListeners();
+  }
+
+  List<Cliente> get searchClients {
+    return _clients.where((client) {
+      bool match = false;
+      String name = "${client.nombreCompleto.toLowerCase()}";
+      String email = "${client.email.toLowerCase()}";
+      String dni = "${client.dni.toLowerCase()}";
+      String id = "${client.id.toString().toLowerCase()}";
+      String nit = "${client.getData('nit').toLowerCase()}";
+      String razonSocial = "${client.getData('razon_social').toLowerCase()}";
+      String phone = "${client.getData('telefono').toLowerCase()}";
+
+      if (name.indexOf(_search) != -1 ||
+          email.indexOf(_search) != -1 ||
+          dni.indexOf(_search) != -1 ||
+          id.indexOf(_search) != -1 ||
+          nit.indexOf(_search) != -1 ||
+          razonSocial.indexOf(_search) != -1 ||
+          phone.indexOf(_search) != -1) {
+        match = true;
+      }
+
+      return match;
+    }).toList();
   }
 
   Future<void> loadClients() async {

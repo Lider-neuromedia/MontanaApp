@@ -51,15 +51,17 @@ class ProductItem extends StatelessWidget {
                 ? Container()
                 : Text("Ref: ${product.referencia}", style: textStyle2),
             SizedBox(height: 15.0),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(5.0),
-              child: FadeInImage(
-                placeholder: AssetImage("assets/images/placeholder.png"),
-                image: NetworkImage(product.image),
-                width: double.infinity,
-                fit: BoxFit.contain,
-              ),
-            ),
+            product.image == null
+                ? Container()
+                : ClipRRect(
+                    borderRadius: BorderRadius.circular(5.0),
+                    child: FadeInImage(
+                      placeholder: AssetImage("assets/images/placeholder.png"),
+                      image: NetworkImage(product.image),
+                      width: double.infinity,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
             SizedBox(height: 15.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -85,7 +85,10 @@ class ProductItem extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).pushNamed(
                   ProductPage.route,
-                  arguments: product.idProducto,
+                  arguments: ProductPageArgs(
+                    product.idProducto,
+                    product.catalogo,
+                  ),
                 );
               },
             ),

@@ -21,6 +21,7 @@ import 'package:montana_mobile/providers/pqrs_provider.dart';
 import 'package:montana_mobile/providers/pqrs_ticket_provider.dart';
 import 'package:montana_mobile/providers/products_provider.dart';
 import 'package:montana_mobile/providers/quota_provider.dart';
+import 'package:montana_mobile/providers/rating_provider.dart';
 import 'package:montana_mobile/providers/reset_password_provider.dart';
 import 'package:montana_mobile/providers/show_room_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
@@ -56,6 +57,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => PqrsTicketProvider()),
         ChangeNotifierProvider(create: (_) => QuotaProvider()),
         ChangeNotifierProvider(create: (_) => CartProvider()),
+        ChangeNotifierProvider(create: (_) => RatingProvider()),
       ],
       child: MaterialApp(
         title: 'Athletic Air',

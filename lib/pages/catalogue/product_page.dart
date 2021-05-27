@@ -5,6 +5,7 @@ import 'package:montana_mobile/pages/catalogue/add_product_modal.dart';
 import 'package:montana_mobile/pages/catalogue/partials/comments.dart';
 import 'package:montana_mobile/pages/catalogue/partials/empty_message.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
+import 'package:montana_mobile/pages/catalogue/partials/rating_form.dart';
 import 'package:montana_mobile/pages/catalogue/partials/ratings.dart';
 import 'package:montana_mobile/pages/catalogue/partials/section_card.dart';
 import 'package:montana_mobile/pages/catalogue/start_order_modal.dart';
@@ -22,6 +23,8 @@ class ProductPage extends StatefulWidget {
 }
 
 class _ProductPageState extends State<ProductPage> {
+  ProductPageArgs _productArgs;
+
   @override
   void initState() {
     super.initState();
@@ -33,16 +36,18 @@ class _ProductPageState extends State<ProductPage> {
   }
 
   void _loadData(BuildContext context) {
-    final int productId = ModalRoute.of(context).settings.arguments as int;
-    final ProductsProvider productsProvider =
-        Provider.of<ProductsProvider>(context, listen: false);
-    productsProvider.loadProduct(productId);
+    final productsProvider = Provider.of<ProductsProvider>(
+      context,
+      listen: false,
+    );
+
+    _productArgs = ModalRoute.of(context).settings.arguments as ProductPageArgs;
+    productsProvider.loadProduct(_productArgs.productId);
   }
 
   @override
   Widget build(BuildContext context) {
     final productsProvider = Provider.of<ProductsProvider>(context);
-    final productId = ModalRoute.of(context).settings.arguments as int;
 
     return Scaffold(
       backgroundColor: CustomTheme.grey3Color,
@@ -56,16 +61,28 @@ class _ProductPageState extends State<ProductPage> {
           ? const LoadingContainer()
           : productsProvider.product == null
               ? EmptyMessage(
-                  onPressed: () => productsProvider.loadProduct(productId),
                   message: 'No hay información.',
+                  onPressed: () =>
+                      productsProvider.loadProduct(_productArgs.productId),
                 )
               : RefreshIndicator(
-                  onRefresh: () => productsProvider.loadProduct(productId),
                   color: Theme.of(context).primaryColor,
                   child: _ProductContent(product: productsProvider.product),
+                  onRefresh: () =>
+                      productsProvider.loadProduct(_productArgs.productId),
                 ),
     );
   }
+}
+
+class ProductPageArgs {
+  final int productId;
+  final int catalogId;
+
+  ProductPageArgs(
+    this.productId,
+    this.catalogId,
+  );
 }
 
 class _ProductContent extends StatelessWidget {
@@ -76,6 +93,9 @@ class _ProductContent extends StatelessWidget {
 
   final Producto product;
 
+  final _bigSeparator = const SizedBox(height: 20.0);
+  final _minSeparator = const SizedBox(height: 10.0);
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -83,23 +103,25 @@ class _ProductContent extends StatelessWidget {
         ListView(
           padding: const EdgeInsets.all(15.0),
           children: [
-            _GalleryProduct(product: product),
+            product.image == null
+                ? Container()
+                : _GalleryProduct(product: product),
             Container(
+              height: 1.0,
+              color: Colors.grey,
+              width: double.infinity,
               margin: EdgeInsets.symmetric(
                 horizontal: 20.0,
                 vertical: 20.0,
               ),
-              color: Colors.grey,
-              width: double.infinity,
-              height: 1.0,
             ),
             _ProductTitle(product: product),
-            SizedBox(height: 20.0),
+            _bigSeparator,
             SectionCard(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  SizedBox(height: 10.0),
+                  _minSeparator,
                   Html(
                     data: product.descripcion,
                     style: {
@@ -113,15 +135,17 @@ class _ProductContent extends StatelessWidget {
                       ),
                     },
                   ),
-                  SizedBox(height: 10.0),
+                  _minSeparator,
                 ],
               ),
             ),
-            SizedBox(height: 20.0),
+            _bigSeparator,
+            RatingForm(product: product),
+            _bigSeparator,
             Ratings(),
-            SizedBox(height: 20.0),
+            _bigSeparator,
             Comments(),
-            SizedBox(height: 120.0),
+            const SizedBox(height: 120.0),
           ],
         ),
         Align(

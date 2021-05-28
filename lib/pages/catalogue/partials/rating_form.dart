@@ -1,121 +1,89 @@
 import 'package:flutter/material.dart';
-import 'package:montana_mobile/models/product.dart';
 import 'package:montana_mobile/models/question.dart';
-import 'package:montana_mobile/pages/catalogue/partials/empty_message.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/pages/catalogue/partials/section_card.dart';
 import 'package:montana_mobile/providers/rating_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
+import 'package:montana_mobile/utils/utils.dart';
 import 'package:provider/provider.dart';
 
-class RatingForm extends StatefulWidget {
+class RatingForm extends StatelessWidget {
   const RatingForm({
     Key key,
-    @required this.product,
+    @required this.onCompleted,
   }) : super(key: key);
 
-  final Producto product;
-
-  @override
-  _RatingFormState createState() => _RatingFormState();
-}
-
-class _RatingFormState extends State<RatingForm> {
-  @override
-  void initState() {
-    super.initState();
-
-    () async {
-      await Future.delayed(Duration.zero);
-      _loadData(context);
-    }();
-  }
-
-  void _loadData(BuildContext context) {
-    final ratingProvider = Provider.of<RatingProvider>(
-      context,
-      listen: false,
-    );
-    ratingProvider.loadQuestions(widget.product.catalogo);
-  }
+  final Function onCompleted;
 
   @override
   Widget build(BuildContext context) {
     final ratingProvider = Provider.of<RatingProvider>(context);
-
-    return SectionCard(
-      child: ratingProvider.isLoading
-          ? const LoadingContainer()
-          : ratingProvider.questions.length == 0
-              ? EmptyMessage(
-                  message: 'No hay información.',
-                  onPressed: () {
-                    ratingProvider.loadQuestions(widget.product.catalogo);
-                  },
-                )
-              : RefreshIndicator(
-                  color: Theme.of(context).primaryColor,
-                  child: _FormContent(),
-                  onRefresh: () {
-                    return ratingProvider
-                        .loadQuestions(widget.product.catalogo);
-                  },
-                ),
-    );
-  }
-}
-
-class _FormContent extends StatelessWidget {
-  const _FormContent({
-    Key key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final ratingProvider = Provider.of<RatingProvider>(context);
-    final TextStyle titleStyle = Theme.of(context).textTheme.headline6.copyWith(
+    final titleStyle = Theme.of(context).textTheme.headline6.copyWith(
           color: Theme.of(context).textTheme.bodyText1.color,
           fontWeight: FontWeight.w700,
         );
 
     int index = 0;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        const SizedBox(height: 10.0),
-        Text(
-          'Valorar Producto',
-          style: titleStyle,
-          textAlign: TextAlign.start,
-        ),
-        const SizedBox(height: 20.0),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: ratingProvider.questions.map((question) {
-            return _RateField(
-              index: ++index,
-              question: question,
-              currentValue: question.respuesta,
-              onChanged: (int value) {
-                ratingProvider.applyAnswer(question.idPregunta, value);
-              },
-            );
-          }).toList(),
-        ),
-        const SizedBox(height: 20.0),
-        Center(
-          child: ElevatedButton(
-            onPressed: ratingProvider.canSend ? () {} : null,
-            child: Text('Calificar'),
-            style: ElevatedButton.styleFrom(
-              primary: Theme.of(context).primaryColor,
-              shape: StadiumBorder(),
-            ),
+    return SectionCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const SizedBox(height: 10.0),
+          Text(
+            'Valorar Producto',
+            style: titleStyle,
+            textAlign: TextAlign.start,
           ),
-        )
-      ],
+          const SizedBox(height: 20.0),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: ratingProvider.preguntas.map((pregunta) {
+              return _RateField(
+                index: ++index,
+                question: pregunta.question,
+                currentValue: pregunta.respuesta,
+                onChanged: (int value) {
+                  ratingProvider.applyAnswer(pregunta.pregunta, value);
+                },
+              );
+            }).toList(),
+          ),
+          const SizedBox(height: 20.0),
+          Center(
+            child: ratingProvider.isLoadingSend
+                ? const LoadingContainer()
+                : ElevatedButton(
+                    child: Text('Calificar'),
+                    style: ElevatedButton.styleFrom(
+                      primary: Theme.of(context).primaryColor,
+                      shape: StadiumBorder(),
+                    ),
+                    onPressed: ratingProvider.canSend
+                        ? () => rateProduct(context, ratingProvider)
+                        : null,
+                  ),
+          )
+        ],
+      ),
     );
+  }
+
+  void rateProduct(BuildContext context, RatingProvider ratingProvider) async {
+    ratingProvider.isLoadingSend = true;
+    final isSuccess = await ratingProvider.saveRating();
+    ratingProvider.isLoadingSend = false;
+
+    if (isSuccess) {
+      showMessageDialog(
+        context,
+        'Listo',
+        'Producto calificado',
+        onAccept: onCompleted,
+      );
+    } else {
+      showMessageDialog(context, 'Aviso', 'Datos de valoración incorrectos.');
+    }
   }
 }
 

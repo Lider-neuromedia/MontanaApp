@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:montana_mobile/models/product.dart';
 import 'package:montana_mobile/pages/catalogue/add_product_modal.dart';
-import 'package:montana_mobile/pages/catalogue/partials/comments.dart';
 import 'package:montana_mobile/pages/catalogue/partials/empty_message.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/pages/catalogue/partials/rating_form.dart';
@@ -10,6 +9,7 @@ import 'package:montana_mobile/pages/catalogue/partials/ratings.dart';
 import 'package:montana_mobile/pages/catalogue/partials/section_card.dart';
 import 'package:montana_mobile/pages/catalogue/start_order_modal.dart';
 import 'package:montana_mobile/providers/products_provider.dart';
+import 'package:montana_mobile/providers/rating_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:montana_mobile/utils/utils.dart';
 import 'package:montana_mobile/widgets/cart_icon.dart';
@@ -92,12 +92,22 @@ class _ProductContent extends StatelessWidget {
   }) : super(key: key);
 
   final Producto product;
-
   final _bigSeparator = const SizedBox(height: 20.0);
   final _minSeparator = const SizedBox(height: 10.0);
 
   @override
   Widget build(BuildContext context) {
+    final htmlStyle = {
+      'body': Style(
+        margin: EdgeInsets.all(0.0),
+        fontSize: FontSize(16),
+      ),
+      '*': Style(
+        fontFamily: CustomTheme.primaryFont,
+        color: CustomTheme.textColor1,
+      ),
+    };
+
     return Stack(
       children: [
         ListView(
@@ -124,27 +134,14 @@ class _ProductContent extends StatelessWidget {
                   _minSeparator,
                   Html(
                     data: product.descripcion,
-                    style: {
-                      'body': Style(
-                        margin: EdgeInsets.all(0.0),
-                        fontSize: FontSize(16),
-                      ),
-                      '*': Style(
-                        fontFamily: CustomTheme.primaryFont,
-                        color: CustomTheme.textColor1,
-                      ),
-                    },
+                    style: htmlStyle,
                   ),
                   _minSeparator,
                 ],
               ),
             ),
             _bigSeparator,
-            RatingForm(product: product),
-            _bigSeparator,
-            Ratings(),
-            _bigSeparator,
-            Comments(),
+            _RatingsContent(product: product),
             const SizedBox(height: 120.0),
           ],
         ),
@@ -210,6 +207,71 @@ class _ProductContent extends StatelessWidget {
   }
 }
 
+class _RatingsContent extends StatefulWidget {
+  const _RatingsContent({
+    Key key,
+    @required this.product,
+  }) : super(key: key);
+
+  final Producto product;
+
+  @override
+  __RatingsContentState createState() => __RatingsContentState();
+}
+
+class __RatingsContentState extends State<_RatingsContent> {
+  @override
+  void initState() {
+    super.initState();
+
+    () async {
+      await Future.delayed(Duration.zero);
+
+      final ratingProvider = Provider.of<RatingProvider>(
+        context,
+        listen: false,
+      );
+
+      ratingProvider.loadData(
+        widget.product.catalogo,
+        widget.product.idProducto,
+      );
+    }();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ratingProvider = Provider.of<RatingProvider>(context);
+
+    return Container(
+      child: ratingProvider.isLoading
+          ? const LoadingContainer()
+          : ratingProvider.valoracion == null
+              ? EmptyMessage(
+                  message: 'No hay información para valorar.',
+                  onPressed: () => ratingProvider.loadData(
+                    widget.product.catalogo,
+                    widget.product.idProducto,
+                  ),
+                )
+              : Column(
+                  children: [
+                    Ratings(),
+                    const SizedBox(height: 20.0),
+                    ratingProvider.isRatingCompleted
+                        ? Container()
+                        : RatingForm(
+                            onCompleted: () => ratingProvider.loadData(
+                              widget.product.catalogo,
+                              widget.product.idProducto,
+                            ),
+                          ),
+                  ],
+                ),
+    );
+  }
+}
+
 class _ProductTitle extends StatelessWidget {
   const _ProductTitle({
     Key key,
@@ -220,13 +282,13 @@ class _ProductTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextStyle titleStyle = Theme.of(context).textTheme.subtitle1.copyWith(
+    final titleStyle = Theme.of(context).textTheme.subtitle1.copyWith(
           fontWeight: FontWeight.w700,
         );
-    final TextStyle totalStyle = Theme.of(context).textTheme.headline5.copyWith(
+    final totalStyle = Theme.of(context).textTheme.headline5.copyWith(
           fontWeight: FontWeight.w900,
         );
-    final TextStyle priceStyle = Theme.of(context).textTheme.subtitle1;
+    final priceStyle = Theme.of(context).textTheme.subtitle1;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,

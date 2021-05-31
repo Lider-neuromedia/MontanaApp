@@ -43,10 +43,17 @@ dependencies:
   signature: ^4.1.1
   path: ^1.8.0
   path_provider: ^2.0.2
+  flutter_launcher_icons: ^0.9.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+flutter_icons:
+  android: "ic_launcher"
+  ios: false
+  image_path: "assets/icons/logo.png"
+  adaptive_icon_background: "assets/icons/background.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

@@ -6,15 +6,11 @@ import 'package:montana_mobile/utils/preferences.dart';
 
 class CataloguesProvider with ChangeNotifier {
   final String _url = dotenv.env['API_URL'];
-  List<Catalogo> _catalogues = [];
+
   bool _isLoading = false;
-
-  CataloguesProvider() {
-    loadCatalogues();
-  }
-
   bool get isLoading => _isLoading;
 
+  List<Catalogo> _catalogues = [];
   List<Catalogo> get catalogues => _catalogues;
 
   Future<void> loadCatalogues() async {

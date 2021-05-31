@@ -6,11 +6,29 @@ import 'package:montana_mobile/providers/catalogues_provider.dart';
 import 'package:montana_mobile/widgets/cart_icon.dart';
 import 'package:provider/provider.dart';
 
-class CataloguePage extends StatelessWidget {
+class CataloguePage extends StatefulWidget {
+  @override
+  _CataloguePageState createState() => _CataloguePageState();
+}
+
+class _CataloguePageState extends State<CataloguePage> {
+  @override
+  void initState() {
+    super.initState();
+
+    () async {
+      await Future.delayed(Duration.zero);
+      final cataloguesProvider = Provider.of<CataloguesProvider>(
+        context,
+        listen: false,
+      );
+      cataloguesProvider.loadCatalogues();
+    }();
+  }
+
   @override
   Widget build(BuildContext context) {
-    CataloguesProvider cataloguesProvider =
-        Provider.of<CataloguesProvider>(context);
+    final cataloguesProvider = Provider.of<CataloguesProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -40,8 +58,7 @@ class _CataloguesList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    CataloguesProvider cataloguesProvider =
-        Provider.of<CataloguesProvider>(context);
+    final cataloguesProvider = Provider.of<CataloguesProvider>(context);
 
     return ListView.separated(
       padding: EdgeInsets.all(20.0),

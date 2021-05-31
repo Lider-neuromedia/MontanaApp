@@ -8,29 +8,46 @@ import 'package:montana_mobile/widgets/scaffold_logo.dart';
 import 'package:montana_mobile/widgets/search_box.dart';
 import 'package:provider/provider.dart';
 
-class ClientsPage extends StatelessWidget {
+class ClientsPage extends StatefulWidget {
+  @override
+  _ClientsPageState createState() => _ClientsPageState();
+}
+
+class _ClientsPageState extends State<ClientsPage> {
+  @override
+  void initState() {
+    super.initState();
+
+    () async {
+      await Future.delayed(Duration.zero);
+
+      final clientsProvider = Provider.of<ClientsProvider>(
+        context,
+        listen: false,
+      );
+      clientsProvider.loadClients();
+    }();
+  }
+
   @override
   Widget build(BuildContext context) {
     final titleStyle = Theme.of(context).textTheme.headline6.copyWith(
           color: Colors.white,
         );
-    final ClientsProvider clientsProvider =
-        Provider.of<ClientsProvider>(context);
+    final clientsProvider = Provider.of<ClientsProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
+        elevation: 0,
         title: ScaffoldLogo(),
         actions: [
           TextButton(
             onPressed: null,
             child: Text('Listado de clientes', style: titleStyle),
-            style: TextButton.styleFrom(
-              primary: Colors.white,
-            ),
+            style: TextButton.styleFrom(primary: Colors.white),
           ),
           SizedBox(width: 10.0),
         ],
-        elevation: 0,
       ),
       body: clientsProvider.isLoading
           ? const LoadingContainer()

@@ -7,10 +7,6 @@ import 'package:montana_mobile/utils/preferences.dart';
 class ClientsProvider with ChangeNotifier {
   final String _url = dotenv.env['API_URL'];
 
-  ClientsProvider() {
-    loadClients();
-  }
-
   List<Cliente> _clients = [];
   List<Cliente> get clients => _clients;
 
@@ -53,6 +49,7 @@ class ClientsProvider with ChangeNotifier {
 
   Future<void> loadClients() async {
     _clients = [];
+    _search = '';
     _isLoading = true;
     notifyListeners();
     _clients = await getClients();

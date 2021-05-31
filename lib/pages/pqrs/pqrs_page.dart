@@ -9,36 +9,37 @@ import 'package:montana_mobile/widgets/scaffold_logo.dart';
 import 'package:montana_mobile/widgets/search_box.dart';
 import 'package:provider/provider.dart';
 
-class PqrsPage extends StatelessWidget {
+class PqrsPage extends StatefulWidget {
+  @override
+  _PqrsPageState createState() => _PqrsPageState();
+}
+
+class _PqrsPageState extends State<PqrsPage> {
+  @override
+  void initState() {
+    super.initState();
+    () async {
+      await Future.delayed(Duration.zero);
+
+      final pqrsProvider = Provider.of<PqrsProvider>(context, listen: false);
+      pqrsProvider.loadTickets();
+    }();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final PqrsProvider pqrsProvider = Provider.of<PqrsProvider>(context);
-    final titleStyle = Theme.of(context).textTheme.headline6.copyWith(
-          color: Colors.white,
-        );
+    final pqrsProvider = Provider.of<PqrsProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: ScaffoldLogo(),
-        actions: [
-          TextButton(
-            onPressed: null,
-            child: Text('Listado de PQRS', style: titleStyle),
-            style: TextButton.styleFrom(
-              primary: Colors.white,
-            ),
-          ),
-          SizedBox(width: 10.0),
-        ],
         elevation: 0,
+        title: const ScaffoldLogo(),
+        actions: [
+          const _PageTitle(),
+          const SizedBox(width: 10.0),
+        ],
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Theme.of(context).primaryColor,
-        child: Icon(Icons.add),
-        onPressed: () {
-          Navigator.of(context).pushNamed(CreatePqrsPage.route);
-        },
-      ),
+      floatingActionButton: _CreatePqrsButton(),
       body: pqrsProvider.isLoadingTickets
           ? const LoadingContainer()
           : pqrsProvider.tickets.length == 0
@@ -51,6 +52,38 @@ class PqrsPage extends StatelessWidget {
                   color: Theme.of(context).primaryColor,
                   child: _PqrsContent(),
                 ),
+    );
+  }
+}
+
+class _PageTitle extends StatelessWidget {
+  const _PageTitle({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final titleStyle = Theme.of(context).textTheme.headline6.copyWith(
+          color: Colors.white,
+        );
+
+    return TextButton(
+      onPressed: null,
+      child: Text('Listado de PQRS', style: titleStyle),
+      style: TextButton.styleFrom(
+        primary: Colors.white,
+      ),
+    );
+  }
+}
+
+class _CreatePqrsButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton(
+      backgroundColor: Theme.of(context).primaryColor,
+      child: const Icon(Icons.add),
+      onPressed: () {
+        Navigator.of(context).pushNamed(CreatePqrsPage.route);
+      },
     );
   }
 }
@@ -75,7 +108,7 @@ class _PqrsContent extends StatelessWidget {
         ),
         PqrsFilter(),
         pqrsProvider.isSearchActive
-            ? Center(
+            ? const Center(
                 child: Padding(
                   padding: EdgeInsets.symmetric(vertical: 10.0),
                   child: Text('No hay coincidencias.'),
@@ -90,7 +123,7 @@ class _PqrsContent extends StatelessWidget {
               return PqrsCard(ticket: tickets[index]);
             },
             separatorBuilder: (_, int index) {
-              return SizedBox(height: 20.0);
+              return const SizedBox(height: 20.0);
             },
           ),
         ),

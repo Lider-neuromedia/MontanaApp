@@ -10,10 +10,6 @@ class PqrsProvider with ChangeNotifier {
   final String _url = dotenv.env['API_URL'];
   final List<SortValue> sortValues = _sortValues;
 
-  PqrsProvider() {
-    loadTickets();
-  }
-
   String _sortBy;
   String get sortBy => _sortBy;
 
@@ -24,21 +20,44 @@ class PqrsProvider with ChangeNotifier {
   Ticket get ticket => _ticket;
 
   bool _isLoadingTickets = false;
-  bool _isLoadingTicket = false;
-  bool _isLoadingMessages = false;
-  bool _isLoadingMessage = false;
   bool get isLoadingTickets => _isLoadingTickets;
-  bool get isLoadingTicket => _isLoadingTicket;
-  bool get isLoadingMessages => _isLoadingMessages;
-  bool get isLoadingMessage => _isLoadingMessage;
 
-  set sortBy(String value) {
-    _sortBy = value;
-    _sortOrders();
+  set isLoadingTickets(bool value) {
+    _isLoadingTickets = value;
     notifyListeners();
   }
 
-  void _sortOrders() {
+  bool _isLoadingTicket = false;
+  bool get isLoadingTicket => _isLoadingTicket;
+
+  set isLoadingTicket(bool value) {
+    _isLoadingTicket = value;
+    notifyListeners();
+  }
+
+  bool _isLoadingMessages = false;
+  bool get isLoadingMessages => _isLoadingMessages;
+
+  set isLoadingMessages(bool value) {
+    _isLoadingMessages = value;
+    notifyListeners();
+  }
+
+  bool _isLoadingMessage = false;
+  bool get isLoadingMessage => _isLoadingMessage;
+
+  set isLoadingMessage(bool value) {
+    _isLoadingMessage = value;
+    notifyListeners();
+  }
+
+  set sortBy(String value) {
+    _sortBy = value;
+    _sortTickets();
+    notifyListeners();
+  }
+
+  void _sortTickets() {
     _tickets.sort((Ticket ticket, Ticket previus) {
       if (_sortBy == SortValue.RECENT_FIRST) {
         return ticket.fechaRegistro.compareTo(previus.fechaRegistro) * -1;
@@ -54,26 +73,6 @@ class PqrsProvider with ChangeNotifier {
       }
       return 0;
     });
-  }
-
-  set isLoadingTickets(bool value) {
-    _isLoadingTickets = value;
-    notifyListeners();
-  }
-
-  set isLoadingMessages(bool value) {
-    _isLoadingMessages = value;
-    notifyListeners();
-  }
-
-  set isLoadingTicket(bool value) {
-    _isLoadingTicket = value;
-    notifyListeners();
-  }
-
-  set isLoadingMessage(bool value) {
-    _isLoadingMessage = value;
-    notifyListeners();
   }
 
   String _search = '';
@@ -125,10 +124,11 @@ class PqrsProvider with ChangeNotifier {
 
   Future<void> loadTickets() async {
     _tickets = [];
+    _sortBy = SortValue.RECENT_FIRST;
     _isLoadingTickets = true;
     notifyListeners();
     _tickets = await getTickets();
-    _sortOrders();
+    _sortTickets();
     _isLoadingTickets = false;
     notifyListeners();
   }

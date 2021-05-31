@@ -26,10 +26,10 @@ class EmptyMessage extends StatelessWidget {
             ),
             SizedBox(height: 15.0),
             ElevatedButton(
-              child: Icon(Icons.refresh),
+              child: const Icon(Icons.refresh),
               style: ElevatedButton.styleFrom(
                 primary: Theme.of(context).primaryColor,
-                shape: CircleBorder(),
+                shape: const CircleBorder(),
               ),
               onPressed: onPressed,
             )

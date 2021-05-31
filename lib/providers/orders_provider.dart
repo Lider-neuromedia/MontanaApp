@@ -8,10 +8,6 @@ class OrdersProvider with ChangeNotifier {
   final String _url = dotenv.env['API_URL'];
   final List<SortValue> sortValues = _sortValues;
 
-  OrdersProvider() {
-    loadOrders();
-  }
-
   Pedido _order;
   Pedido get order => _order;
 
@@ -22,8 +18,9 @@ class OrdersProvider with ChangeNotifier {
   String get sortBy => _sortBy;
 
   bool _isLoading = false;
-  bool _isOrderLoading = false;
   bool get isLoading => _isLoading;
+
+  bool _isOrderLoading = false;
   bool get isOrderLoading => _isOrderLoading;
 
   set sortBy(String value) {
@@ -35,8 +32,10 @@ class OrdersProvider with ChangeNotifier {
   Future<void> loadOrders() async {
     _orders = [];
     _isLoading = true;
+    _sortBy = SortValue.RECENT_FIRST;
     notifyListeners();
     _orders = await getOrders();
+    _sortOrders();
     _isLoading = false;
     notifyListeners();
   }
@@ -101,8 +100,6 @@ class OrdersProvider with ChangeNotifier {
     });
     notifyListeners();
   }
-
-  void sortOrderProductsByPlace(String place) {}
 }
 
 class SortValue {

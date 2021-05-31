@@ -9,10 +9,30 @@ import 'package:montana_mobile/theme/theme.dart';
 import 'package:montana_mobile/widgets/cart_icon.dart';
 import 'package:provider/provider.dart';
 
-class OrdersPage extends StatelessWidget {
+class OrdersPage extends StatefulWidget {
+  @override
+  _OrdersPageState createState() => _OrdersPageState();
+}
+
+class _OrdersPageState extends State<OrdersPage> {
+  @override
+  void initState() {
+    super.initState();
+
+    () async {
+      await Future.delayed(Duration.zero);
+
+      final ordersProvider = Provider.of<OrdersProvider>(
+        context,
+        listen: false,
+      );
+      ordersProvider.loadOrders();
+    }();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final OrdersProvider ordersProvider = Provider.of<OrdersProvider>(context);
+    final ordersProvider = Provider.of<OrdersProvider>(context);
 
     return Scaffold(
       appBar: AppBar(

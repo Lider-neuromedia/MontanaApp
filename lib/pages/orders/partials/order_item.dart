@@ -35,7 +35,7 @@ class OrderItem extends StatelessWidget {
           );
         },
         child: Container(
-          padding: EdgeInsets.symmetric(
+          padding: const EdgeInsets.symmetric(
             horizontal: 10.0,
             vertical: 15.0,
           ),
@@ -43,17 +43,17 @@ class OrderItem extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text("Cliente: ${order.clienteNombre}", style: textStyle1),
-              SizedBox(height: 5.0),
+              const SizedBox(height: 5.0),
               Text("Pedido #${order.codigo}", style: textStyle2),
-              SizedBox(height: 5.0),
+              const SizedBox(height: 5.0),
               Text(formatDate(order.fecha), style: textStyle2),
-              SizedBox(height: 5.0),
+              const SizedBox(height: 5.0),
               Text(formatMoney(order.total), style: textStyle3),
-              SizedBox(height: 10.0),
+              const SizedBox(height: 10.0),
               Container(
                 child: Text(order.estadoFormatted, style: textStyle4),
                 color: order.estadoColor,
-                padding: EdgeInsets.symmetric(
+                padding: const EdgeInsets.symmetric(
                   horizontal: 10.0,
                   vertical: 5.0,
                 ),

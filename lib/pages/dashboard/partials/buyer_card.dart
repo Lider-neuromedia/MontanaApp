@@ -20,21 +20,21 @@ class _BuyerCardState extends State<BuyerCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.all(12.0),
-      padding: EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0),
+      margin: const EdgeInsets.all(12.0),
+      padding: const EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0),
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border.all(
           color: Colors.grey[200],
           width: 2.0,
         ),
-        borderRadius: BorderRadius.all(
-          Radius.circular(10.0),
+        borderRadius: const BorderRadius.all(
+          const Radius.circular(10.0),
         ),
       ),
       child: ExpansionPanelList(
         elevation: 0,
-        expandedHeaderPadding: EdgeInsets.all(0),
+        expandedHeaderPadding: const EdgeInsets.all(0),
         expansionCallback: (i, isOpen) {
           setState(() => _isOpen = !_isOpen);
         },
@@ -50,7 +50,7 @@ class _BuyerCardState extends State<BuyerCard> {
               );
             },
             body: Container(
-              padding: EdgeInsets.all(5.0),
+              padding: const EdgeInsets.all(5.0),
               decoration: BoxDecoration(
                 border: Border(
                   top: BorderSide(
@@ -121,14 +121,14 @@ class _CardDataRow extends StatelessWidget {
       children: [
         Expanded(
           child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 5.0),
+            padding: const EdgeInsets.symmetric(vertical: 5.0),
             child: children[0],
           ),
         ),
-        SizedBox(width: 10.0),
+        const SizedBox(width: 10.0),
         Expanded(
           child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 5.0),
+            padding: const EdgeInsets.symmetric(vertical: 5.0),
             child: children[1],
           ),
         ),

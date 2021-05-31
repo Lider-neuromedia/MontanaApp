@@ -4,11 +4,13 @@ import 'package:montana_mobile/providers/cart_provider.dart';
 import 'package:provider/provider.dart';
 
 class CartIcon extends StatelessWidget {
+  const CartIcon({Key key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     final cartProvider = Provider.of<CartProvider>(context);
     final cartCount = cartProvider.products.length;
-    final TextStyle textStyle = Theme.of(context).textTheme.bodyText1.copyWith(
+    final textStyle = Theme.of(context).textTheme.bodyText1.copyWith(
           color: Theme.of(context).primaryColor,
           fontWeight: FontWeight.w700,
         );
@@ -17,20 +19,20 @@ class CartIcon extends StatelessWidget {
         ? Container()
         : TextButton.icon(
             onPressed: () => Navigator.of(context).pushNamed(CartPage.route),
-            icon: Icon(Icons.shopping_bag_outlined),
+            icon: const Icon(Icons.shopping_bag_outlined),
             style: TextButton.styleFrom(
               primary: Colors.white,
             ),
             label: Container(
               child: Text("$cartCount", style: textStyle),
-              padding: EdgeInsets.symmetric(
+              padding: const EdgeInsets.symmetric(
                 horizontal: 5.0,
                 vertical: 2.0,
               ),
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.all(
-                  Radius.circular(3.0),
+                borderRadius: const BorderRadius.all(
+                  const Radius.circular(3.0),
                 ),
               ),
             ),

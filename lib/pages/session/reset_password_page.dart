@@ -18,8 +18,8 @@ class ResetPasswordPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ResetPasswordProvider resetPasswordProvider =
-        Provider.of<ResetPasswordProvider>(context);
+    final resetPasswordProvider = Provider.of<ResetPasswordProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Reiniciar Contraseña'),
@@ -28,14 +28,14 @@ class ResetPasswordPage extends StatelessWidget {
         padding: const EdgeInsets.all(20.0),
         children: [
           _TokenInput(controller: _tokenController),
-          SizedBox(height: 30.0),
+          const SizedBox(height: 30.0),
           _EmailInput(controller: _emailController),
-          SizedBox(height: 30.0),
+          const SizedBox(height: 30.0),
           _PasswordInput(controller: _passwordController),
-          SizedBox(height: 30.0),
+          const SizedBox(height: 30.0),
           _PasswordConfirmationInput(
               controller: _passwordConfirmationController),
-          SizedBox(height: 30.0),
+          const SizedBox(height: 30.0),
           resetPasswordProvider.isLoading
               ? Center(
                   child: CircularProgressIndicator(
@@ -98,7 +98,10 @@ class _SubmitButton extends StatelessWidget {
       child: Text('Reiniciar Contraseña'),
       style: ElevatedButton.styleFrom(
         primary: Theme.of(context).primaryColor,
-        padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 10.0),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 10.0,
+          vertical: 12.0,
+        ),
       ),
       onPressed: onPressed,
     );
@@ -115,8 +118,7 @@ class _PasswordInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ResetPasswordProvider resetPasswordProvider =
-        Provider.of<ResetPasswordProvider>(context);
+    final resetPasswordProvider = Provider.of<ResetPasswordProvider>(context);
 
     return TextFormField(
       controller: controller,
@@ -142,8 +144,7 @@ class _PasswordConfirmationInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ResetPasswordProvider resetPasswordProvider =
-        Provider.of<ResetPasswordProvider>(context);
+    final resetPasswordProvider = Provider.of<ResetPasswordProvider>(context);
 
     return TextFormField(
       controller: controller,
@@ -169,8 +170,7 @@ class _EmailInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ResetPasswordProvider resetPasswordProvider =
-        Provider.of<ResetPasswordProvider>(context);
+    final resetPasswordProvider = Provider.of<ResetPasswordProvider>(context);
 
     return TextFormField(
       controller: controller,
@@ -197,8 +197,7 @@ class _TokenInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ResetPasswordProvider resetPasswordProvider =
-        Provider.of<ResetPasswordProvider>(context);
+    final resetPasswordProvider = Provider.of<ResetPasswordProvider>(context);
 
     return TextFormField(
       controller: controller,

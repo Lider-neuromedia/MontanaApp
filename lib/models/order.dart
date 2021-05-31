@@ -176,12 +176,12 @@ class Pedido {
   String get clienteNombre => "$nameCliente $apellidoCliente";
 
   Color get estadoColor {
-    Color statusColor = Color.fromRGBO(109, 109, 109, 1.0);
+    Color statusColor = const Color.fromRGBO(109, 109, 109, 1.0);
 
     if (estado == Estado.ENTREGADO) {
-      statusColor = Color.fromRGBO(55, 202, 8, 1.0);
+      statusColor = const Color.fromRGBO(55, 202, 8, 1.0);
     } else if (estado == Estado.CANCELADO) {
-      statusColor = Color.fromRGBO(229, 10, 32, 1.0);
+      statusColor = const Color.fromRGBO(229, 10, 32, 1.0);
     }
 
     return statusColor;

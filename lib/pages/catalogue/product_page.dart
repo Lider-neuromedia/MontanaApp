@@ -54,7 +54,7 @@ class _ProductPageState extends State<ProductPage> {
       appBar: AppBar(
         title: Text('Detalle de Producto'),
         actions: [
-          CartIcon(),
+          const CartIcon(),
         ],
       ),
       body: productsProvider.isLoadingProduct
@@ -99,7 +99,7 @@ class _ProductContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final htmlStyle = {
       'body': Style(
-        margin: EdgeInsets.all(0.0),
+        margin: const EdgeInsets.all(0.0),
         fontSize: FontSize(16),
       ),
       '*': Style(
@@ -120,7 +120,7 @@ class _ProductContent extends StatelessWidget {
               height: 1.0,
               color: Colors.grey,
               width: double.infinity,
-              margin: EdgeInsets.symmetric(
+              margin: const EdgeInsets.symmetric(
                 horizontal: 20.0,
                 vertical: 20.0,
               ),
@@ -151,13 +151,13 @@ class _ProductContent extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white,
             ),
-            padding: EdgeInsets.all(10.0),
+            padding: const EdgeInsets.all(10.0),
             width: double.infinity,
             child: ElevatedButton(
               child: Text('Añadir al pedido'),
               onPressed: () => _openStartOrder(context),
               style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 10.0),
+                padding: const EdgeInsets.symmetric(vertical: 10.0),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30.0),
                 ),
@@ -173,10 +173,10 @@ class _ProductContent extends StatelessWidget {
   void _openStartOrder(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(30.0),
-          topRight: Radius.circular(30.0),
+      shape: const RoundedRectangleBorder(
+        borderRadius: const BorderRadius.only(
+          topLeft: const Radius.circular(30.0),
+          topRight: const Radius.circular(30.0),
         ),
       ),
       builder: (_) {
@@ -196,10 +196,10 @@ class _ProductContent extends StatelessWidget {
       context: context,
       enableDrag: false,
       isScrollControlled: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(30.0),
-          topRight: Radius.circular(30.0),
+      shape: const RoundedRectangleBorder(
+        borderRadius: const BorderRadius.only(
+          topLeft: const Radius.circular(30.0),
+          topRight: const Radius.circular(30.0),
         ),
       ),
       builder: (_) => AddProductModal(product: product),
@@ -256,7 +256,7 @@ class __RatingsContentState extends State<_RatingsContent> {
                 )
               : Column(
                   children: [
-                    Ratings(),
+                    const Ratings(),
                     const SizedBox(height: 20.0),
                     ratingProvider.isRatingCompleted
                         ? Container()
@@ -300,7 +300,7 @@ class _ProductTitle extends StatelessWidget {
             softWrap: true,
           ),
         ),
-        SizedBox(width: 20.0),
+        const SizedBox(width: 20.0),
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
@@ -337,26 +337,28 @@ class __GalleryProductState extends State<_GalleryProduct> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 20.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+      padding: const EdgeInsets.symmetric(vertical: 20.0),
+      decoration: const BoxDecoration(
+        borderRadius: const BorderRadius.all(
+          const Radius.circular(10.0),
+        ),
         color: Colors.white,
       ),
       child: Column(
         children: [
           Container(
-            padding: EdgeInsets.all(10.0),
+            padding: const EdgeInsets.all(10.0),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(5.0),
               child: FadeInImage(
-                placeholder: AssetImage("assets/images/placeholder.png"),
+                placeholder: const AssetImage("assets/images/placeholder.png"),
                 image: NetworkImage(selectedImage),
                 width: double.infinity,
                 fit: BoxFit.contain,
               ),
             ),
           ),
-          SizedBox(height: 10.0),
+          const SizedBox(height: 10.0),
           widget.product.imagenes.length == 0
               ? Container()
               : Container(
@@ -382,7 +384,7 @@ class __GalleryProductState extends State<_GalleryProduct> {
                       if (index == 0) {
                         return Row(
                           children: [
-                            SizedBox(width: 10.0),
+                            const SizedBox(width: 10.0),
                             imageWidget,
                           ],
                         );
@@ -393,7 +395,7 @@ class __GalleryProductState extends State<_GalleryProduct> {
                     separatorBuilder: (_, int index) {
                       return Center(
                         child: Container(
-                          margin: EdgeInsets.symmetric(horizontal: 8.0),
+                          margin: const EdgeInsets.symmetric(horizontal: 8.0),
                           color: CustomTheme.greyColor,
                           height: 25.0,
                           width: 1.0,

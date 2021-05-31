@@ -18,14 +18,14 @@ class DashboardBuyerPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: ScaffoldLogo(),
+        title: const ScaffoldLogo(),
         actions: [
-          CartIcon(),
+          const CartIcon(),
         ],
       ),
       body: ListView(
         children: [
-          SizedBox(height: 20.0),
+          const SizedBox(height: 20.0),
           // BuyerCard(), // TODO: traer datos del api
           _CardDataList(
             children: [
@@ -79,15 +79,15 @@ class DashboardBuyerPage extends StatelessWidget {
               label: 'Tiendas',
             ),
           ]),
-          SizedBox(height: 20.0),
+          const SizedBox(height: 20.0),
           Text(
             'CONSOLIDADO PEDIDOS',
             style: titleStyle,
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: 20.0),
+          const SizedBox(height: 20.0),
           ConsolidatedOrders(),
-          SizedBox(height: 50.0),
+          const SizedBox(height: 50.0),
         ],
       ),
     );
@@ -109,12 +109,15 @@ class _CardDataList extends StatelessWidget {
     children.asMap().forEach((index, item) {
       items.add(Expanded(child: item));
       if (index < children.length - 1) {
-        items.add(SizedBox(width: 15.0));
+        items.add(const SizedBox(width: 15.0));
       }
     });
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 15.0,
+        vertical: 10.0,
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         crossAxisAlignment: CrossAxisAlignment.start,

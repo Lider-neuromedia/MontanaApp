@@ -19,11 +19,11 @@ class ProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final TextStyle textStyle1 = textTheme.headline5.copyWith(
+    final textStyle1 = textTheme.headline5.copyWith(
       color: isShowRoom ? Colors.white : CustomTheme.textColor1,
       fontWeight: FontWeight.w700,
     );
-    final TextStyle textStyle2 = textTheme.bodyText1.copyWith(
+    final textStyle2 = textTheme.bodyText1.copyWith(
       color: isShowRoom ? Colors.white : CustomTheme.textColor1,
     );
 
@@ -46,23 +46,24 @@ class ProductItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(product.nombre, style: textStyle1),
-            SizedBox(height: 10.0),
+            const SizedBox(height: 10.0),
             isShowRoom
                 ? Container()
                 : Text("Ref: ${product.referencia}", style: textStyle2),
-            SizedBox(height: 15.0),
+            const SizedBox(height: 15.0),
             product.image == null
                 ? Container()
                 : ClipRRect(
                     borderRadius: BorderRadius.circular(5.0),
                     child: FadeInImage(
-                      placeholder: AssetImage("assets/images/placeholder.png"),
+                      placeholder:
+                          const AssetImage("assets/images/placeholder.png"),
                       image: NetworkImage(product.image),
                       width: double.infinity,
                       fit: BoxFit.contain,
                     ),
                   ),
-            SizedBox(height: 15.0),
+            const SizedBox(height: 15.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -73,7 +74,7 @@ class ProductItem extends StatelessWidget {
                     : Text("Stock: ${product.stock} cajas", style: textStyle2),
               ],
             ),
-            SizedBox(height: 15.0),
+            const SizedBox(height: 15.0),
             _ProductButton(
               mainColor:
                   isShowRoom ? Colors.white : Theme.of(context).primaryColor,
@@ -92,7 +93,7 @@ class ProductItem extends StatelessWidget {
                 );
               },
             ),
-            SizedBox(height: 15.0),
+            const SizedBox(height: 15.0),
             _ProductButton(
               mainColor: isShowRoom
                   ? CustomTheme.goldColor
@@ -113,10 +114,10 @@ class ProductItem extends StatelessWidget {
   void openStartOrder(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(30.0),
-          topRight: Radius.circular(30.0),
+      shape: const RoundedRectangleBorder(
+        borderRadius: const BorderRadius.only(
+          topLeft: const Radius.circular(30.0),
+          topRight: const Radius.circular(30.0),
         ),
       ),
       builder: (_) {
@@ -136,10 +137,10 @@ class ProductItem extends StatelessWidget {
       context: context,
       enableDrag: false,
       isScrollControlled: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(30.0),
-          topRight: Radius.circular(30.0),
+      shape: const RoundedRectangleBorder(
+        borderRadius: const BorderRadius.only(
+          topLeft: const Radius.circular(30.0),
+          topRight: const Radius.circular(30.0),
         ),
       ),
       builder: (_) => AddProductModal(product: product),
@@ -176,18 +177,18 @@ class _ProductButton extends StatelessWidget {
               color: mainColor,
               shape: BoxShape.circle,
             ),
-            padding: EdgeInsets.all(15.0),
+            padding: const EdgeInsets.all(15.0),
             child: Icon(icon, color: secondColor),
           ),
           Text(label),
           Container(
-            padding: EdgeInsets.all(15.0),
+            padding: const EdgeInsets.all(15.0),
             child: Icon(icon, color: Colors.transparent),
           ),
         ],
       ),
       style: OutlinedButton.styleFrom(
-        padding: EdgeInsets.only(left: 0.0, right: 10.0),
+        padding: const EdgeInsets.only(left: 0.0, right: 10.0),
         side: BorderSide(
           color: mainColor,
         ),

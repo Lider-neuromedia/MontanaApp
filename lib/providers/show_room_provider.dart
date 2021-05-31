@@ -6,14 +6,11 @@ import 'package:montana_mobile/utils/preferences.dart';
 
 class ShowRoomProvider with ChangeNotifier {
   final String _url = dotenv.env['API_URL'];
+
   bool _isLoading = false;
-  List<Producto> _products = [];
-
-  ShowRoomProvider() {
-    loadShowRoomProducts();
-  }
-
   bool get isLoading => _isLoading;
+
+  List<Producto> _products = [];
   List<Producto> get products => _products;
 
   Future<void> loadShowRoomProducts() async {

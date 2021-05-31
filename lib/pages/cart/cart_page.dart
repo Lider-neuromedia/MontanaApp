@@ -23,12 +23,12 @@ class CartPage extends StatelessWidget {
           Expanded(
             child: ListView.separated(
               itemCount: cartProvider.cart.products.length,
-              padding: EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(10.0),
               itemBuilder: (_, int index) {
                 return _CartItem(cartProduct: cartProvider.products[index]);
               },
               separatorBuilder: (_, int index) {
-                return SizedBox(height: 20.0);
+                return const SizedBox(height: 20.0);
               },
             ),
           ),
@@ -56,7 +56,7 @@ class _CartTotals extends StatelessWidget {
         );
 
     return Container(
-      padding: EdgeInsets.all(20.0),
+      padding: const EdgeInsets.all(20.0),
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border(
@@ -85,7 +85,7 @@ class _CartActions extends StatelessWidget {
 
     return Container(
       color: Colors.grey[100],
-      padding: EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
         horizontal: 10.0,
         vertical: 20.0,
       ),
@@ -122,10 +122,10 @@ class _CartActions extends StatelessWidget {
       context: context,
       enableDrag: false,
       isScrollControlled: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(30.0),
-          topRight: Radius.circular(30.0),
+      shape: const RoundedRectangleBorder(
+        borderRadius: const BorderRadius.only(
+          topLeft: const Radius.circular(30.0),
+          topRight: const Radius.circular(30.0),
         ),
       ),
       builder: (_) => CheckoutModal(),
@@ -146,9 +146,11 @@ class _CartItem extends StatelessWidget {
     return InkWell(
       onTap: () => openAddProduct(context),
       child: Container(
-        padding: EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(20.0),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+          borderRadius: const BorderRadius.all(
+            const Radius.circular(10.0),
+          ),
           border: Border.all(
             color: CustomTheme.greyColor,
             width: 1.0,
@@ -178,10 +180,10 @@ class _CartItem extends StatelessWidget {
       context: context,
       enableDrag: false,
       isScrollControlled: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(30.0),
-          topRight: Radius.circular(30.0),
+      shape: const RoundedRectangleBorder(
+        borderRadius: const BorderRadius.only(
+          topLeft: const Radius.circular(30.0),
+          topRight: const Radius.circular(30.0),
         ),
       ),
       builder: (_) {
@@ -212,16 +214,18 @@ class _CartItemHeader extends StatelessWidget {
           height: 60,
           width: 60,
           child: ClipRRect(
-            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            borderRadius: const BorderRadius.all(
+              const Radius.circular(10.0),
+            ),
             child: FadeInImage(
-              placeholder: AssetImage("assets/images/placeholder.png"),
+              placeholder: const AssetImage("assets/images/placeholder.png"),
               image: NetworkImage(cartProduct.product.image),
               width: double.infinity,
               fit: BoxFit.cover,
             ),
           ),
         ),
-        SizedBox(width: 25.0),
+        const SizedBox(width: 25.0),
         Text("Ref: ${cartProduct.product.referencia}", style: titleStyle),
       ],
     );
@@ -248,11 +252,11 @@ class _CartItemStock extends StatelessWidget {
         );
 
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 12.0),
+      margin: const EdgeInsets.symmetric(vertical: 12.0),
       child: Row(
         children: [
           Text("${cartStore.store.lugar}", style: boldStyle),
-          SizedBox(width: 5.0),
+          const SizedBox(width: 5.0),
           Text("${cartStore.store.local}", style: regularStyle),
           Expanded(child: Container()),
           Text("${cartStore.quantity}", style: mainStyle),

@@ -99,7 +99,7 @@ class _AddProductModalState extends State<AddProductModal> {
                 Expanded(
                   child: ListView(
                     children: storesList,
-                    padding: EdgeInsets.symmetric(
+                    padding: const EdgeInsets.symmetric(
                       horizontal: 20.0,
                       vertical: 25.0,
                     ),
@@ -107,7 +107,7 @@ class _AddProductModalState extends State<AddProductModal> {
                 ),
                 Container(
                   color: Colors.grey[100],
-                  padding: EdgeInsets.symmetric(
+                  padding: const EdgeInsets.symmetric(
                     horizontal: 10.0,
                     vertical: 20.0,
                   ),
@@ -215,8 +215,8 @@ class _StockButton extends StatelessWidget {
       child: Icon(icon, size: 20.0),
       style: ElevatedButton.styleFrom(
         primary: Theme.of(context).primaryColor,
-        padding: EdgeInsets.all(3.0),
-        minimumSize: Size(0, 0),
+        padding: const EdgeInsets.all(3.0),
+        minimumSize: const Size(0, 0),
       ),
     );
   }
@@ -268,7 +268,7 @@ class _BoxField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: child,
-      padding: EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
         horizontal: 15.0,
         vertical: 10.0,
       ),

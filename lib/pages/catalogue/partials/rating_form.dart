@@ -103,10 +103,9 @@ class _RateField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextStyle subtitleStyle =
-        Theme.of(context).textTheme.bodyText1.copyWith(
-              fontWeight: FontWeight.w700,
-            );
+    final subtitleStyle = Theme.of(context).textTheme.bodyText1.copyWith(
+          fontWeight: FontWeight.w700,
+        );
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),

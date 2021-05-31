@@ -21,7 +21,7 @@ class CurrentSign extends StatelessWidget {
         children: [
           Material(
             child: IconButton(
-              icon: Icon(Icons.cancel),
+              icon: const Icon(Icons.cancel),
               color: CustomTheme.textColor1,
               onPressed: () => cartProvider.signData = null,
             ),

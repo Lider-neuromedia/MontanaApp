@@ -7,20 +7,39 @@ import 'package:montana_mobile/widgets/cart_icon.dart';
 import 'package:montana_mobile/widgets/scaffold_logo.dart';
 import 'package:provider/provider.dart';
 
-class ShowRoomPage extends StatelessWidget {
+class ShowRoomPage extends StatefulWidget {
+  @override
+  _ShowRoomPageState createState() => _ShowRoomPageState();
+}
+
+class _ShowRoomPageState extends State<ShowRoomPage> {
+  @override
+  void initState() {
+    super.initState();
+
+    () async {
+      await Future.delayed(Duration.zero);
+
+      final showRoomProvider = Provider.of<ShowRoomProvider>(
+        context,
+        listen: false,
+      );
+      showRoomProvider.loadShowRoomProducts();
+    }();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final ShowRoomProvider showRoomProvider =
-        Provider.of<ShowRoomProvider>(context);
+    final showRoomProvider = Provider.of<ShowRoomProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: ScaffoldLogo(),
+        title: const ScaffoldLogo(),
         actions: [
-          CartIcon(),
+          const CartIcon(),
         ],
       ),
-      backgroundColor: Color.fromRGBO(45, 45, 45, 1.0),
+      backgroundColor: const Color.fromRGBO(45, 45, 45, 1.0),
       body: showRoomProvider.isLoading
           ? const LoadingContainer()
           : showRoomProvider.products.length == 0
@@ -42,11 +61,10 @@ class _ProductsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ShowRoomProvider showRoomProvider =
-        Provider.of<ShowRoomProvider>(context);
+    final showRoomProvider = Provider.of<ShowRoomProvider>(context);
 
     return ListView.separated(
-      padding: EdgeInsets.all(20.0),
+      padding: const EdgeInsets.all(20.0),
       itemCount: showRoomProvider.products.length,
       itemBuilder: (_, index) {
         if (index == 0) {
@@ -68,7 +86,7 @@ class _ProductsList extends StatelessWidget {
         );
       },
       separatorBuilder: (_, index) {
-        return SizedBox(height: 30.0);
+        return const SizedBox(height: 30.0);
       },
     );
   }
@@ -78,9 +96,9 @@ class BannerShowRoom extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: 20.0),
+      margin: const EdgeInsets.only(bottom: 20.0),
       child: Image(
-        image: AssetImage("assets/images/show_room.png"),
+        image: const AssetImage("assets/images/show_room.png"),
         fit: BoxFit.contain,
         width: double.infinity,
       ),

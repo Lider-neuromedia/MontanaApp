@@ -65,12 +65,12 @@ class _StartOrderModalState extends State<StartOrderModal> {
 
     return Container(
       height: size.height / 2,
-      padding: EdgeInsets.all(10.0),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.all(10.0),
+      decoration: const BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(30.0),
-          topRight: Radius.circular(30.0),
+        borderRadius: const BorderRadius.only(
+          topLeft: const Radius.circular(30.0),
+          topRight: const Radius.circular(30.0),
         ),
       ),
       child: Center(
@@ -84,7 +84,7 @@ class _StartOrderModalState extends State<StartOrderModal> {
               _FieldBox(
                 children: [
                   _LabelField(label: 'CLIENTE'),
-                  SizedBox(height: 10.0),
+                  const SizedBox(height: 10.0),
                   _loading
                       ? LoadingContainer()
                       : DropdownList(
@@ -106,7 +106,7 @@ class _StartOrderModalState extends State<StartOrderModal> {
                   : _FieldBox(
                       children: [
                         _LabelField(label: 'CATALOGO'),
-                        SizedBox(height: 10.0),
+                        const SizedBox(height: 10.0),
                         _loading
                             ? LoadingContainer()
                             : DropdownList(
@@ -212,7 +212,7 @@ class _ContinueButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cartProvider = Provider.of<CartProvider>(context);
-    final bool isBlocked = onPressed == null;
+    final isBlocked = onPressed == null;
 
     return ElevatedButton(
       onPressed: cartProvider.clientId == null ? null : onPressed,
@@ -232,20 +232,20 @@ class _ContinueButton extends StatelessWidget {
                 ),
               ],
             ),
-            padding: EdgeInsets.all(15.0),
+            padding: const EdgeInsets.all(15.0),
             child: Icon(icon, color: Colors.white),
           ),
           Text(label),
           Container(
-            padding: EdgeInsets.all(15.0),
+            padding: const EdgeInsets.all(15.0),
             child: Icon(icon, color: Colors.transparent),
           ),
         ],
       ),
       style: ElevatedButton.styleFrom(
-        padding: EdgeInsets.only(
-          left: 0.0,
+        padding: const EdgeInsets.only(
           right: 10.0,
+          left: 0.0,
         ),
         side: BorderSide(
           color: isBlocked ? Colors.grey : Theme.of(context).primaryColor,

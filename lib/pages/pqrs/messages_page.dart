@@ -83,7 +83,7 @@ class _MessagesList extends StatelessWidget {
     return ListView.separated(
       reverse: true,
       itemCount: pqrsProvider.ticket.mensajes.length,
-      padding: EdgeInsets.all(10.0),
+      padding: const EdgeInsets.all(10.0),
       itemBuilder: (_, int index) {
         final message = pqrsProvider.ticket.mensajes[index];
         return MessageCard(
@@ -92,7 +92,7 @@ class _MessagesList extends StatelessWidget {
         );
       },
       separatorBuilder: (_, int index) {
-        return SizedBox(height: 20.0);
+        return const SizedBox(height: 20.0);
       },
     );
   }

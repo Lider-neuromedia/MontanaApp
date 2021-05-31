@@ -30,7 +30,7 @@ class _SignBoxState extends State<SignBox> {
       child: Column(
         children: <Widget>[
           Container(
-            padding: EdgeInsets.only(top: 5.0),
+            padding: const EdgeInsets.only(top: 5.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               mainAxisSize: MainAxisSize.max,

@@ -20,10 +20,9 @@ class DropdownPqrs extends StatefulWidget {
 class _DropdownPqrsState extends State<DropdownPqrs> {
   @override
   Widget build(BuildContext context) {
-    final TextStyle valueStyle = Theme.of(context).textTheme.bodyText1.copyWith(
+    final valueStyle = Theme.of(context).textTheme.bodyText1.copyWith(
           fontWeight: FontWeight.w700,
         );
-
     final border = OutlineInputBorder(
       borderSide: BorderSide(
         color: CustomTheme.greyColor,
@@ -36,7 +35,7 @@ class _DropdownPqrsState extends State<DropdownPqrs> {
       decoration: InputDecoration(
         border: border,
         enabledBorder: border,
-        contentPadding: EdgeInsets.symmetric(
+        contentPadding: const EdgeInsets.symmetric(
           horizontal: 10.0,
           vertical: 0.0,
         ),

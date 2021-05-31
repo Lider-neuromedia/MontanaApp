@@ -28,23 +28,23 @@ class NavigationBar extends StatelessWidget {
       backgroundColor: Colors.white,
       items: [
         BottomNavigationBarItem(
-          icon: Icon(Icons.dashboard_outlined),
+          icon: const Icon(Icons.dashboard_outlined),
           label: 'Dashboard',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.assignment),
+          icon: const Icon(Icons.assignment),
           label: 'Catálogo',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Octicons.package),
+          icon: const Icon(Octicons.package),
           label: 'Pedidos',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.star_border_rounded),
+          icon: const Icon(Icons.star_border_rounded),
           label: 'ShowRoom',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.add_circle_outline),
+          icon: const Icon(Icons.add_circle_outline),
           label: 'Más',
         ),
       ],

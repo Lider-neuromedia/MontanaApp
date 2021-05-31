@@ -29,22 +29,21 @@ class _OrderPageState extends State<OrderPage> {
   }
 
   void _loadData(BuildContext context) {
-    final int orderId = ModalRoute.of(context).settings.arguments as int;
-    final OrdersProvider ordersProvider =
-        Provider.of<OrdersProvider>(context, listen: false);
+    final orderId = ModalRoute.of(context).settings.arguments as int;
+    final ordersProvider = Provider.of<OrdersProvider>(context, listen: false);
     ordersProvider.loadOrder(orderId);
   }
 
   @override
   Widget build(BuildContext context) {
-    final OrdersProvider ordersProvider = Provider.of<OrdersProvider>(context);
-    final int orderId = ModalRoute.of(context).settings.arguments as int;
+    final ordersProvider = Provider.of<OrdersProvider>(context);
+    final orderId = ModalRoute.of(context).settings.arguments as int;
 
     return Scaffold(
       appBar: AppBar(
         title: Text('Pedido'),
         actions: [
-          CartIcon(),
+          const CartIcon(),
         ],
       ),
       body: ordersProvider.isOrderLoading
@@ -77,26 +76,26 @@ class _OrderDetailContent extends StatelessWidget {
       padding: const EdgeInsets.only(top: 20.0),
       children: [
         _OrderTitle(order: order),
-        SizedBox(height: 20.0),
+        const SizedBox(height: 20.0),
         _OrderDataList(
           children: [
             _OrderDetailData(
               title: 'Fecha de emisión del pedido:',
               value: formatDate(order.fecha),
             ),
-            SizedBox(height: 10.0),
+            const SizedBox(height: 10.0),
             _OrderDetailData(
               title: 'Nombre comercial:',
               value: order.cliente.nombreCompleto,
             ),
-            SizedBox(height: 10.0),
+            const SizedBox(height: 10.0),
             _OrderDetailData(
               title: 'Nit:',
               value: order.cliente.nit,
             ),
           ],
         ),
-        SizedBox(height: 20.0),
+        const SizedBox(height: 20.0),
         _OrderDetailCards(
           height: 270.0,
           children: [
@@ -118,7 +117,7 @@ class _OrderDetailContent extends StatelessWidget {
             ),
           ],
         ),
-        SizedBox(height: 20.0),
+        const SizedBox(height: 20.0),
         ProductsTable(products: order.productos),
       ],
     );
@@ -136,7 +135,7 @@ class _OrderDataList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20.0),
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: Column(
         children: children,
       ),
@@ -157,7 +156,7 @@ class _OrderDetailCards extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10.0),
+      padding: const EdgeInsets.symmetric(horizontal: 10.0),
       height: height,
       child: GridView.count(
         physics: NeverScrollableScrollPhysics(),

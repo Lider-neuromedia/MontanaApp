@@ -20,12 +20,12 @@ class MessageCard extends StatelessWidget {
         children: leftSide
             ? [
                 _AvatarMessage(message: message, leftSide: leftSide),
-                SizedBox(width: 15.0),
+                const SizedBox(width: 15.0),
                 _MessageBox(message: message, leftSide: leftSide),
               ]
             : [
                 _MessageBox(message: message, leftSide: leftSide),
-                SizedBox(width: 15.0),
+                const SizedBox(width: 15.0),
                 _AvatarMessage(message: message, leftSide: leftSide),
               ],
       ),
@@ -57,11 +57,16 @@ class _MessageBox extends StatelessWidget {
           Container(
             width: double.infinity,
             child: Container(
-              padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 10.0,
+                vertical: 15.0,
+              ),
               child: Text("${message.mensaje}", style: textStyle),
             ),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+              borderRadius: const BorderRadius.all(
+                const Radius.circular(5.0),
+              ),
               color: leftSide ? Colors.white : CustomTheme.blue2Color,
             ),
           ),
@@ -114,7 +119,7 @@ class _AvatarMessage extends StatelessWidget {
             child: Text("${message.iniciales}", style: avatarStyle),
           ),
         ),
-        SizedBox(height: 5.0),
+        const SizedBox(height: 5.0),
         Text("${message.hora}", style: timeStyle),
       ],
     );

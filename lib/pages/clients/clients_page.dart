@@ -46,7 +46,7 @@ class _ClientsPageState extends State<ClientsPage> {
             child: Text('Listado de clientes', style: titleStyle),
             style: TextButton.styleFrom(primary: Colors.white),
           ),
-          SizedBox(width: 10.0),
+          const SizedBox(width: 10.0),
         ],
       ),
       body: clientsProvider.isLoading
@@ -70,8 +70,7 @@ class _ClientsContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ClientsProvider clientsProvider =
-        Provider.of<ClientsProvider>(context);
+    final clientsProvider = Provider.of<ClientsProvider>(context);
 
     return Column(
       children: [
@@ -84,7 +83,7 @@ class _ClientsContent extends StatelessWidget {
         clientsProvider.isSearchActive
             ? Center(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10.0),
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
                   child: Text('No hay coincidencias.'),
                 ),
               )
@@ -110,14 +109,14 @@ class ClientsListResults extends StatelessWidget {
     return Expanded(
       child: ListView.separated(
         itemCount: clients.length,
-        padding: EdgeInsets.all(15.0),
+        padding: const EdgeInsets.all(15.0),
         itemBuilder: (_, int index) {
           return ClientCard(
             client: clients[index],
           );
         },
         separatorBuilder: (_, int index) {
-          return SizedBox(height: 5.0);
+          return const SizedBox(height: 5.0);
         },
       ),
     );

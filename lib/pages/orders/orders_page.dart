@@ -38,7 +38,7 @@ class _OrdersPageState extends State<OrdersPage> {
       appBar: AppBar(
         title: Text('Pedidos'),
         actions: [
-          CartIcon(),
+          const CartIcon(),
         ],
       ),
       floatingActionButton: _CreateOrderButton(),
@@ -70,11 +70,11 @@ class _ListOrders extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final OrdersProvider ordersProvider = Provider.of<OrdersProvider>(context);
+    final ordersProvider = Provider.of<OrdersProvider>(context);
 
     return Expanded(
       child: ListView.separated(
-        padding: EdgeInsets.only(
+        padding: const EdgeInsets.only(
           top: 10.0,
           left: 10.0,
           right: 10.0,
@@ -85,7 +85,7 @@ class _ListOrders extends StatelessWidget {
           return OrderItem(order: ordersProvider.orders[index]);
         },
         separatorBuilder: (_, index) {
-          return SizedBox(height: 10.0);
+          return const SizedBox(height: 10.0);
         },
       ),
     );
@@ -101,7 +101,7 @@ class _CreateOrderButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return FloatingActionButton(
       backgroundColor: Theme.of(context).primaryColor,
-      child: Icon(Icons.add),
+      child: const Icon(Icons.add),
       onPressed: () => openStartOrder(context),
     );
   }
@@ -109,10 +109,10 @@ class _CreateOrderButton extends StatelessWidget {
   void openStartOrder(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(30.0),
-          topRight: Radius.circular(30.0),
+      shape: const RoundedRectangleBorder(
+        borderRadius: const BorderRadius.only(
+          topLeft: const Radius.circular(30.0),
+          topRight: const Radius.circular(30.0),
         ),
       ),
       builder: (_) {
@@ -140,11 +140,11 @@ class _OrdersFilter extends StatefulWidget {
 class __OrdersFilterState extends State<_OrdersFilter> {
   @override
   Widget build(BuildContext context) {
-    final TextStyle textStyle = Theme.of(context).textTheme.subtitle1;
-    final OrdersProvider ordersProvider = Provider.of<OrdersProvider>(context);
+    final textStyle = Theme.of(context).textTheme.subtitle1;
+    final ordersProvider = Provider.of<OrdersProvider>(context);
 
     return Container(
-      padding: EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
         horizontal: 15.0,
         vertical: 5.0,
       ),
@@ -153,7 +153,7 @@ class __OrdersFilterState extends State<_OrdersFilter> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Text('Ordenar por:', style: textStyle),
-          SizedBox(width: 10.0),
+          const SizedBox(width: 10.0),
           DropdownButton<String>(
             icon: const Icon(Icons.keyboard_arrow_down),
             iconSize: 24,

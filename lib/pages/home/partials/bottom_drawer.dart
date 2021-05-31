@@ -29,13 +29,13 @@ class BottomDrawer extends StatelessWidget {
       left: 0,
       bottom: navigationProvider.showMore ? 0 : (boxHeight * -1),
       child: Container(
-        padding: EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(20.0),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: navigationProvider.showMore
-              ? BorderRadius.only(
-                  topLeft: Radius.circular(20.0),
-                  topRight: Radius.circular(20.0),
+              ? const BorderRadius.only(
+                  topLeft: const Radius.circular(20.0),
+                  topRight: const Radius.circular(20.0),
                 )
               : null,
           boxShadow: [
@@ -58,21 +58,21 @@ class BottomDrawer extends StatelessWidget {
               active: navigationProvider.currentPage == 4,
               onTap: () => navigationProvider.currentPage = 4,
             ),
-            SizedBox(width: 20.0),
+            const SizedBox(width: 20.0),
             DrawerItem(
               title: 'PQRS',
               iconData: Octicons.comment_discussion,
               active: navigationProvider.currentPage == 5,
               onTap: () => navigationProvider.currentPage = 5,
             ),
-            SizedBox(width: 20.0),
+            const SizedBox(width: 20.0),
             DrawerItem(
               title: 'Ampliación\nde Cupo',
               iconData: Icons.tab_unselected,
               active: navigationProvider.currentPage == 6,
               onTap: () => navigationProvider.currentPage = 6,
             ),
-            SizedBox(width: 20.0),
+            const SizedBox(width: 20.0),
             DrawerItem(
               title: 'Cerrar Sesión',
               iconData: WebSymbols.logout,

@@ -18,11 +18,11 @@ class CheckoutModal extends StatelessWidget {
 
     return Container(
       height: size.height * 0.90,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(30.0),
-          topRight: Radius.circular(30.0),
+        borderRadius: const BorderRadius.only(
+          topLeft: const Radius.circular(30.0),
+          topRight: const Radius.circular(30.0),
         ),
       ),
       child: Column(
@@ -46,7 +46,7 @@ class CheckoutModal extends StatelessWidget {
   Future<void> finishOrder(
       BuildContext context, CartProvider cartProvider) async {
     cartProvider.isLoading = true;
-    bool success = await cartProvider.createOrder();
+    final success = await cartProvider.createOrder();
     cartProvider.isLoading = false;
 
     if (success) {
@@ -108,7 +108,7 @@ class __CheckoutFormState extends State<_CheckoutForm> {
 
     return Expanded(
       child: ListView(
-        padding: EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(20.0),
         children: [
           _TitleCheckout(label: 'Método de Pago'),
           const SizedBox(height: 20.0),
@@ -149,7 +149,7 @@ class __CheckoutFormState extends State<_CheckoutForm> {
             },
             decoration: InputDecoration(
               isCollapsed: true,
-              contentPadding: EdgeInsets.all(10.0),
+              contentPadding: const EdgeInsets.all(10.0),
               errorText: cartProvider.notesError,
               border: OutlineInputBorder(
                 borderSide: BorderSide(
@@ -222,7 +222,7 @@ class _CheckoutActions extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.grey[100],
-      padding: EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
         horizontal: 10.0,
         vertical: 20.0,
       ),

@@ -34,8 +34,10 @@ class _MessageFormState extends State<MessageForm> {
     () async {
       await Future.delayed(Duration.zero);
 
-      final messageProvider =
-          Provider.of<MessageProvider>(context, listen: false);
+      final messageProvider = Provider.of<MessageProvider>(
+        context,
+        listen: false,
+      );
       final preferences = Preferences();
       final user = preferences.session as Session;
 
@@ -50,7 +52,7 @@ class _MessageFormState extends State<MessageForm> {
     final pqrsProvider = Provider.of<PqrsProvider>(context);
 
     return Container(
-      padding: EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
         horizontal: 15.0,
         vertical: 10.0,
       ),
@@ -75,9 +77,9 @@ class _MessageFormState extends State<MessageForm> {
                   style: ElevatedButton.styleFrom(
                     primary: CustomTheme.blue1Color,
                     shape: CircleBorder(),
-                    padding: EdgeInsets.all(14),
+                    padding: const EdgeInsets.all(14),
                   ),
-                  child: Icon(Linecons.paper_plane, size: 20.0),
+                  child: const Icon(Linecons.paper_plane, size: 20.0),
                   onPressed: messageProvider.canSend
                       ? () => _createMessage(messageProvider, pqrsProvider)
                       : null,

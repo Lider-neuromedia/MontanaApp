@@ -9,27 +9,27 @@ import 'package:montana_mobile/widgets/scaffold_logo.dart';
 class DashboardSellerPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    TextStyle titleStyle = Theme.of(context).textTheme.headline5.copyWith(
+    final titleStyle = Theme.of(context).textTheme.headline5.copyWith(
           color: CustomTheme.textColor1,
           fontWeight: FontWeight.w600,
         );
 
     return Scaffold(
       appBar: AppBar(
-        title: ScaffoldLogo(),
+        title: const ScaffoldLogo(),
         actions: [
-          CartIcon(),
+          const CartIcon(),
         ],
       ),
       body: ListView(
         children: [
-          SizedBox(height: 30.0),
+          const SizedBox(height: 30.0),
           Text(
             'CONSOLIDADO COMISIONES',
             style: titleStyle,
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: 20.0),
+          const SizedBox(height: 20.0),
           Center(
             child: CardData(
               title: 'Comisiones perdidas',
@@ -57,15 +57,15 @@ class DashboardSellerPage extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 20.0),
+          const SizedBox(height: 20.0),
           Text('CONSOLIDADO CLIENTES', style: titleStyle),
-          SizedBox(height: 20.0),
+          const SizedBox(height: 20.0),
           _ConsolidatedClients(),
-          SizedBox(height: 40.0),
+          const SizedBox(height: 40.0),
           Text('CONSOLIDADO PEDIDOS', style: titleStyle),
-          SizedBox(height: 20.0),
+          const SizedBox(height: 20.0),
           ConsolidatedOrders(),
-          SizedBox(height: 50.0),
+          const SizedBox(height: 50.0),
         ],
       ),
     );
@@ -116,12 +116,12 @@ class _CommisionsList extends StatelessWidget {
     children.asMap().forEach((index, item) {
       items.add(Expanded(child: item));
       if (index < children.length - 1) {
-        items.add(SizedBox(width: 10.0));
+        items.add(const SizedBox(width: 10.0));
       }
     });
 
     return Container(
-      padding: EdgeInsets.all(15.0),
+      padding: const EdgeInsets.all(15.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         crossAxisAlignment: CrossAxisAlignment.center,

@@ -12,7 +12,7 @@ class PasswordPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    PasswordProvider passwordProvider = Provider.of<PasswordProvider>(context);
+    final passwordProvider = Provider.of<PasswordProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -26,7 +26,7 @@ class PasswordPage extends StatelessWidget {
             _EmailInput(
               controller: _emailController,
             ),
-            SizedBox(height: 50.0),
+            const SizedBox(height: 50.0),
             passwordProvider.isLoading
                 ? Center(
                     child: CircularProgressIndicator(
@@ -39,12 +39,12 @@ class PasswordPage extends StatelessWidget {
                         ? null
                         : () => _requestResetEmail(context, passwordProvider),
                   ),
-            SizedBox(height: 70.0),
+            const SizedBox(height: 70.0),
             Text(
               'Si ya tiene el token para reiniciar su contraseña puede ir al formulario de reinicio de contraseña.',
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 10.0),
+            const SizedBox(height: 10.0),
             _ResetFormButton()
           ],
         ),
@@ -91,7 +91,7 @@ class _SubmitButton extends StatelessWidget {
       child: Text('Enviar Correo de Restauración'),
       style: ElevatedButton.styleFrom(
         primary: Theme.of(context).primaryColor,
-        padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 10.0),
+        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 10.0),
       ),
     );
   }
@@ -107,7 +107,8 @@ class _EmailInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    PasswordProvider passwordProvider = Provider.of<PasswordProvider>(context);
+    final passwordProvider = Provider.of<PasswordProvider>(context);
+
     return TextFormField(
       keyboardType: TextInputType.emailAddress,
       controller: controller,
@@ -132,7 +133,7 @@ class _ResetFormButton extends StatelessWidget {
       child: Text('Formulario de Reinicio'),
       style: ElevatedButton.styleFrom(
         primary: Theme.of(context).textTheme.bodyText1.color,
-        padding: EdgeInsets.symmetric(
+        padding: const EdgeInsets.symmetric(
           horizontal: 10.0,
           vertical: 5.0,
         ),

@@ -13,9 +13,8 @@ class ClientPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ClientsProvider clientsProvider =
-        Provider.of<ClientsProvider>(context);
-    final Cliente client = ModalRoute.of(context).settings.arguments as Cliente;
+    final clientsProvider = Provider.of<ClientsProvider>(context);
+    final client = ModalRoute.of(context).settings.arguments as Cliente;
 
     return Scaffold(
       appBar: AppBar(
@@ -52,7 +51,7 @@ class _ClientContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
-      padding: EdgeInsets.only(bottom: 30.0),
+      padding: const EdgeInsets.only(bottom: 30.0),
       itemCount: client.tiendas.length,
       itemBuilder: (_, int index) {
         if (index == 0) {
@@ -66,9 +65,9 @@ class _ClientContent extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  SizedBox(height: 30.0),
+                  const SizedBox(height: 30.0),
                   _StoresTitle(),
-                  SizedBox(height: 20.0),
+                  const SizedBox(height: 20.0),
                   StoreCard(
                     store: client.tiendas[index],
                     index: index + 1,
@@ -91,7 +90,7 @@ class _ClientContent extends StatelessWidget {
         );
       },
       separatorBuilder: (_, int index) {
-        return SizedBox(height: 20.0);
+        return const SizedBox(height: 20.0);
       },
     );
   }
@@ -131,7 +130,7 @@ class _ClientData extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        SizedBox(height: 20.0),
+        const SizedBox(height: 20.0),
         BuyerCard(client: client),
         _CardDataList(
           children: [
@@ -190,12 +189,15 @@ class _CardDataList extends StatelessWidget {
     children.asMap().forEach((index, item) {
       items.add(Expanded(child: item));
       if (index < children.length - 1) {
-        items.add(SizedBox(width: 15.0));
+        items.add(const SizedBox(width: 15.0));
       }
     });
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 15.0,
+        vertical: 10.0,
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         crossAxisAlignment: CrossAxisAlignment.start,

@@ -24,7 +24,7 @@ class LoginPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               _BackgroundLogo(),
-              SizedBox(height: 30.0),
+              const SizedBox(height: 30.0),
               LoginCard(),
             ],
           ),
@@ -53,8 +53,9 @@ class _BackgroundLogo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mediaSize = MediaQuery.of(context).size;
+
     return Image(
-      image: AssetImage("assets/images/logo.png"),
+      image: const AssetImage("assets/images/logo.png"),
       fit: BoxFit.contain,
       width: mediaSize.width / 2,
     );
@@ -82,7 +83,7 @@ class _LoginCardState extends State<LoginCard> {
       width: mediaSize.width > 400 ? 400 : mediaSize.width,
       child: Card(
         elevation: 4.0,
-        margin: EdgeInsets.symmetric(horizontal: 20.0),
+        margin: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Padding(
           padding: const EdgeInsets.only(
             top: 20.0,
@@ -96,12 +97,12 @@ class _LoginCardState extends State<LoginCard> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               _LoginTitle(),
-              SizedBox(height: 30.0),
+              const SizedBox(height: 30.0),
               _EmailInput(controller: _emailController),
-              SizedBox(height: 30.0),
+              const SizedBox(height: 30.0),
               _PasswordInput(controller: _passwordController),
               _ForgetPasswordButton(),
-              SizedBox(height: 30.0),
+              const SizedBox(height: 30.0),
               _loginProvider.isLoading
                   ? Center(
                       child: CircularProgressIndicator(
@@ -159,7 +160,7 @@ class _SubmitLoginButton extends StatelessWidget {
       child: Text(label),
       style: ElevatedButton.styleFrom(
         primary: Theme.of(context).primaryColor,
-        padding: EdgeInsets.symmetric(vertical: 12.0),
+        padding: const EdgeInsets.symmetric(vertical: 12.0),
       ),
     );
   }
@@ -175,7 +176,7 @@ class _PasswordInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    LoginProvider loginProvider = Provider.of<LoginProvider>(context);
+    final loginProvider = Provider.of<LoginProvider>(context);
 
     return TextFormField(
       controller: controller,
@@ -201,7 +202,7 @@ class _EmailInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    LoginProvider loginProvider = Provider.of<LoginProvider>(context);
+    final loginProvider = Provider.of<LoginProvider>(context);
 
     return TextFormField(
       controller: controller,
@@ -222,7 +223,7 @@ class _ForgetPasswordButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(top: 10.0),
+      margin: const EdgeInsets.only(top: 10.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [

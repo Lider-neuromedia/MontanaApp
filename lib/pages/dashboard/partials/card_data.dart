@@ -66,11 +66,13 @@ class _ContentMain extends StatelessWidget {
         );
     return Container(
       width: size.width - 30.0,
-      padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
+      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColor,
         border: Border.all(color: Colors.grey[200], width: 2.0),
-        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+        borderRadius: const BorderRadius.all(
+          const Radius.circular(10.0),
+        ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -117,20 +119,22 @@ class _ContentNormal extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 8.0),
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border.all(
           color: Colors.grey[200],
           width: 2.0,
         ),
-        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+        borderRadius: const BorderRadius.all(
+          const Radius.circular(10.0),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.only(left: 35.0),
+            padding: const EdgeInsets.only(left: 35.0),
             child: Text(title, style: titleStyle),
           ),
           Text(value, style: valueStyle),
@@ -157,15 +161,15 @@ class _CardDataIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(4.0),
+      padding: const EdgeInsets.all(4.0),
       decoration: BoxDecoration(
         color: isMain ? Theme.of(context).primaryColor : Colors.white,
         border: Border.all(
           color: color,
           width: 2.0,
         ),
-        borderRadius: BorderRadius.all(
-          Radius.circular(5.0),
+        borderRadius: const BorderRadius.all(
+          const Radius.circular(5.0),
         ),
       ),
       child: Icon(

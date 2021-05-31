@@ -34,7 +34,7 @@ class _CataloguePageState extends State<CataloguePage> {
       appBar: AppBar(
         title: Text('Catálogo'),
         actions: [
-          CartIcon(),
+          const CartIcon(),
         ],
       ),
       body: cataloguesProvider.isLoading
@@ -61,7 +61,7 @@ class _CataloguesList extends StatelessWidget {
     final cataloguesProvider = Provider.of<CataloguesProvider>(context);
 
     return ListView.separated(
-      padding: EdgeInsets.all(20.0),
+      padding: const EdgeInsets.all(20.0),
       itemCount: cataloguesProvider.catalogues.length,
       itemBuilder: (_, index) {
         return CatalogueItem(
@@ -69,7 +69,7 @@ class _CataloguesList extends StatelessWidget {
         );
       },
       separatorBuilder: (_, index) {
-        return SizedBox(height: 30.0);
+        return const SizedBox(height: 30.0);
       },
     );
   }

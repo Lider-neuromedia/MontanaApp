@@ -15,13 +15,13 @@ class _PqrsFilterState extends State<PqrsFilter> {
     final textStyle = Theme.of(context).textTheme.subtitle1;
 
     return Container(
-      padding: EdgeInsets.only(left: 15.0, right: 15.0, top: 5.0),
+      padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 5.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Text('Ordenar por:', style: textStyle),
-          SizedBox(width: 10.0),
+          const SizedBox(width: 10.0),
           DropdownButton<String>(
             value: pqrsProvider.sortBy,
             icon: const Icon(Icons.keyboard_arrow_down),

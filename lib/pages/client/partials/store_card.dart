@@ -13,16 +13,15 @@ class StoreCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextStyle titleStyle = Theme.of(context).textTheme.subtitle1.copyWith(
+    final titleStyle = Theme.of(context).textTheme.subtitle1.copyWith(
           color: Theme.of(context).textTheme.bodyText1.color,
           fontWeight: FontWeight.w900,
         );
-    final TextStyle subtitleStyle =
-        Theme.of(context).textTheme.subtitle1.copyWith(
-              color: Theme.of(context).textTheme.bodyText1.color,
-              fontWeight: FontWeight.w700,
-            );
-    final TextStyle textStyle = Theme.of(context).textTheme.bodyText1.copyWith(
+    final subtitleStyle = Theme.of(context).textTheme.subtitle1.copyWith(
+          color: Theme.of(context).textTheme.bodyText1.color,
+          fontWeight: FontWeight.w700,
+        );
+    final textStyle = Theme.of(context).textTheme.bodyText1.copyWith(
           color: Theme.of(context).textTheme.bodyText1.color,
           fontWeight: FontWeight.w400,
         );
@@ -30,13 +29,13 @@ class StoreCard extends StatelessWidget {
     return Card(
       elevation: 4.0,
       child: Padding(
-        padding: EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(10.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text("${store.nombre} - ${store.local}", style: titleStyle),
             Text("Tienda No. $index", style: textStyle),
-            SizedBox(height: 10.0),
+            const SizedBox(height: 10.0),
             Text("${store.lugar}", style: subtitleStyle),
             Text("${store.direccion}", style: textStyle),
           ],

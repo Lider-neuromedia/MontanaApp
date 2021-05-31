@@ -22,7 +22,7 @@ class _ProductsTableState extends State<ProductsTable> {
 
   @override
   Widget build(BuildContext context) {
-    final OrdersProvider ordersProvider = Provider.of<OrdersProvider>(context);
+    final ordersProvider = Provider.of<OrdersProvider>(context);
     final List<TableRow> rows = [];
 
     rows.add(TableRow(

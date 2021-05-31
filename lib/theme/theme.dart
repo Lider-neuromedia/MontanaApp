@@ -1,36 +1,36 @@
 import 'package:flutter/material.dart';
 
 class CustomTheme {
-  static final Color mainColor = Color.fromRGBO(255, 89, 106, 1.0);
+  static const Color mainColor = const Color.fromRGBO(255, 89, 106, 1.0);
 
-  static final Color mainDarkColor = Color.fromRGBO(193, 29, 46, 1.0);
-  static final Color textColor1 = Color.fromRGBO(68, 74, 79, 1.0);
-  static final Color textColor2 = Color.fromRGBO(125, 125, 125, 1.0);
-  static final Color textColor3 = Color.fromRGBO(129, 144, 176, 1.0);
+  static const Color mainDarkColor = const Color.fromRGBO(193, 29, 46, 1.0);
+  static const Color textColor1 = const Color.fromRGBO(68, 74, 79, 1.0);
+  static const Color textColor2 = const Color.fromRGBO(125, 125, 125, 1.0);
+  static const Color textColor3 = const Color.fromRGBO(129, 144, 176, 1.0);
 
-  static final Color redColor = Color.fromRGBO(255, 89, 106, 1.0);
-  static final Color yellowColor = Color.fromRGBO(251, 173, 18, 1.0);
-  static final Color goldColor = Color.fromRGBO(255, 217, 3, 1.0);
-  static final Color purpleColor = Color.fromRGBO(235, 30, 195, 1.0);
+  static const Color redColor = const Color.fromRGBO(255, 89, 106, 1.0);
+  static const Color yellowColor = const Color.fromRGBO(251, 173, 18, 1.0);
+  static const Color goldColor = const Color.fromRGBO(255, 217, 3, 1.0);
+  static const Color purpleColor = const Color.fromRGBO(235, 30, 195, 1.0);
 
-  static final Color greenColor = Color.fromRGBO(56, 224, 172, 1.0);
-  static final Color green2Color = Color.fromRGBO(104, 190, 142, 1.0);
-  static final Color green3Color = Color.fromRGBO(92, 208, 104, 1.0);
+  static const Color greenColor = const Color.fromRGBO(56, 224, 172, 1.0);
+  static const Color green2Color = const Color.fromRGBO(104, 190, 142, 1.0);
+  static const Color green3Color = const Color.fromRGBO(92, 208, 104, 1.0);
 
-  static final Color greyColor = Color.fromRGBO(210, 210, 210, 1.0);
-  static final Color grey2Color = Color.fromRGBO(165, 165, 165, 1.0);
-  static final Color grey3Color = Color.fromRGBO(245, 245, 245, 1.0);
+  static const Color greyColor = const Color.fromRGBO(210, 210, 210, 1.0);
+  static const Color grey2Color = const Color.fromRGBO(165, 165, 165, 1.0);
+  static const Color grey3Color = const Color.fromRGBO(245, 245, 245, 1.0);
 
-  static final Color blue1Color = Color.fromRGBO(0, 88, 255, 1.0);
-  static final Color blue2Color = Color.fromRGBO(0, 132, 255, 1.0);
-  static final Color blue3Color = Color.fromRGBO(52, 189, 247, 1.0);
+  static const Color blue1Color = const Color.fromRGBO(0, 88, 255, 1.0);
+  static const Color blue2Color = const Color.fromRGBO(0, 132, 255, 1.0);
+  static const Color blue3Color = const Color.fromRGBO(52, 189, 247, 1.0);
 
-  static final String familySourceSansPro = 'SourceSansPro';
-  static final String familyNunito = 'Nunito';
-  static final String primaryFont = 'Nunito';
+  static const String familySourceSansPro = 'SourceSansPro';
+  static const String familyNunito = 'Nunito';
+  static const String primaryFont = 'Nunito';
 
-  static ThemeData theme() {
-    ThemeData original = ThemeData.light();
+  ThemeData get theme {
+    final original = ThemeData.light();
     final textTheme = original.textTheme;
 
     return original.copyWith(

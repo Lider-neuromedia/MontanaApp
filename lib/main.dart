@@ -62,7 +62,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Athletic Air',
         debugShowCheckedModeBanner: false,
-        theme: CustomTheme.theme(),
+        theme: (CustomTheme()).theme,
         initialRoute: HomePage.route,
         routes: {
           HomePage.route: (_) => HomePage(),

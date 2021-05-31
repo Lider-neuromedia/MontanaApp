@@ -11,13 +11,15 @@ class SectionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(10.0),
+      child: child,
+      padding: const EdgeInsets.all(10.0),
       width: double.infinity,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(5.0)),
         color: Colors.white,
+        borderRadius: const BorderRadius.all(
+          const Radius.circular(5.0),
+        ),
       ),
-      child: child,
     );
   }
 }

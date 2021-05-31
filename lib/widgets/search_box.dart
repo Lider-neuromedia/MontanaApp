@@ -31,16 +31,18 @@ class _SearchBoxState extends State<SearchBox> {
 
   @override
   Widget build(BuildContext context) {
-    final Color textColor = Theme.of(context).textTheme.bodyText1.color;
+    final textColor = Theme.of(context).textTheme.bodyText1.color;
 
     return Container(
       color: Theme.of(context).primaryColor,
-      padding: EdgeInsets.only(left: 10.0, right: 10.0, bottom: 10.0),
+      padding: const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 10.0),
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 10.0),
+        padding: const EdgeInsets.symmetric(horizontal: 10.0),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(10.0)),
           color: Colors.white,
+          borderRadius: const BorderRadius.all(
+            const Radius.circular(10.0),
+          ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -63,7 +65,7 @@ class _SearchBoxState extends State<SearchBox> {
                   border: InputBorder.none,
                   hintText: 'Buscador',
                   isCollapsed: true,
-                  contentPadding: EdgeInsets.symmetric(
+                  contentPadding: const EdgeInsets.symmetric(
                     horizontal: 10.0,
                     vertical: 5.0,
                   ),

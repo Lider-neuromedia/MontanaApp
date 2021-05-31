@@ -27,11 +27,13 @@ class _CatalogueProductsPageState extends State<CatalogueProductsPage> {
   }
 
   void _loadData(BuildContext context) {
-    ProductsScreenArguments args =
+    final args =
         ModalRoute.of(context).settings.arguments as ProductsScreenArguments;
-    Catalogo catalogue = args.catalogue;
-    ProductsProvider productsProvider =
-        Provider.of<ProductsProvider>(context, listen: false);
+    final catalogue = args.catalogue;
+    final productsProvider = Provider.of<ProductsProvider>(
+      context,
+      listen: false,
+    );
     productsProvider.loadProducts(catalogue.id);
   }
 
@@ -47,7 +49,7 @@ class _CatalogueProductsPageState extends State<CatalogueProductsPage> {
         title: Text(catalogue.titulo),
         elevation: 0.0,
         actions: [
-          CartIcon(),
+          const CartIcon(),
         ],
       ),
       body: productsProvider.isLoadingProducts
@@ -71,7 +73,8 @@ class _CatalogueProductsPageState extends State<CatalogueProductsPage> {
                       productsProvider.isSearchActive
                           ? Center(
                               child: Padding(
-                                padding: EdgeInsets.symmetric(vertical: 10.0),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 10.0),
                                 child: Text('No hay coincidencias.'),
                               ),
                             )
@@ -87,15 +90,13 @@ class _CatalogueProductsPageState extends State<CatalogueProductsPage> {
 class _ProductsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final ProductsProvider productsProvider =
-        Provider.of<ProductsProvider>(context);
-
+    final productsProvider = Provider.of<ProductsProvider>(context);
     final products = productsProvider.search.isEmpty
         ? productsProvider.products
         : productsProvider.searchProducts;
 
     return ListView.separated(
-      padding: EdgeInsets.all(20.0),
+      padding: const EdgeInsets.all(20.0),
       itemCount: products.length,
       itemBuilder: (_, index) {
         return ProductItem(
@@ -104,7 +105,7 @@ class _ProductsList extends StatelessWidget {
         );
       },
       separatorBuilder: (_, index) {
-        return SizedBox(height: 30.0);
+        return const SizedBox(height: 30.0);
       },
     );
   }

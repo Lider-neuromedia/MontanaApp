@@ -23,7 +23,9 @@ class FileButton extends StatelessWidget {
           color: CustomTheme.greyColor,
           width: 1.0,
         ),
-        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+        borderRadius: const BorderRadius.all(
+          const Radius.circular(10.0),
+        ),
         color: Colors.white,
       ),
       child: Row(
@@ -32,13 +34,13 @@ class FileButton extends StatelessWidget {
         children: [
           Expanded(
             child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(10.0),
-                  topLeft: Radius.circular(10.0),
+              decoration: const BoxDecoration(
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: const Radius.circular(10.0),
+                  topLeft: const Radius.circular(10.0),
                 ),
               ),
-              padding: EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(10.0),
               child: Text(
                 value == null ? "" : "$value",
                 overflow: TextOverflow.ellipsis,
@@ -97,7 +99,7 @@ class _FileIcon extends StatelessWidget {
         child: Ink(
           height: 50.0,
           child: Icon(icon, color: Colors.white),
-          padding: EdgeInsets.symmetric(
+          padding: const EdgeInsets.symmetric(
             horizontal: 20.0,
             vertical: 15.0,
           ),

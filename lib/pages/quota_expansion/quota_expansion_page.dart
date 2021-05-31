@@ -24,6 +24,7 @@ class _QuotaExpansionPageState extends State<QuotaExpansionPage> {
 
     () async {
       await Future.delayed(Duration.zero);
+
       final quotaProvider = Provider.of<QuotaProvider>(context, listen: false);
       final clientsProvider = Provider.of<ClientsProvider>(
         context,
@@ -55,46 +56,46 @@ class _QuotaExpansionPageState extends State<QuotaExpansionPage> {
         padding: const EdgeInsets.all(20.0),
         children: [
           _TitleQuota(title: 'Realiza tu Solicitud', size: 30.0),
-          SizedBox(height: 30.0),
+          const SizedBox(height: 30.0),
           _LabelField(label: 'CLIENTE'),
-          SizedBox(height: 10.0),
+          const SizedBox(height: 10.0),
           _ClientsDropdown(),
-          SizedBox(height: 20.0),
+          const SizedBox(height: 20.0),
           _LabelField(label: 'Adjuntar documento de identidad'),
-          SizedBox(height: 10.0),
+          const SizedBox(height: 10.0),
           FileButton(
             value: quotaProvider.descriptionIdentidad,
             onSelected: (File file) {
               quotaProvider.docIdentidad = file;
             },
           ),
-          SizedBox(height: 20.0),
+          const SizedBox(height: 20.0),
           _LabelField(label: 'Adjuntar RUT'),
-          SizedBox(height: 10.0),
+          const SizedBox(height: 10.0),
           FileButton(
             value: quotaProvider.descriptionRut,
             onSelected: (File file) {
               quotaProvider.docRut = file;
             },
           ),
-          SizedBox(height: 20.0),
+          const SizedBox(height: 20.0),
           _LabelField(label: 'Adjuntar cámara de comercio'),
-          SizedBox(height: 10.0),
+          const SizedBox(height: 10.0),
           FileButton(
             value: quotaProvider.descriptionCamaraCom,
             onSelected: (File file) {
               quotaProvider.docCamaraCom = file;
             },
           ),
-          SizedBox(height: 30.0),
+          const SizedBox(height: 30.0),
           _TitleQuota(
             title:
                 'Por favor coloque el monto por el cual desea solicitar ampliación de cupo',
             size: 20.0,
           ),
-          SizedBox(height: 30.0),
+          const SizedBox(height: 30.0),
           _LabelField(label: 'Monto'),
-          SizedBox(height: 10.0),
+          const SizedBox(height: 10.0),
           TextField(
             keyboardType: TextInputType.number,
             controller: quotaProvider.montoController,
@@ -103,7 +104,7 @@ class _QuotaExpansionPageState extends State<QuotaExpansionPage> {
             },
             decoration: InputDecoration(
               isCollapsed: true,
-              contentPadding: EdgeInsets.all(10.0),
+              contentPadding: const EdgeInsets.all(10.0),
               errorText: quotaProvider.montoError,
               border: OutlineInputBorder(
                 borderSide: BorderSide(
@@ -113,9 +114,9 @@ class _QuotaExpansionPageState extends State<QuotaExpansionPage> {
               ),
             ),
           ),
-          SizedBox(height: 30.0),
+          const SizedBox(height: 30.0),
           _SubmitAction(),
-          SizedBox(height: 30.0),
+          const SizedBox(height: 30.0),
         ],
       ),
     );
@@ -211,11 +212,12 @@ class _TitleQuota extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextStyle titleStyle = Theme.of(context).textTheme.headline4.copyWith(
+    final titleStyle = Theme.of(context).textTheme.headline4.copyWith(
           color: Theme.of(context).textTheme.bodyText1.color,
           fontWeight: FontWeight.w700,
           fontSize: size,
         );
+
     return Text(
       title,
       textAlign: TextAlign.center,
@@ -237,6 +239,7 @@ class _LabelField extends StatelessWidget {
     final labelStyle = Theme.of(context).textTheme.subtitle1.copyWith(
           color: Theme.of(context).primaryColor,
         );
+
     return Text(label, style: labelStyle);
   }
 }

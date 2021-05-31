@@ -26,9 +26,9 @@ class ActionButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        padding: EdgeInsets.only(
-          left: 0.0,
+        padding: const EdgeInsets.only(
           right: 10.0,
+          left: 0.0,
         ),
         side: BorderSide(
           color: onPressed == null ? Colors.grey : borderColor,
@@ -58,15 +58,15 @@ class ActionButton extends StatelessWidget {
                 ),
               ],
             ),
-            padding: EdgeInsets.all(5.0),
+            padding: const EdgeInsets.all(5.0),
             child: Icon(icon, color: iconColor),
           ),
-          SizedBox(width: 10.0),
+          const SizedBox(width: 10.0),
           Text(
             label,
             style: TextStyle(color: textColor),
           ),
-          SizedBox(width: 5.0),
+          const SizedBox(width: 5.0),
         ],
       ),
     );

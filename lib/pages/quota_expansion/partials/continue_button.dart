@@ -34,19 +34,19 @@ class ContinueButton extends StatelessWidget {
                 ),
               ],
             ),
-            padding: EdgeInsets.all(5.0),
+            padding: const EdgeInsets.all(5.0),
             child: Icon(icon, color: Colors.white),
           ),
           Text(label),
           Container(
             width: 30,
-            decoration: BoxDecoration(shape: BoxShape.circle),
+            decoration: const BoxDecoration(shape: BoxShape.circle),
             child: Icon(icon, color: Colors.transparent),
           ),
         ],
       ),
       style: ElevatedButton.styleFrom(
-        padding: EdgeInsets.only(
+        padding: const EdgeInsets.only(
           left: 0.0,
           right: 0.0,
         ),

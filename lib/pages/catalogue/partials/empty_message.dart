@@ -24,14 +24,14 @@ class EmptyMessage extends StatelessWidget {
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.subtitle1,
             ),
-            SizedBox(height: 15.0),
+            const SizedBox(height: 15.0),
             ElevatedButton(
+              onPressed: onPressed,
               child: const Icon(Icons.refresh),
               style: ElevatedButton.styleFrom(
                 primary: Theme.of(context).primaryColor,
                 shape: const CircleBorder(),
               ),
-              onPressed: onPressed,
             )
           ],
         ),

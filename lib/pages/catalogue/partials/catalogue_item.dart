@@ -45,15 +45,15 @@ class _DiscountTag extends StatelessWidget {
       top: 75.0,
       right: 4.0,
       child: Container(
-        padding: EdgeInsets.symmetric(
-          vertical: 5.0,
+        padding: const EdgeInsets.symmetric(
           horizontal: 20.0,
+          vertical: 5.0,
         ),
         decoration: BoxDecoration(
           color: CustomTheme.textColor1,
-          borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(10.0),
-            topLeft: Radius.circular(10.0),
+          borderRadius: const BorderRadius.only(
+            bottomLeft: const Radius.circular(10.0),
+            topLeft: const Radius.circular(10.0),
           ),
         ),
         child: Text(
@@ -81,15 +81,15 @@ class _TypeTag extends StatelessWidget {
       right: 5.0,
       top: 30.0,
       child: Container(
-        padding: EdgeInsets.symmetric(
+        padding: const EdgeInsets.symmetric(
           horizontal: 30.0,
           vertical: 5.0,
         ),
         decoration: BoxDecoration(
           color: Colors.grey[100],
-          borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(10.0),
-            topLeft: Radius.circular(10.0),
+          borderRadius: const BorderRadius.only(
+            bottomLeft: const Radius.circular(10.0),
+            topLeft: const Radius.circular(10.0),
           ),
         ),
         child: Text(
@@ -138,23 +138,24 @@ class _CatalogueCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10.0),
+                borderRadius: const BorderRadius.all(
+                  const Radius.circular(10.0),
                 ),
                 child: FadeInImage(
-                  placeholder: AssetImage("assets/images/placeholder.png"),
+                  placeholder:
+                      const AssetImage("assets/images/placeholder.png"),
                   image: NetworkImage(catalogue.imagen),
                   width: double.infinity,
                   fit: BoxFit.contain,
                 ),
               ),
-              SizedBox(height: 5.0),
+              const SizedBox(height: 5.0),
               Text(catalogue.titulo.toUpperCase(), style: textStyle1),
-              SizedBox(height: 5.0),
+              const SizedBox(height: 5.0),
               catalogue.cantidad == 1
                   ? Text("${catalogue.cantidad} producto", style: textStyle2)
                   : Text("${catalogue.cantidad} productos", style: textStyle2),
-              SizedBox(height: 5.0),
+              const SizedBox(height: 5.0),
             ],
           ),
         ),

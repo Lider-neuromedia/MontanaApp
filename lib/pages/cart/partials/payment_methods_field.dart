@@ -46,13 +46,13 @@ class _MethodOption extends StatelessWidget {
   final bool hasBorderRight;
   final Function onTap;
 
-  final borderLeft = BorderRadius.only(
-    bottomLeft: Radius.circular(10.0),
-    topLeft: Radius.circular(10.0),
+  final borderLeft = const BorderRadius.only(
+    bottomLeft: const Radius.circular(10.0),
+    topLeft: const Radius.circular(10.0),
   );
-  final borderRight = BorderRadius.only(
-    bottomRight: Radius.circular(10.0),
-    topRight: Radius.circular(10.0),
+  final borderRight = const BorderRadius.only(
+    bottomRight: const Radius.circular(10.0),
+    topRight: const Radius.circular(10.0),
   );
 
   @override
@@ -80,7 +80,7 @@ class _MethodOption extends StatelessWidget {
 
     return Expanded(
       child: Container(
-        padding: EdgeInsets.only(bottom: 3.0),
+        padding: const EdgeInsets.only(bottom: 3.0),
         decoration: BoxDecoration(
           color: darkColor,
           borderRadius: borderRadius,
@@ -92,7 +92,7 @@ class _MethodOption extends StatelessWidget {
             onTap: onTap,
             borderRadius: borderRadius,
             child: Ink(
-              padding: EdgeInsets.symmetric(
+              padding: const EdgeInsets.symmetric(
                 horizontal: 5.0,
                 vertical: 10.0,
               ),

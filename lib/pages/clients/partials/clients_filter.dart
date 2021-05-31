@@ -12,16 +12,16 @@ class _ClientsFilterState extends State<ClientsFilter> {
 
   @override
   Widget build(BuildContext context) {
-    TextStyle textStyle = Theme.of(context).textTheme.subtitle1;
+    final textStyle = Theme.of(context).textTheme.subtitle1;
 
     return Container(
-      padding: EdgeInsets.only(left: 15.0, right: 15.0, top: 5.0),
+      padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 5.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Text('Ordenar por:', style: textStyle),
-          SizedBox(width: 10.0),
+          const SizedBox(width: 10.0),
           DropdownButton<String>(
             value: dropdownValue,
             icon: const Icon(Icons.keyboard_arrow_down),

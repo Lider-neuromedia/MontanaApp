@@ -93,7 +93,7 @@ class _PqrsContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final PqrsProvider pqrsProvider = Provider.of<PqrsProvider>(context);
+    final pqrsProvider = Provider.of<PqrsProvider>(context);
     final tickets = pqrsProvider.search.isEmpty
         ? pqrsProvider.tickets
         : pqrsProvider.searchTickets;
@@ -110,7 +110,7 @@ class _PqrsContent extends StatelessWidget {
         pqrsProvider.isSearchActive
             ? const Center(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10.0),
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
                   child: Text('No hay coincidencias.'),
                 ),
               )
@@ -118,7 +118,7 @@ class _PqrsContent extends StatelessWidget {
         Expanded(
           child: ListView.separated(
             itemCount: tickets.length,
-            padding: EdgeInsets.only(top: 15.0, bottom: 100.0),
+            padding: const EdgeInsets.only(top: 15.0, bottom: 100.0),
             itemBuilder: (_, int index) {
               return PqrsCard(ticket: tickets[index]);
             },

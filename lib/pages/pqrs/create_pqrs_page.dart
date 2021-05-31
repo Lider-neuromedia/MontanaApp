@@ -60,8 +60,7 @@ class _CreatePqrsPageState extends State<CreatePqrsPage> {
 
   @override
   Widget build(BuildContext context) {
-    PqrsTicketProvider pqrsTicketProvider =
-        Provider.of<PqrsTicketProvider>(context);
+    final pqrsTicketProvider = Provider.of<PqrsTicketProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -71,9 +70,9 @@ class _CreatePqrsPageState extends State<CreatePqrsPage> {
         padding: const EdgeInsets.all(20.0),
         children: [
           _TitlePqrs(title: 'Nuevo PQRS'),
-          SizedBox(height: 25.0),
+          const SizedBox(height: 25.0),
           _LabelField(label: 'Tipo de PQRS'),
-          SizedBox(height: 10.0),
+          const SizedBox(height: 10.0),
           DropdownPqrs(
             onChanged: (dynamic value) {
               pqrsTicketProvider.pqrsType = value as String;
@@ -91,9 +90,9 @@ class _CreatePqrsPageState extends State<CreatePqrsPage> {
               },
             ).toList(),
           ),
-          SizedBox(height: 25.0),
+          const SizedBox(height: 25.0),
           _LabelField(label: 'Cliente'),
-          SizedBox(height: 10.0),
+          const SizedBox(height: 10.0),
           DropdownPqrs(
             onChanged: (dynamic value) {
               pqrsTicketProvider.clienteId = value as int;
@@ -111,9 +110,9 @@ class _CreatePqrsPageState extends State<CreatePqrsPage> {
               },
             ).toList(),
           ),
-          SizedBox(height: 20.0),
+          const SizedBox(height: 20.0),
           _LabelField(label: 'Mensaje'),
-          SizedBox(height: 10.0),
+          const SizedBox(height: 10.0),
           TextField(
             maxLines: 5,
             controller: _messageController,
@@ -122,7 +121,7 @@ class _CreatePqrsPageState extends State<CreatePqrsPage> {
             },
             decoration: InputDecoration(
               isCollapsed: true,
-              contentPadding: EdgeInsets.all(10.0),
+              contentPadding: const EdgeInsets.all(10.0),
               border: OutlineInputBorder(
                 borderSide: BorderSide(
                   color: CustomTheme.greyColor,
@@ -131,7 +130,7 @@ class _CreatePqrsPageState extends State<CreatePqrsPage> {
               ),
             ),
           ),
-          SizedBox(height: 40.0),
+          const SizedBox(height: 40.0),
           pqrsTicketProvider.isLoading
               ? LoadingContainer()
               : Center(
@@ -173,8 +172,10 @@ class _CreatePqrsPageState extends State<CreatePqrsPage> {
           pqrsTicketProvider.message = '';
           Navigator.pop(context);
 
-          final pqrsProvider =
-              Provider.of<PqrsProvider>(context, listen: false);
+          final pqrsProvider = Provider.of<PqrsProvider>(
+            context,
+            listen: false,
+          );
           pqrsProvider.sortBy = SortValue.RECENT_FIRST;
           pqrsProvider.loadTickets();
         },
@@ -193,10 +194,11 @@ class _TitlePqrs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextStyle titleStyle = Theme.of(context).textTheme.headline4.copyWith(
+    final titleStyle = Theme.of(context).textTheme.headline4.copyWith(
           color: Theme.of(context).textTheme.bodyText1.color,
           fontWeight: FontWeight.w700,
         );
+
     return Text(
       title,
       style: titleStyle,
@@ -218,6 +220,7 @@ class _LabelField extends StatelessWidget {
     final labelStyle = Theme.of(context).textTheme.subtitle1.copyWith(
           color: Theme.of(context).primaryColor,
         );
+
     return Text(label, style: labelStyle);
   }
 }
@@ -258,21 +261,21 @@ class _ContinueButton extends StatelessWidget {
               color: isBlocked ? Colors.grey : Theme.of(context).primaryColor,
               boxShadow: isBlocked ? [] : shadow,
             ),
-            padding: EdgeInsets.all(5.0),
+            padding: const EdgeInsets.all(5.0),
             child: Icon(icon, color: Colors.white),
           ),
           Text(label),
           Container(
             width: 30,
             child: Icon(icon, color: Colors.transparent),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               shape: BoxShape.circle,
             ),
           ),
         ],
       ),
       style: ElevatedButton.styleFrom(
-        padding: EdgeInsets.only(left: 0.0, right: 0.0),
+        padding: const EdgeInsets.only(left: 0.0, right: 0.0),
         primary: Theme.of(context).primaryColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30.0),

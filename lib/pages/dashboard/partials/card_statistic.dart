@@ -36,12 +36,14 @@ class CardStatistic extends StatelessWidget {
         );
 
     return Container(
-      padding: EdgeInsets.all(10.0),
+      padding: const EdgeInsets.all(10.0),
       width: (size.width / 2) - 20.0,
       decoration: BoxDecoration(
         color: bgColor,
         border: Border.all(color: Colors.grey[200], width: 2.0),
-        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+        borderRadius: const BorderRadius.all(
+          const Radius.circular(10.0),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,7 +53,7 @@ class CardStatistic extends StatelessWidget {
               : Row(
                   children: [
                     Icon(icon, color: isMain ? Colors.white : mainColor),
-                    SizedBox(width: 10.0),
+                    const SizedBox(width: 10.0),
                     Text(title, style: titleStyle),
                   ],
                 ),
@@ -68,7 +70,7 @@ class CardStatistic extends StatelessWidget {
                     ),
                   ],
                 ),
-          SizedBox(height: 10.0),
+          const SizedBox(height: 10.0),
           Center(
             child: _CardChart(
               isMain: isMain,
@@ -76,7 +78,7 @@ class CardStatistic extends StatelessWidget {
               label: label,
             ),
           ),
-          SizedBox(height: 15.0),
+          const SizedBox(height: 15.0),
         ],
       ),
     );
@@ -97,16 +99,17 @@ class _CardChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color mainColor = Theme.of(context).primaryColor;
-    final Color textColor = isMain ? Colors.white : mainColor;
-    final Color bgColor = isMain ? mainColor : Colors.white;
+    final mainColor = Theme.of(context).primaryColor;
+    final textColor = isMain ? Colors.white : mainColor;
+    final bgColor = isMain ? mainColor : Colors.white;
 
-    final TextStyle valueStyle = Theme.of(context).textTheme.headline4.copyWith(
+    final valueStyle = Theme.of(context).textTheme.headline4.copyWith(
           color: textColor,
           fontWeight: FontWeight.w700,
         );
-    final TextStyle labelStyle =
-        Theme.of(context).textTheme.headline6.copyWith(color: textColor);
+    final labelStyle = Theme.of(context).textTheme.headline6.copyWith(
+          color: textColor,
+        );
 
     return Stack(
       children: [

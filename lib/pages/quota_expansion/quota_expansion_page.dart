@@ -38,7 +38,7 @@ class _QuotaExpansionPageState extends State<QuotaExpansionPage> {
       quotaProvider.docCamaraCom = null;
       quotaProvider.clientes = [];
 
-      clientsProvider.getClients().then((clients) {
+      clientsProvider.getSellerClients().then((clients) {
         quotaProvider.clientes = clients;
       });
     }();

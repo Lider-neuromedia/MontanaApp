@@ -48,7 +48,7 @@ class _StartOrderModalState extends State<StartOrderModal> {
   void _loadData() async {
     setState(() => _loading = true);
 
-    final clients = await _clientsProvider.getClients();
+    final clients = await _clientsProvider.getSellerClients();
     final catalogues = await _cataloguesProvider.getCatalogues();
 
     setState(() {

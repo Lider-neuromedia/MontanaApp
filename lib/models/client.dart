@@ -4,6 +4,10 @@ ResponseClientes responseClientesFromJson(String str) =>
     ResponseClientes.fromJson(json.decode(str));
 String responseClientesToJson(ResponseClientes data) =>
     json.encode(data.toJson());
+List<Cliente> responseVendedorClientesFromJson(String str) =>
+    List<Cliente>.from(json.decode(str).map(
+          (x) => Cliente.fromVendedorClientesJson(x),
+        ));
 
 Cliente responseClienteFromJson(String str) =>
     Cliente.detailFromJson(json.decode(str));
@@ -42,6 +46,7 @@ class Cliente {
     this.tipoIdentificacion,
     this.dni,
     this.userData,
+    this.vendedorId,
     this.vendedor,
     this.tiendas,
     this.pedidos,
@@ -55,6 +60,7 @@ class Cliente {
   String tipoIdentificacion;
   String dni;
   List<ClienteData> userData;
+  int vendedorId;
   Vendedor vendedor;
   List<Tienda> tiendas;
   List<Pedido> pedidos;
@@ -100,6 +106,19 @@ class Cliente {
         vendedor: json["vendedor"] == null
             ? null
             : Vendedor.fromJson(json["vendedor"]),
+      );
+
+  factory Cliente.fromVendedorClientesJson(Map<String, dynamic> json) =>
+      Cliente(
+        vendedorId: json["id_vendedor_cliente"],
+        id: json["id_cliente"],
+        rolId: json["rol_id"],
+        name: json["name"],
+        apellidos: json["apellidos"],
+        email: json["email"],
+        userData: List<ClienteData>.from(
+          json["data"].map((x) => ClienteData.fromJson(x)),
+        ),
       );
 
   Map<String, dynamic> toJson() => {

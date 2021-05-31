@@ -41,7 +41,7 @@ class _CreatePqrsPageState extends State<CreatePqrsPage> {
       );
 
       pqrsTicketProvider.clientes = [];
-      clientsProvider.getClients().then((clients) {
+      clientsProvider.getSellerClients().then((clients) {
         pqrsTicketProvider.clientes = clients;
       });
 

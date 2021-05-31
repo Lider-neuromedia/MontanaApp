@@ -7,8 +7,7 @@ import 'package:provider/provider.dart';
 class PasswordPage extends StatelessWidget {
   static final String route = 'password';
 
-  final TextEditingController _emailController =
-      TextEditingController(text: '');
+  final _emailController = TextEditingController(text: '');
 
   @override
   Widget build(BuildContext context) {

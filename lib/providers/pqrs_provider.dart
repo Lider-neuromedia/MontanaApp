@@ -9,6 +9,7 @@ import 'package:montana_mobile/utils/utils.dart';
 class PqrsProvider with ChangeNotifier {
   final String _url = dotenv.env['API_URL'];
   final List<SortValue> sortValues = _sortValues;
+  final _preferences = Preferences();
 
   String _sortBy;
   String get sortBy => _sortBy;
@@ -148,18 +149,16 @@ class PqrsProvider with ChangeNotifier {
   }
 
   Future<List<Ticket>> getTickets() async {
-    final preferences = Preferences();
     final url = Uri.parse('$_url/pqrs');
-    final response = await http.get(url, headers: preferences.signedHeaders);
+    final response = await http.get(url, headers: _preferences.signedHeaders);
 
     if (response.statusCode != 200) return [];
     return responseTicketsFromJson(response.body).tickets;
   }
 
   Future<Ticket> getTicketWithMessages(int id) async {
-    final preferences = Preferences();
     final url = Uri.parse('$_url/pqrs/$id');
-    final response = await http.get(url, headers: preferences.signedHeaders);
+    final response = await http.get(url, headers: _preferences.signedHeaders);
 
     if (response.statusCode != 200) return null;
     return responseTicketFromJson(response.body).ticket;

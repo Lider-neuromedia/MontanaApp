@@ -6,6 +6,7 @@ import 'package:montana_mobile/utils/preferences.dart';
 
 class CataloguesProvider with ChangeNotifier {
   final String _url = dotenv.env['API_URL'];
+  final _preferences = Preferences();
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
@@ -23,9 +24,8 @@ class CataloguesProvider with ChangeNotifier {
   }
 
   Future<List<Catalogo>> getCatalogues() async {
-    final preferences = Preferences();
     final url = Uri.parse('$_url/catalogos');
-    final response = await http.get(url, headers: preferences.signedHeaders);
+    final response = await http.get(url, headers: _preferences.signedHeaders);
 
     if (response.statusCode != 200) return [];
     return responseCatalogosFromJson(response.body).catalogos;

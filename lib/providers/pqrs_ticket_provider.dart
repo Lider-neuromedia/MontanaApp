@@ -9,6 +9,7 @@ import 'package:montana_mobile/utils/preferences.dart';
 class PqrsTicketProvider with ChangeNotifier {
   final String _url = dotenv.env['API_URL'];
   final List<PqrsType> pqrsTypes = _pqrsTypes;
+  final _preferences = Preferences();
 
   List<Cliente> _clientes = [];
   List<Cliente> get clientes => _clientes;
@@ -90,7 +91,6 @@ class PqrsTicketProvider with ChangeNotifier {
   }
 
   Future<bool> createPqrs() async {
-    final preferences = Preferences();
     final url = Uri.parse('$_url/pqrs');
     final Map<String, dynamic> data = {
       'mensaje': _message.value,
@@ -98,9 +98,11 @@ class PqrsTicketProvider with ChangeNotifier {
       'vendedor': vendedorId,
       'cliente': clienteId,
     };
-
-    final response = await http.post(url,
-        headers: preferences.signedHeaders, body: jsonEncode(data));
+    final response = await http.post(
+      url,
+      headers: _preferences.signedHeaders,
+      body: jsonEncode(data),
+    );
 
     return response.statusCode == 200;
   }

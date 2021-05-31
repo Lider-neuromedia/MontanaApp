@@ -24,8 +24,7 @@ class MessageForm extends StatefulWidget {
 }
 
 class _MessageFormState extends State<MessageForm> {
-  final TextEditingController _messageController =
-      TextEditingController(text: '');
+  final _messageController = TextEditingController(text: '');
 
   @override
   void initState() {

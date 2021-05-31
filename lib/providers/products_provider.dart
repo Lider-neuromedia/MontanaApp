@@ -6,6 +6,8 @@ import 'package:montana_mobile/utils/preferences.dart';
 
 class ProductsProvider with ChangeNotifier {
   final String _url = dotenv.env['API_URL'];
+  final _preferences = Preferences();
+
   List<Producto> _products = [];
   bool _isLoadingProducts = false;
   bool _isLoadingProduct = false;
@@ -71,18 +73,16 @@ class ProductsProvider with ChangeNotifier {
   }
 
   Future<List<Producto>> getProducts(int catalogId) async {
-    final preferences = Preferences();
     final url = Uri.parse('$_url/productos/$catalogId');
-    final response = await http.get(url, headers: preferences.signedHeaders);
+    final response = await http.get(url, headers: _preferences.signedHeaders);
 
     if (response.statusCode != 200) return [];
     return responseProductosFromJson(response.body).productos;
   }
 
   Future<Producto> getProduct(int productoId) async {
-    final prefs = Preferences();
     final url = Uri.parse('$_url/producto/$productoId');
-    final response = await http.get(url, headers: prefs.signedHeaders);
+    final response = await http.get(url, headers: _preferences.signedHeaders);
 
     if (response.statusCode != 200) return null;
     return responseProductoFromJson(response.body).producto;

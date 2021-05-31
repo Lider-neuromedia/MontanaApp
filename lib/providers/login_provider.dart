@@ -7,6 +7,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 
 class LoginProvider with ChangeNotifier {
   final String _url = dotenv.env['API_URL'];
+  final _preferences = Preferences();
 
   ValidationField _email = ValidationField();
   ValidationField _password = ValidationField();
@@ -67,34 +68,34 @@ class LoginProvider with ChangeNotifier {
   }
 
   Future<void> login() async {
-    final preferences = Preferences();
     final url = Uri.parse('$_url/auth/login');
     final Map<String, String> data = {
       'email': _email.value,
       'password': _password.value,
     };
-
-    http.Response response =
-        await http.post(url, headers: preferences.guestHeaders, body: data);
+    final response = await http.post(
+      url,
+      headers: _preferences.guestHeaders,
+      body: data,
+    );
 
     if (response.statusCode != 200) {
-      preferences.token = null;
-      preferences.session = null;
+      _preferences.token = null;
+      _preferences.session = null;
     }
 
     if (response.statusCode == 200) {
       Session session = sessionFromJson(response.body);
-      preferences.token = session.accessToken;
-      preferences.session = session;
+      _preferences.token = session.accessToken;
+      _preferences.session = session;
     }
 
     notifyListeners();
   }
 
   void logout() {
-    final preferences = Preferences();
-    preferences.token = null;
-    preferences.session = null;
+    _preferences.token = null;
+    _preferences.session = null;
     notifyListeners();
   }
 }

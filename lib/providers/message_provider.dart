@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
@@ -9,6 +8,7 @@ import 'package:montana_mobile/utils/preferences.dart';
 
 class MessageProvider with ChangeNotifier {
   final String _url = dotenv.env['API_URL'];
+  final _preferences = Preferences();
 
   int _userId;
   int get userId => _userId;
@@ -59,16 +59,17 @@ class MessageProvider with ChangeNotifier {
   }
 
   Future<Mensaje> createMessage() async {
-    final preferences = Preferences();
     final url = Uri.parse('$_url/newMessage');
     final Map<String, dynamic> data = {
       'mensaje': _message.value,
       'usuario': _userId,
       'pqrs': _pqrsId,
     };
-
-    final http.Response response = await http.post(url,
-        headers: preferences.signedHeaders, body: jsonEncode(data));
+    final response = await http.post(
+      url,
+      headers: _preferences.signedHeaders,
+      body: jsonEncode(data),
+    );
 
     if (response.statusCode != 200) return null;
     return responseMensajeFromJson(response.body).mensaje;

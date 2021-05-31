@@ -7,6 +7,7 @@ import 'package:montana_mobile/utils/preferences.dart';
 class OrdersProvider with ChangeNotifier {
   final String _url = dotenv.env['API_URL'];
   final List<SortValue> sortValues = _sortValues;
+  final _preferences = Preferences();
 
   Pedido _order;
   Pedido get order => _order;
@@ -50,18 +51,16 @@ class OrdersProvider with ChangeNotifier {
   }
 
   Future<List<Pedido>> getOrders() async {
-    final prefs = Preferences();
     final url = Uri.parse('$_url/pedidos');
-    final response = await http.get(url, headers: prefs.signedHeaders);
+    final response = await http.get(url, headers: _preferences.signedHeaders);
 
     if (response.statusCode != 200) return [];
     return responsePedidosFromJson(response.body).pedidos;
   }
 
   Future<Pedido> getOrder(int orderId) async {
-    final prefs = Preferences();
     final url = Uri.parse('$_url/pedidos/$orderId');
-    final response = await http.get(url, headers: prefs.signedHeaders);
+    final response = await http.get(url, headers: _preferences.signedHeaders);
 
     if (response.statusCode != 200) return null;
     return responsePedidoFromJson(response.body).pedido;

@@ -6,6 +6,7 @@ import 'package:montana_mobile/utils/preferences.dart';
 
 class PasswordProvider with ChangeNotifier {
   final String _url = dotenv.env['API_URL'];
+  final _preferences = Preferences();
 
   ValidationField _email = ValidationField();
   bool _isLoading = false;
@@ -51,14 +52,15 @@ class PasswordProvider with ChangeNotifier {
   }
 
   Future<bool> requestResetEmail() async {
-    final preferences = Preferences();
     final url = Uri.parse('$_url/password/email');
     final Map<String, String> data = {
       'email': _email.value,
     };
-
-    http.Response response =
-        await http.post(url, headers: preferences.guestHeaders, body: data);
+    final response = await http.post(
+      url,
+      headers: _preferences.guestHeaders,
+      body: data,
+    );
 
     return response.statusCode == 200;
   }

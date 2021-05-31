@@ -69,10 +69,8 @@ class LoginCard extends StatefulWidget {
 
 class _LoginCardState extends State<LoginCard> {
   LoginProvider _loginProvider;
-  final TextEditingController _emailController =
-      TextEditingController(text: '');
-  final TextEditingController _passwordController =
-      TextEditingController(text: '');
+  final _emailController = TextEditingController(text: '');
+  final _passwordController = TextEditingController(text: '');
 
   @override
   Widget build(BuildContext context) {
@@ -125,10 +123,9 @@ class _LoginCardState extends State<LoginCard> {
 
   Future<void> _login(BuildContext context) async {
     _loginProvider.isLoading = true;
+    final preferences = Preferences();
     await _loginProvider.login();
     _loginProvider.isLoading = false;
-
-    final preferences = Preferences();
 
     if (preferences.token != null) {
       _emailController.clear();

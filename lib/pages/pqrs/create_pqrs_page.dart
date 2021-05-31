@@ -19,8 +19,7 @@ class CreatePqrsPage extends StatefulWidget {
 }
 
 class _CreatePqrsPageState extends State<CreatePqrsPage> {
-  final TextEditingController _messageController =
-      TextEditingController(text: '');
+  final _messageController = TextEditingController(text: '');
 
   @override
   void initState() {

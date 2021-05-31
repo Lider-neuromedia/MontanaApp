@@ -6,6 +6,7 @@ import 'package:montana_mobile/utils/preferences.dart';
 
 class ResetPasswordProvider with ChangeNotifier {
   final String _url = dotenv.env['API_URL'];
+  final _preferences = Preferences();
 
   ValidationField _token = ValidationField();
   ValidationField _email = ValidationField();
@@ -108,7 +109,6 @@ class ResetPasswordProvider with ChangeNotifier {
   }
 
   Future<bool> resetPassword() async {
-    final preferences = Preferences();
     final url = Uri.parse('$_url/password/reset');
     final Map<String, String> data = {
       'token': _token.value,
@@ -117,8 +117,11 @@ class ResetPasswordProvider with ChangeNotifier {
       'password_confirmation': _passwordConfirmation.value,
     };
 
-    http.Response response =
-        await http.post(url, headers: preferences.guestHeaders, body: data);
+    final response = await http.post(
+      url,
+      headers: _preferences.guestHeaders,
+      body: data,
+    );
 
     return response.statusCode == 200;
   }

@@ -11,6 +11,7 @@ import 'package:montana_mobile/utils/preferences.dart';
 
 class QuotaProvider with ChangeNotifier {
   final String _url = dotenv.env['API_URL'];
+  final _preferences = Preferences();
 
   String _getFileName(File file) {
     if (file == null) return null;
@@ -126,12 +127,11 @@ class QuotaProvider with ChangeNotifier {
       ),
     );
 
-    final preferences = Preferences();
-    final user = preferences.session as Session;
+    final user = _preferences.session as Session;
     final url = Uri.parse('$_url/ampliacion-cupo');
 
     final request = http.MultipartRequest('POST', url);
-    request.headers.addAll(preferences.signedHeaders);
+    request.headers.addAll(_preferences.signedHeaders);
 
     request.fields['monto'] = _monto.value;
     request.fields['vendedor'] = "${user.id}";

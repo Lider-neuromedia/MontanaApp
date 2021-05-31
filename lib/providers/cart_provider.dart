@@ -13,6 +13,7 @@ import 'package:montana_mobile/utils/preferences.dart';
 class CartProvider with ChangeNotifier {
   final String _url = dotenv.env['API_URL'];
   final List<PaymentMethod> paymentMethods = _paymentMethods;
+  final _preferences = Preferences();
 
   ValidationField _notes = ValidationField();
   String get notes => _notes.value;
@@ -104,18 +105,16 @@ class CartProvider with ChangeNotifier {
   }
 
   Future<List<Tienda>> getStores(int clientId) async {
-    final preferences = Preferences();
     final url = Uri.parse('$_url/tiendas-cliente/$clientId');
-    final response = await http.get(url, headers: preferences.signedHeaders);
+    final response = await http.get(url, headers: _preferences.signedHeaders);
 
     if (response.statusCode != 200) return [];
     return responseTiendasFromJson(response.body);
   }
 
   Future<String> getOrderCode() async {
-    final preferences = Preferences();
     final url = Uri.parse('$_url/generate-code');
-    final response = await http.get(url, headers: preferences.signedHeaders);
+    final response = await http.get(url, headers: _preferences.signedHeaders);
     final decodedResponse = json.decode(response.body);
 
     if (response.statusCode != 200) return '';
@@ -133,12 +132,11 @@ class CartProvider with ChangeNotifier {
       contentType: MediaType('image', 'image/png'),
     );
 
-    final preferences = Preferences();
-    final user = preferences.session as Session;
+    final user = _preferences.session as Session;
     final url = Uri.parse('$_url/pedidos');
 
     final request = http.MultipartRequest('POST', url);
-    request.headers.addAll(preferences.signedHeaders);
+    request.headers.addAll(_preferences.signedHeaders);
     request.files.add(fileFirma);
 
     request.fields['cliente'] = "${_cart.clientId}";

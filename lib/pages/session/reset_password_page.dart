@@ -7,14 +7,10 @@ import 'package:provider/provider.dart';
 class ResetPasswordPage extends StatelessWidget {
   static final String route = 'reset_password';
 
-  final TextEditingController _tokenController =
-      TextEditingController(text: '');
-  final TextEditingController _emailController =
-      TextEditingController(text: '');
-  final TextEditingController _passwordController =
-      TextEditingController(text: '');
-  final TextEditingController _passwordConfirmationController =
-      TextEditingController(text: '');
+  final _tokenController = TextEditingController(text: '');
+  final _emailController = TextEditingController(text: '');
+  final _passwordController = TextEditingController(text: '');
+  final _passwordConfirmationController = TextEditingController(text: '');
 
   @override
   Widget build(BuildContext context) {

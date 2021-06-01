@@ -9,11 +9,6 @@ import 'package:montana_mobile/widgets/scaffold_logo.dart';
 class DashboardSellerPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final titleStyle = Theme.of(context).textTheme.headline5.copyWith(
-          color: CustomTheme.textColor1,
-          fontWeight: FontWeight.w600,
-        );
-
     return Scaffold(
       appBar: AppBar(
         title: const ScaffoldLogo(),
@@ -24,10 +19,8 @@ class DashboardSellerPage extends StatelessWidget {
       body: ListView(
         children: [
           const SizedBox(height: 30.0),
-          Text(
-            'CONSOLIDADO COMISIONES',
-            style: titleStyle,
-            textAlign: TextAlign.center,
+          const Center(
+            child: const _SectionTitle('CONSOLIDADO COMISIONES'),
           ),
           const SizedBox(height: 20.0),
           Center(
@@ -58,16 +51,35 @@ class DashboardSellerPage extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20.0),
-          Text('CONSOLIDADO CLIENTES', style: titleStyle),
+          const _SectionTitle('CONSOLIDADO CLIENTES'),
           const SizedBox(height: 20.0),
           _ConsolidatedClients(),
           const SizedBox(height: 40.0),
-          Text('CONSOLIDADO PEDIDOS', style: titleStyle),
+          const _SectionTitle('CONSOLIDADO PEDIDOS'),
           const SizedBox(height: 20.0),
           ConsolidatedOrders(),
           const SizedBox(height: 50.0),
         ],
       ),
+    );
+  }
+}
+
+class _SectionTitle extends StatelessWidget {
+  const _SectionTitle(this.value, {Key key}) : super(key: key);
+
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    final titleStyle = Theme.of(context).textTheme.headline5.copyWith(
+          color: CustomTheme.textColor1,
+          fontWeight: FontWeight.w600,
+        );
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+      child: Text(value, style: titleStyle),
     );
   }
 }

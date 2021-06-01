@@ -137,6 +137,7 @@ class _ContentNormal extends StatelessWidget {
             padding: const EdgeInsets.only(left: 35.0),
             child: Text(title, style: titleStyle),
           ),
+          const SizedBox(height: 5.0),
           Text(value, style: valueStyle),
         ],
       ),

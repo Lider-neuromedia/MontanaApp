@@ -39,7 +39,7 @@ class _ClientsPageState extends State<ClientsPage> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        title: ScaffoldLogo(),
+        title: const ScaffoldLogo(),
         actions: [
           TextButton(
             onPressed: null,

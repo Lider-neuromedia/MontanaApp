@@ -3,9 +3,7 @@ import 'package:montana_mobile/pages/dashboard/partials/circular_statistic.dart'
 import 'package:montana_mobile/theme/theme.dart';
 
 class ConsolidatedOrders extends StatelessWidget {
-  const ConsolidatedOrders({
-    Key key,
-  }) : super(key: key);
+  const ConsolidatedOrders({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

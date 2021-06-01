@@ -97,23 +97,37 @@ class _OrderDetailContent extends StatelessWidget {
         ),
         const SizedBox(height: 20.0),
         _OrderDetailCards(
-          height: 270.0,
           children: [
-            OrderDetailCard(
-              title: 'Valor del pedido',
-              value: formatMoney(order.total),
+            Expanded(
+              child: OrderDetailCard(
+                title: 'Valor del pedido',
+                value: formatMoney(order.total),
+              ),
             ),
-            OrderDetailCard(
-              title: 'Método de pago',
-              value: order.metodoPago,
+            const SizedBox(width: 10.0),
+            Expanded(
+              child: OrderDetailCard(
+                title: 'Método de pago',
+                value: order.metodoPago,
+              ),
             ),
-            OrderDetailCard(
-              title: 'Estado del pedido',
-              value: order.estadoFormatted,
+          ],
+        ),
+        const SizedBox(height: 15.0),
+        _OrderDetailCards(
+          children: [
+            Expanded(
+              child: OrderDetailCard(
+                title: 'Estado del pedido',
+                value: order.estadoFormatted,
+              ),
             ),
-            OrderDetailCard(
-              title: 'Descuento',
-              value: "${order.descuento}%",
+            const SizedBox(width: 10.0),
+            Expanded(
+              child: OrderDetailCard(
+                title: 'Descuento',
+                value: "${order.descuento}%",
+              ),
             ),
           ],
         ),
@@ -147,23 +161,16 @@ class _OrderDetailCards extends StatelessWidget {
   const _OrderDetailCards({
     Key key,
     @required this.children,
-    @required this.height,
   }) : super(key: key);
 
   final List<Widget> children;
-  final double height;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-      height: height,
-      child: GridView.count(
-        physics: NeverScrollableScrollPhysics(),
-        childAspectRatio: 16 / 10.5,
-        crossAxisSpacing: 5,
-        mainAxisSpacing: 5,
-        crossAxisCount: 2,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: children,
       ),
     );

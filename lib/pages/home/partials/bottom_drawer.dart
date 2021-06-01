@@ -78,14 +78,55 @@ class BottomDrawer extends StatelessWidget {
               iconData: WebSymbols.logout,
               active: false,
               onTap: () {
-                loginProvider.logout();
                 navigationProvider.showMore = false;
-                Navigator.of(context).pushReplacementNamed(LoginPage.route);
+
+                _confirmLogout(context, () {
+                  loginProvider.logout();
+                  Navigator.of(context).pushReplacementNamed(LoginPage.route);
+                });
               },
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Future<void> _confirmLogout(BuildContext context, Function onAccept) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirmación'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: [
+                const Text("¿Realmente desea cerrar su sesión de usuario?"),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text("Cancelar"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            const SizedBox(width: 30.0),
+            TextButton(
+              child: Text(
+                "Si",
+                style: TextStyle(color: Theme.of(context).primaryColor),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+                onAccept();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

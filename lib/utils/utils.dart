@@ -36,7 +36,7 @@ Future<void> showMessageDialog(
         ),
         actions: <Widget>[
           TextButton(
-            child: Text("Aceptar"),
+            child: const Text("Aceptar"),
             onPressed: () {
               Navigator.of(context).pop();
 

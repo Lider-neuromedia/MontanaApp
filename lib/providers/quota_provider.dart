@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:mime_type/mime_type.dart';
 import 'package:montana_mobile/models/client.dart';
-import 'package:montana_mobile/models/session.dart';
 import 'package:montana_mobile/providers/validation_field.dart';
 import 'package:montana_mobile/utils/preferences.dart';
 
@@ -127,7 +126,7 @@ class QuotaProvider with ChangeNotifier {
       ),
     );
 
-    final user = _preferences.session as Session;
+    final user = _preferences.session;
     final url = Uri.parse('$_url/ampliacion-cupo');
 
     final request = http.MultipartRequest('POST', url);

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:montana_mobile/models/client.dart';
-import 'package:montana_mobile/models/session.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/pages/pqrs/partials/dropdown_pqrs.dart';
 import 'package:montana_mobile/providers/clients_provider.dart';
@@ -29,7 +28,7 @@ class _CreatePqrsPageState extends State<CreatePqrsPage> {
       await Future.delayed(Duration.zero);
 
       final preferences = Preferences();
-      final user = preferences.session as Session;
+      final user = preferences.session;
       final pqrsTicketProvider = Provider.of<PqrsTicketProvider>(
         context,
         listen: false,

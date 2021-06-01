@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttericon/linecons_icons.dart';
 import 'package:montana_mobile/models/message.dart';
-import 'package:montana_mobile/models/session.dart';
 import 'package:montana_mobile/models/ticket.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/providers/message_provider.dart';
@@ -38,7 +37,7 @@ class _MessageFormState extends State<MessageForm> {
         listen: false,
       );
       final preferences = Preferences();
-      final user = preferences.session as Session;
+      final user = preferences.session;
 
       messageProvider.pqrsId = widget.ticket.idPqrs;
       messageProvider.userId = user.id;

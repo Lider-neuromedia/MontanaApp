@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 import 'package:montana_mobile/models/client.dart';
-import 'package:montana_mobile/models/session.dart';
 import 'package:montana_mobile/utils/preferences.dart';
 
 class ClientsProvider with ChangeNotifier {
@@ -68,7 +67,7 @@ class ClientsProvider with ChangeNotifier {
   }
 
   Future<List<Cliente>> getSellerClients() async {
-    final user = _preferences.session as Session;
+    final user = _preferences.session;
     final url = Uri.parse('$_url/clientes-asignados/${user.id}');
     final response = await http.get(url, headers: _preferences.signedHeaders);
 

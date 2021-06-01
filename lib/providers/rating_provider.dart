@@ -1,9 +1,7 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:montana_mobile/models/question.dart';
 import 'package:montana_mobile/models/rating.dart';
-import 'package:montana_mobile/models/session.dart';
 import 'package:montana_mobile/utils/preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
@@ -51,7 +49,7 @@ class RatingProvider with ChangeNotifier {
   Rating get rating => _rating;
 
   bool get isRatingCompleted {
-    final session = _preferences.session as Session;
+    final session = _preferences.session;
     if (_rating == null) return false;
     if (_rating.usuarios.indexOf(session.id) == -1) return false;
     return true;
@@ -63,7 +61,7 @@ class RatingProvider with ChangeNotifier {
     _rating = null;
     notifyListeners();
 
-    final user = _preferences.session as Session;
+    final user = _preferences.session;
     final questions = await getQuestions(catalogId);
     _rating = await getRatings(productId);
 

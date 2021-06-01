@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 import 'package:http_parser/http_parser.dart';
 import 'package:montana_mobile/models/product.dart';
-import 'package:montana_mobile/models/session.dart';
 import 'package:montana_mobile/models/store.dart';
 import 'package:montana_mobile/providers/validation_field.dart';
 import 'package:montana_mobile/utils/preferences.dart';
@@ -132,7 +131,7 @@ class CartProvider with ChangeNotifier {
       contentType: MediaType('image', 'image/png'),
     );
 
-    final user = _preferences.session as Session;
+    final user = _preferences.session;
     final url = Uri.parse('$_url/pedidos');
 
     final request = http.MultipartRequest('POST', url);
@@ -146,7 +145,7 @@ class CartProvider with ChangeNotifier {
     request.fields['total_pedido'] = "${_cart.total}";
     request.fields['forma_pago'] = "${_cart.paymentMethod}";
 
-    if (_notes.value.isNotEmpty) {
+    if (_notes.value != null && _notes.value.isNotEmpty) {
       request.fields['notas'] = "${_notes.value}";
     }
 

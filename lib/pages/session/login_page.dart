@@ -27,7 +27,7 @@ class LoginPage extends StatelessWidget {
                 child: Column(
                   children: [
                     const SizedBox(height: 10.0),
-                    _BackgroundLogo(),
+                    const _BackgroundLogo(),
                     const SizedBox(height: 30.0),
                     LoginCard(),
                     const SizedBox(height: 10.0),
@@ -59,14 +59,14 @@ class _BackgroundBox extends StatelessWidget {
 }
 
 class _BackgroundLogo extends StatelessWidget {
+  const _BackgroundLogo({Key key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    final mediaSize = MediaQuery.of(context).size;
-
-    return Image(
+    return const Image(
       image: const AssetImage("assets/images/logo.png"),
       fit: BoxFit.contain,
-      width: mediaSize.width / 2,
+      width: 200.0,
     );
   }
 }
@@ -77,9 +77,9 @@ class LoginCard extends StatefulWidget {
 }
 
 class _LoginCardState extends State<LoginCard> {
-  LoginProvider _loginProvider;
   final _emailController = TextEditingController(text: '');
   final _passwordController = TextEditingController(text: '');
+  LoginProvider _loginProvider;
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +103,7 @@ class _LoginCardState extends State<LoginCard> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _LoginTitle(),
+              const _LoginTitle(),
               const SizedBox(height: 30.0),
               _EmailInput(controller: _emailController),
               const SizedBox(height: 30.0),
@@ -246,6 +246,8 @@ class _ForgetPasswordButton extends StatelessWidget {
 }
 
 class _LoginTitle extends StatelessWidget {
+  const _LoginTitle({Key key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Center(

@@ -23,6 +23,7 @@ import 'package:montana_mobile/providers/products_provider.dart';
 import 'package:montana_mobile/providers/quota_provider.dart';
 import 'package:montana_mobile/providers/rating_provider.dart';
 import 'package:montana_mobile/providers/reset_password_provider.dart';
+import 'package:montana_mobile/providers/session_provider.dart';
 import 'package:montana_mobile/providers/show_room_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
@@ -35,6 +36,7 @@ Future<void> main() async {
   await dotenv.load();
   final preferences = Preferences();
   await preferences.initialize();
+  await (SessionProvider()).isUserSessionValid();
 
   runApp(MyApp());
 }
@@ -42,6 +44,8 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final preferences = Preferences();
+
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => LoginProvider()),
@@ -63,7 +67,7 @@ class MyApp extends StatelessWidget {
         title: 'Athletic Air',
         debugShowCheckedModeBanner: false,
         theme: (CustomTheme()).theme,
-        initialRoute: HomePage.route,
+        initialRoute: preferences.initialPage,
         routes: {
           HomePage.route: (_) => HomePage(),
           LoginPage.route: (_) => LoginPage(),

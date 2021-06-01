@@ -1,4 +1,6 @@
 import 'package:montana_mobile/models/session.dart';
+import 'package:montana_mobile/pages/home/home_page.dart';
+import 'package:montana_mobile/pages/session/login_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
@@ -17,11 +19,11 @@ class Preferences {
     _prefs = await SharedPreferences.getInstance();
   }
 
-  get token {
+  String get token {
     return _prefs.getString('token') ?? null;
   }
 
-  set token(value) {
+  set token(String value) {
     if (value == null) {
       _prefs.remove('token');
     } else {
@@ -29,12 +31,12 @@ class Preferences {
     }
   }
 
-  get session {
+  Session get session {
     final value = _prefs.getString('session') ?? null;
     return value != null ? sessionFromJson(value) : null;
   }
 
-  set session(value) {
+  set session(Session value) {
     if (value == null) {
       _prefs.remove('session');
     } else {
@@ -42,19 +44,17 @@ class Preferences {
     }
   }
 
-  Map<String, String> get guestHeaders {
-    Map<String, String> headers = {
-      'X-Requested-With': 'XMLHttpRequest',
-    };
-    return headers;
+  String get initialPage {
+    return session == null || token == null ? LoginPage.route : HomePage.route;
   }
 
-  Map<String, String> get signedHeaders {
-    Map<String, String> headers = {
-      'content-type': 'application/json',
-      'X-Requested-With': 'XMLHttpRequest',
-      'Authorization': 'Bearer $token',
-    };
-    return headers;
-  }
+  Map<String, String> get guestHeaders => {
+        'X-Requested-With': 'XMLHttpRequest',
+      };
+
+  Map<String, String> get signedHeaders => {
+        'content-type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+        'Authorization': 'Bearer $token',
+      };
 }

@@ -12,21 +12,29 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mediaSize = MediaQuery.of(context).size;
+
     return Scaffold(
       body: Stack(
         children: [
           Positioned(
-            left: 0.0,
             top: mediaSize.height * 0.2 * -1,
             child: _BackgroundBox(),
+            right: 0.0,
           ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _BackgroundLogo(),
-              const SizedBox(height: 30.0),
-              LoginCard(),
-            ],
+          SafeArea(
+            child: Center(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    const SizedBox(height: 10.0),
+                    _BackgroundLogo(),
+                    const SizedBox(height: 30.0),
+                    LoginCard(),
+                    const SizedBox(height: 10.0),
+                  ],
+                ),
+              ),
+            ),
           ),
         ],
       ),
@@ -38,6 +46,7 @@ class _BackgroundBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mediaSize = MediaQuery.of(context).size;
+
     return Transform(
       transform: Matrix4.skewY(0.15),
       child: Container(

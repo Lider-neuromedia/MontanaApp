@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:montana_mobile/models/ticket.dart';
 import 'package:montana_mobile/pages/catalogue/partials/empty_message.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/pages/pqrs/partials/message_card.dart';
 import 'package:montana_mobile/pages/pqrs/partials/message_form.dart';
 import 'package:montana_mobile/providers/pqrs_provider.dart';
+import 'package:montana_mobile/services/push_notification_service.dart';
 import 'package:montana_mobile/theme/theme.dart';
+import 'package:montana_mobile/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 class MessagesPage extends StatefulWidget {
@@ -22,19 +23,40 @@ class _MessagesPageState extends State<MessagesPage> {
 
     () async {
       await Future.delayed(Duration.zero);
-      _loadData(context);
-    }();
-  }
 
-  void _loadData(BuildContext context) {
-    final ticket = ModalRoute.of(context).settings.arguments as Ticket;
-    final pqrsProvider = Provider.of<PqrsProvider>(context, listen: false);
-    pqrsProvider.loadTicket(ticket.idPqrs);
+      final idPqrs = ModalRoute.of(context).settings.arguments as int;
+      final pqrsProvider = Provider.of<PqrsProvider>(context, listen: false);
+      pqrsProvider.loadTicket(idPqrs);
+      print("id: $idPqrs");
+    }();
+
+    PushNotificationService.messageStream.listen((message) {
+      if (message.data['type'] == 'pqrs-message') {
+        final idPqrs = ModalRoute.of(context).settings.arguments as int;
+        final messageIdPqrs = int.parse(message.data['id_pqrs']);
+        final isCurrentRoute = ModalRoute.of(context).isCurrent;
+
+        if (isCurrentRoute && idPqrs == messageIdPqrs) {
+          final pqrsProvider = Provider.of<PqrsProvider>(
+            context,
+            listen: false,
+          );
+          pqrsProvider.loadTicket(idPqrs);
+        }
+        if (isCurrentRoute && idPqrs != messageIdPqrs) {
+          ScaffoldMessenger.of(context).showSnackBar(snackbar(
+            message.notification.title,
+            message.notification.body,
+            label: 'Aceptar',
+            action: () {},
+          ));
+        }
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final ticket = ModalRoute.of(context).settings.arguments as Ticket;
     final pqrsProvider = Provider.of<PqrsProvider>(context);
 
     return Scaffold(
@@ -49,16 +71,20 @@ class _MessagesPageState extends State<MessagesPage> {
                 ? const LoadingContainer()
                 : pqrsProvider.ticket == null
                     ? EmptyMessage(
-                        onPressed: () => pqrsProvider.loadTicket(ticket.idPqrs),
+                        onPressed: () =>
+                            pqrsProvider.loadTicket(pqrsProvider.ticket.idPqrs),
                         message: 'No hay información.',
                       )
                     : RefreshIndicator(
-                        onRefresh: () => pqrsProvider.loadTicket(ticket.idPqrs),
+                        onRefresh: () =>
+                            pqrsProvider.loadTicket(pqrsProvider.ticket.idPqrs),
                         color: Theme.of(context).primaryColor,
                         child: _MessagesList(),
                       ),
           ),
-          MessageForm(ticket: ticket),
+          pqrsProvider.ticket == null
+              ? Container()
+              : MessageForm(ticket: pqrsProvider.ticket),
         ],
       ),
     );

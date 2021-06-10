@@ -31,7 +31,7 @@ class PqrsCard extends StatelessWidget {
       onTap: () {
         Navigator.of(context).pushNamed(
           MessagesPage.route,
-          arguments: ticket,
+          arguments: ticket.idPqrs,
         );
       },
       title: Text(ticket.clienteNombre, style: titleText),

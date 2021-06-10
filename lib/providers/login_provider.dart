@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:montana_mobile/models/session.dart';
 import 'package:montana_mobile/providers/validation_field.dart';
+import 'package:montana_mobile/services/push_notification_service.dart';
 import 'package:montana_mobile/utils/preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
@@ -88,6 +89,8 @@ class LoginProvider with ChangeNotifier {
       Session session = sessionFromJson(response.body);
       _preferences.token = session.accessToken;
       _preferences.session = session;
+
+      await PushNotificationService.saveDeviceToken();
     }
 
     notifyListeners();

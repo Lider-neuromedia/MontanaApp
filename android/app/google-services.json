@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "683803106739",
+    "project_id": "montana-mobile",
+    "storage_bucket": "montana-mobile.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:683803106739:android:ddb7ff340ad3e9064dffc6",
+        "android_client_info": {
+          "package_name": "co.pruebasneuro.montana_mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "683803106739-p0pctbgl05ed38qqgmbr0jh0il4ej72v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzjmcf-1ugci7pds4moZgkxMXWz2nHEKc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "683803106739-p0pctbgl05ed38qqgmbr0jh0il4ej72v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

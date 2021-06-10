@@ -50,3 +50,25 @@ Future<void> showMessageDialog(
     },
   );
 }
+
+Widget snackbar(String title, String body, {String label, Function action}) {
+  return SnackBar(
+    margin: const EdgeInsets.all(10.0),
+    behavior: SnackBarBehavior.floating,
+    content: Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(title),
+        Text(body),
+      ],
+    ),
+    action: action == null
+        ? null
+        : SnackBarAction(
+            textColor: Colors.grey,
+            label: label,
+            onPressed: action,
+          ),
+  );
+}

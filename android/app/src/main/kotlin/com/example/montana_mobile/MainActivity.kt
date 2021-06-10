@@ -1,4 +1,4 @@
-package com.example.montana_mobile
+package co.pruebasneuro.montana_mobile
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.montana_mobile">
+    package="co.pruebasneuro.montana_mobile">
    <application
         android:label="montana_mobile"
         android:icon="@mipmap/ic_launcher">

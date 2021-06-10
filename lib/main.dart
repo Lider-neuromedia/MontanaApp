@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
+import 'package:provider/provider.dart';
 import 'package:montana_mobile/pages/cart/cart_page.dart';
 import 'package:montana_mobile/pages/catalogue/catalogue_products_page.dart';
 import 'package:montana_mobile/pages/catalogue/product_page.dart';
@@ -15,6 +18,7 @@ import 'package:montana_mobile/providers/catalogues_provider.dart';
 import 'package:montana_mobile/providers/clients_provider.dart';
 import 'package:montana_mobile/providers/login_provider.dart';
 import 'package:montana_mobile/providers/message_provider.dart';
+import 'package:montana_mobile/providers/navigation_provider.dart';
 import 'package:montana_mobile/providers/orders_provider.dart';
 import 'package:montana_mobile/providers/password_provider.dart';
 import 'package:montana_mobile/providers/pqrs_provider.dart';
@@ -25,11 +29,9 @@ import 'package:montana_mobile/providers/rating_provider.dart';
 import 'package:montana_mobile/providers/reset_password_provider.dart';
 import 'package:montana_mobile/providers/session_provider.dart';
 import 'package:montana_mobile/providers/show_room_provider.dart';
+import 'package:montana_mobile/services/push_notification_service.dart';
 import 'package:montana_mobile/theme/theme.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 import 'package:montana_mobile/utils/preferences.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter/services.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,6 +40,8 @@ Future<void> main() async {
   final preferences = Preferences();
   await preferences.initialize();
   await (SessionProvider()).isUserSessionValid();
+  await PushNotificationService.initializeApp();
+  print(PushNotificationService.token);
 
   runApp(MyApp());
 }
@@ -52,6 +56,7 @@ class MyApp extends StatelessWidget {
 
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => NavigationProvider()),
         ChangeNotifierProvider(create: (_) => LoginProvider()),
         ChangeNotifierProvider(create: (_) => PasswordProvider()),
         ChangeNotifierProvider(create: (_) => ResetPasswordProvider()),

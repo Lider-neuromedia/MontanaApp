@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
+import 'package:montana_mobile/utils/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:montana_mobile/pages/cart/cart_page.dart';
 import 'package:montana_mobile/pages/catalogue/catalogue_products_page.dart';
@@ -32,6 +33,7 @@ import 'package:montana_mobile/providers/show_room_provider.dart';
 import 'package:montana_mobile/services/push_notification_service.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:montana_mobile/utils/preferences.dart';
+import 'package:navigation_history_observer/navigation_history_observer.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,20 +43,9 @@ Future<void> main() async {
   await preferences.initialize();
   await (SessionProvider()).isUserSessionValid();
   await PushNotificationService.initializeApp();
-  print(PushNotificationService.token);
 
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final preferences = Preferences();
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-    ]);
-
-    return MultiProvider(
+  runApp(
+    MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => NavigationProvider()),
         ChangeNotifierProvider(create: (_) => LoginProvider()),
@@ -72,25 +63,90 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => CartProvider()),
         ChangeNotifierProvider(create: (_) => RatingProvider()),
       ],
-      child: MaterialApp(
-        title: 'Athletic Air',
-        debugShowCheckedModeBanner: false,
-        theme: (CustomTheme()).theme,
-        initialRoute: preferences.initialPage,
-        routes: {
-          HomePage.route: (_) => HomePage(),
-          LoginPage.route: (_) => LoginPage(),
-          PasswordPage.route: (_) => PasswordPage(),
-          ResetPasswordPage.route: (_) => ResetPasswordPage(),
-          OrderPage.route: (_) => OrderPage(),
-          CatalogueProductsPage.route: (_) => CatalogueProductsPage(),
-          ProductPage.route: (_) => ProductPage(),
-          CartPage.route: (_) => CartPage(),
-          ClientPage.route: (_) => ClientPage(),
-          CreatePqrsPage.route: (_) => CreatePqrsPage(),
-          MessagesPage.route: (_) => MessagesPage(),
-        },
-      ),
+      child: MyApp(),
+    ),
+  );
+}
+
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final _scaffoldKey = GlobalKey<ScaffoldMessengerState>();
+  final historyObserver = NavigationHistoryObserver();
+
+  @override
+  void initState() {
+    super.initState();
+
+    () async {
+      await Future.delayed(Duration.zero);
+
+      final navProvider =
+          Provider.of<NavigationProvider>(context, listen: false);
+      final pqrsProvider = Provider.of<PqrsProvider>(context, listen: false);
+
+      PushNotificationService.messageStream.listen((message) {
+        final currentRoute = historyObserver.top.settings.name;
+
+        if (message.data['type'] == 'pqrs-message') {
+          final idPqrs = pqrsProvider.ticket?.idPqrs;
+          final messageIdPqrs = int.parse(message.data['id_pqrs']);
+
+          // Mostrar snackbar.
+          if (currentRoute != MessagesPage.route ||
+              (currentRoute == MessagesPage.route && idPqrs != messageIdPqrs)) {
+            _scaffoldKey.currentState.showSnackBar(snackbar(
+              message.notification.title,
+              message.notification.body,
+              label: 'Aceptar',
+              action: () {},
+            ));
+          }
+
+          // Si la ruta es el listado de pqrs se recarga.
+          if (currentRoute == HomePage.route && navProvider.currentPage == 5) {
+            pqrsProvider.loadTickets();
+          }
+
+          // Si la ruta es la pantalla de mensajes del pqrs actual se recarga.
+          if (currentRoute == MessagesPage.route && idPqrs == messageIdPqrs) {
+            pqrsProvider.loadTicket(idPqrs);
+          }
+        }
+      });
+    }();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final preferences = Preferences();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
+
+    return MaterialApp(
+      scaffoldMessengerKey: _scaffoldKey,
+      navigatorObservers: [NavigationHistoryObserver()],
+      title: 'Athletic Air',
+      debugShowCheckedModeBanner: false,
+      theme: (CustomTheme()).theme,
+      initialRoute: preferences.initialPage,
+      routes: {
+        HomePage.route: (_) => HomePage(),
+        LoginPage.route: (_) => LoginPage(),
+        PasswordPage.route: (_) => PasswordPage(),
+        ResetPasswordPage.route: (_) => ResetPasswordPage(),
+        OrderPage.route: (_) => OrderPage(),
+        CatalogueProductsPage.route: (_) => CatalogueProductsPage(),
+        ProductPage.route: (_) => ProductPage(),
+        CartPage.route: (_) => CartPage(),
+        ClientPage.route: (_) => ClientPage(),
+        CreatePqrsPage.route: (_) => CreatePqrsPage(),
+        MessagesPage.route: (_) => MessagesPage(),
+      },
     );
   }
 }

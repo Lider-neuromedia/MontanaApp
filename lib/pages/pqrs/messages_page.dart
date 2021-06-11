@@ -4,9 +4,7 @@ import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/pages/pqrs/partials/message_card.dart';
 import 'package:montana_mobile/pages/pqrs/partials/message_form.dart';
 import 'package:montana_mobile/providers/pqrs_provider.dart';
-import 'package:montana_mobile/services/push_notification_service.dart';
 import 'package:montana_mobile/theme/theme.dart';
-import 'package:montana_mobile/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 class MessagesPage extends StatefulWidget {
@@ -27,32 +25,7 @@ class _MessagesPageState extends State<MessagesPage> {
       final idPqrs = ModalRoute.of(context).settings.arguments as int;
       final pqrsProvider = Provider.of<PqrsProvider>(context, listen: false);
       pqrsProvider.loadTicket(idPqrs);
-      print("id: $idPqrs");
     }();
-
-    PushNotificationService.messageStream.listen((message) {
-      if (message.data['type'] == 'pqrs-message') {
-        final idPqrs = ModalRoute.of(context).settings.arguments as int;
-        final messageIdPqrs = int.parse(message.data['id_pqrs']);
-        final isCurrentRoute = ModalRoute.of(context).isCurrent;
-
-        if (isCurrentRoute && idPqrs == messageIdPqrs) {
-          final pqrsProvider = Provider.of<PqrsProvider>(
-            context,
-            listen: false,
-          );
-          pqrsProvider.loadTicket(idPqrs);
-        }
-        if (isCurrentRoute && idPqrs != messageIdPqrs) {
-          ScaffoldMessenger.of(context).showSnackBar(snackbar(
-            message.notification.title,
-            message.notification.body,
-            label: 'Aceptar',
-            action: () {},
-          ));
-        }
-      }
-    });
   }
 
   @override

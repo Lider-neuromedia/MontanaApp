@@ -1,12 +1,14 @@
 import 'dart:convert';
+import 'package:montana_mobile/models/user_data.dart';
 
 Session sessionFromJson(String str) => Session.fromJson(json.decode(str));
 
 String sessionToJson(Session data) => json.encode(data.toJson());
 
 class Session {
-  static const rolSeller = 'seller';
-  static const rolBuyer = 'buyer';
+  static const rolAdministrador = 1;
+  static const rolVendedor = 2;
+  static const rolCliente = 3;
 
   Session({
     this.accessToken,
@@ -15,7 +17,10 @@ class Session {
     this.id,
     this.email,
     this.name,
+    this.apellidos,
     this.rol,
+    this.dni,
+    this.tipoIdentificacion,
     this.userdata,
     this.permisos,
   });
@@ -26,8 +31,11 @@ class Session {
   int id;
   String email;
   String name;
+  String apellidos;
   int rol;
-  List<Userdatum> userdata;
+  String dni;
+  String tipoIdentificacion;
+  List<UserData> userdata;
   List<String> permisos;
 
   factory Session.fromJson(Map<String, dynamic> json) => Session(
@@ -37,9 +45,13 @@ class Session {
         id: json["id"],
         email: json["email"],
         name: json["name"],
+        apellidos: json["apellidos"],
         rol: json["rol"],
-        userdata: List<Userdatum>.from(
-            json["userdata"].map((x) => Userdatum.fromJson(x))),
+        dni: json["dni"],
+        tipoIdentificacion: json['tipo_identificacion'],
+        userdata: List<UserData>.from(
+          json["userdata"].map((x) => UserData.fromJson(x)),
+        ),
         permisos: List<String>.from(json["permisos"].map((x) => x)),
       );
 
@@ -50,44 +62,14 @@ class Session {
         "id": id,
         "email": email,
         "name": name,
+        "apellidos": apellidos,
         "rol": rol,
+        "dni": dni,
+        "tipo_identificacion": tipoIdentificacion,
         "userdata": List<dynamic>.from(userdata.map((x) => x.toJson())),
         "permisos": List<dynamic>.from(permisos.map((x) => x)),
       };
-}
 
-class Userdatum {
-  Userdatum({
-    this.id,
-    this.userId,
-    this.fieldKey,
-    this.valueKey,
-    this.createdAt,
-    this.updatedAt,
-  });
-
-  int id;
-  int userId;
-  String fieldKey;
-  String valueKey;
-  DateTime createdAt;
-  DateTime updatedAt;
-
-  factory Userdatum.fromJson(Map<String, dynamic> json) => Userdatum(
-        id: json["id"],
-        userId: json["user_id"],
-        fieldKey: json["field_key"],
-        valueKey: json["value_key"],
-        createdAt: DateTime.parse(json["created_at"]),
-        updatedAt: DateTime.parse(json["updated_at"]),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "user_id": userId,
-        "field_key": fieldKey,
-        "value_key": valueKey,
-        "created_at": createdAt.toIso8601String(),
-        "updated_at": updatedAt.toIso8601String(),
-      };
+  bool get isVendedor => rol == rolVendedor;
+  bool get isCliente => rol == rolCliente;
 }

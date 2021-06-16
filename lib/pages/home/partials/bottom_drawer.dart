@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fluttericon/octicons_icons.dart';
 import 'package:fluttericon/web_symbols_icons.dart';
-import 'package:montana_mobile/models/session.dart';
 import 'package:montana_mobile/pages/session/login_page.dart';
 import 'package:montana_mobile/providers/login_provider.dart';
+import 'package:montana_mobile/utils/preferences.dart';
 import 'package:provider/provider.dart';
 import 'package:montana_mobile/pages/home/partials/drawer_item.dart';
 import 'package:montana_mobile/providers/navigation_provider.dart';
@@ -11,17 +11,26 @@ import 'package:montana_mobile/providers/navigation_provider.dart';
 class BottomDrawer extends StatelessWidget {
   const BottomDrawer({
     Key key,
-    @required this.rol,
   }) : super(key: key);
 
   final double boxHeight = 150.0;
-  final String rol;
 
   @override
   Widget build(BuildContext context) {
     final navigationProvider = Provider.of<NavigationProvider>(context);
     final loginProvider = Provider.of<LoginProvider>(context);
     final size = MediaQuery.of(context).size;
+
+    final preferences = Preferences();
+    final user = preferences.session;
+    String homeTitle = 'Home';
+    IconData homeIcon = Icons.home;
+
+    if (user != null) {
+      homeTitle = user.isVendedor ? 'Clientes' : 'Tiendas';
+      homeIcon =
+          user.isVendedor ? Icons.account_circle_outlined : Icons.storefront;
+    }
 
     return AnimatedPositioned(
       curve: Curves.easeInOut,
@@ -51,12 +60,12 @@ class BottomDrawer extends StatelessWidget {
         child: Row(
           children: [
             DrawerItem(
-              title: rol == Session.rolSeller ? 'Clientes' : 'Tiendas',
-              iconData: rol == Session.rolSeller
-                  ? Icons.account_circle_outlined
-                  : Icons.storefront,
+              title: homeTitle,
+              iconData: homeIcon,
               active: navigationProvider.currentPage == 4,
-              onTap: () => navigationProvider.currentPage = 4,
+              onTap: user == null
+                  ? null
+                  : () => navigationProvider.currentPage = 4,
             ),
             const SizedBox(width: 20.0),
             DrawerItem(

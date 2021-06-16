@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:montana_mobile/models/session.dart';
 import 'package:montana_mobile/pages/session/login_page.dart';
 import 'package:montana_mobile/providers/session_provider.dart';
 import 'package:montana_mobile/pages/home/partials/bottom_drawer.dart';
@@ -46,8 +45,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     return Scaffold(
       body: Stack(
         children: [
-          Pages(rol: Session.rolSeller),
-          BottomDrawer(rol: Session.rolSeller),
+          Pages(),
+          BottomDrawer(),
         ],
       ),
       bottomNavigationBar: NavigationBar(),

@@ -5,13 +5,15 @@ import 'package:montana_mobile/pages/dashboard/partials/card_data.dart';
 import 'package:montana_mobile/pages/dashboard/partials/card_statistic.dart';
 import 'package:montana_mobile/pages/dashboard/partials/consolidated_orders.dart';
 import 'package:montana_mobile/theme/theme.dart';
+import 'package:montana_mobile/utils/preferences.dart';
 import 'package:montana_mobile/widgets/cart_icon.dart';
 import 'package:montana_mobile/widgets/scaffold_logo.dart';
 
 class DashboardBuyerPage extends StatelessWidget {
+  final _preferences = Preferences();
   @override
   Widget build(BuildContext context) {
-    TextStyle titleStyle = Theme.of(context).textTheme.headline5.copyWith(
+    final titleStyle = Theme.of(context).textTheme.headline5.copyWith(
           color: CustomTheme.textColor1,
           fontWeight: FontWeight.w600,
         );
@@ -26,7 +28,7 @@ class DashboardBuyerPage extends StatelessWidget {
       body: ListView(
         children: [
           const SizedBox(height: 20.0),
-          // BuyerCard(), // TODO: traer datos del api
+          BuyerCard(client: _preferences.sessionCliente),
           _CardDataList(
             children: [
               CardData(

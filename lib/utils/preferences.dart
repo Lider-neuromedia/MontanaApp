@@ -1,3 +1,4 @@
+import 'package:montana_mobile/models/client.dart';
 import 'package:montana_mobile/models/session.dart';
 import 'package:montana_mobile/pages/home/home_page.dart';
 import 'package:montana_mobile/pages/session/login_page.dart';
@@ -42,6 +43,21 @@ class Preferences {
     } else {
       _prefs.setString('session', json.encode(value.toJson()));
     }
+  }
+
+  Cliente get sessionCliente {
+    if (session == null) return null;
+
+    return Cliente(
+      id: session.id,
+      rolId: session.rol,
+      name: session.name,
+      apellidos: session.apellidos,
+      email: session.email,
+      dni: session.dni,
+      userData: session.userdata,
+      tipoIdentificacion: session.tipoIdentificacion,
+    );
   }
 
   String get initialPage {

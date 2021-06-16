@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:montana_mobile/models/user_data.dart';
 
 ResponseClientes responseClientesFromJson(String str) =>
     ResponseClientes.fromJson(json.decode(str));
@@ -59,7 +60,7 @@ class Cliente {
   String email;
   String tipoIdentificacion;
   String dni;
-  List<ClienteData> userData;
+  List<UserData> userData;
   int vendedorId;
   Vendedor vendedor;
   List<Tienda> tiendas;
@@ -101,8 +102,9 @@ class Cliente {
         email: json["email"],
         tipoIdentificacion: json["tipo_identificacion"],
         dni: json["dni"],
-        userData: List<ClienteData>.from(
-            json["user_data"].map((x) => ClienteData.fromJson(x))),
+        userData: List<UserData>.from(
+          json["user_data"].map((x) => UserData.fromJson(x)),
+        ),
         vendedor: json["vendedor"] == null
             ? null
             : Vendedor.fromJson(json["vendedor"]),
@@ -116,8 +118,8 @@ class Cliente {
         name: json["name"],
         apellidos: json["apellidos"],
         email: json["email"],
-        userData: List<ClienteData>.from(
-          json["data"].map((x) => ClienteData.fromJson(x)),
+        userData: List<UserData>.from(
+          json["data"].map((x) => UserData.fromJson(x)),
         ),
       );
 
@@ -141,8 +143,8 @@ class Cliente {
         email: json["email"],
         tipoIdentificacion: json["tipo_identificacion"],
         dni: json["dni"],
-        userData: List<ClienteData>.from(
-            json["data_user"].map((x) => ClienteData.fromJson(x))),
+        userData: List<UserData>.from(
+            json["data_user"].map((x) => UserData.fromJson(x))),
         vendedor: json["vendedor"] == null
             ? null
             : Vendedor.detailFromJson(json["vendedor"]),
@@ -295,7 +297,7 @@ class Vendedor {
   String name;
   String apellidos;
   String email;
-  List<VendedorData> userData;
+  List<UserData> userData;
   String tipoIdentificacion;
   String dni;
 
@@ -333,8 +335,9 @@ class Vendedor {
         name: json["name"],
         apellidos: json["apellidos"],
         email: json["email"],
-        userData: List<VendedorData>.from(
-            json["user_data"].map((x) => VendedorData.fromJson(x))),
+        userData: List<UserData>.from(
+          json["user_data"].map((x) => UserData.fromJson(x)),
+        ),
       );
 
   Map<String, dynamic> detailToJson() => {
@@ -346,58 +349,5 @@ class Vendedor {
         "apellidos": apellidos,
         "email": email,
         "user_data": List<dynamic>.from(userData.map((x) => x.toJson())),
-      };
-}
-
-class ClienteData {
-  ClienteData({
-    this.id,
-    this.fieldKey,
-    this.valueKey,
-  });
-
-  int id;
-  String fieldKey;
-  String valueKey;
-
-  factory ClienteData.fromJson(Map<String, dynamic> json) => ClienteData(
-        id: json.containsKey("id_field") ? json["id_field"] : json["id"],
-        fieldKey: json["field_key"],
-        valueKey: json["value_key"] == null ? null : json["value_key"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "id_field": id,
-        "field_key": fieldKey,
-        "value_key": valueKey == null ? null : valueKey,
-      };
-}
-
-class VendedorData {
-  VendedorData({
-    this.id,
-    this.userId,
-    this.fieldKey,
-    this.valueKey,
-  });
-
-  int id;
-  int userId;
-  String fieldKey;
-  String valueKey;
-
-  factory VendedorData.fromJson(Map<String, dynamic> json) => VendedorData(
-        id: json["id"],
-        userId: json["user_id"],
-        fieldKey: json["field_key"],
-        valueKey: json["value_key"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "user_id": userId,
-        "field_key": fieldKey,
-        "value_key": valueKey,
       };
 }

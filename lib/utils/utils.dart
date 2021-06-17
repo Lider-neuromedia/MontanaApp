@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:montana_mobile/models/product.dart';
 import 'package:montana_mobile/pages/catalogue/add_product_modal.dart';
 import 'package:montana_mobile/pages/catalogue/start_order_modal.dart';
+import 'package:montana_mobile/utils/preferences.dart';
 
 bool isEmailValid(email) {
   return RegExp(
@@ -76,7 +77,15 @@ Widget snackbar(String title, String body, {String label, Function action}) {
   );
 }
 
-void openStartOrder(BuildContext context, {@required Function onContinue}) {
+void openStartOrderModal(BuildContext context,
+    {@required Function onContinue}) {
+  final preferences = Preferences();
+
+  if (preferences.session.isCliente) {
+    onContinue();
+    return;
+  }
+
   showModalBottomSheet(
     context: context,
     shape: const RoundedRectangleBorder(

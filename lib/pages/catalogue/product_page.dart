@@ -153,7 +153,7 @@ class _ProductContent extends StatelessWidget {
             width: double.infinity,
             child: ElevatedButton(
               child: Text('Añadir al pedido'),
-              onPressed: () => openStartOrder(
+              onPressed: () => openStartOrderModal(
                 context,
                 onContinue: () => openAddProductModal(context, product),
               ),

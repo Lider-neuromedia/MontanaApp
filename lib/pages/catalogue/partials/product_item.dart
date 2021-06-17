@@ -101,7 +101,7 @@ class ProductItem extends StatelessWidget {
                   : Colors.white,
               icon: Icons.shopping_bag_outlined,
               label: 'Añadir al Pedido',
-              onPressed: () => openStartOrder(
+              onPressed: () => openStartOrderModal(
                 context,
                 onContinue: () => openAddProductModal(context, product),
               ),

@@ -141,7 +141,7 @@ class _OrderDetailContent extends StatelessWidget {
 class _OrderDataList extends StatelessWidget {
   const _OrderDataList({
     Key key,
-    this.children,
+    @required this.children,
   }) : super(key: key);
 
   final List<Widget> children;
@@ -203,8 +203,8 @@ class _OrderTitle extends StatelessWidget {
 class _OrderDetailData extends StatelessWidget {
   const _OrderDetailData({
     Key key,
-    this.title,
-    this.value,
+    @required this.title,
+    @required this.value,
   }) : super(key: key);
 
   final String title;

@@ -185,7 +185,7 @@ class _CreatePqrsPageState extends State<CreatePqrsPage> {
 class _TitlePqrs extends StatelessWidget {
   const _TitlePqrs({
     Key key,
-    this.title,
+    @required this.title,
   }) : super(key: key);
 
   final String title;

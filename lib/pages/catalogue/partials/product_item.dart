@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:montana_mobile/models/product.dart';
-import 'package:montana_mobile/pages/catalogue/add_product_modal.dart';
 import 'package:montana_mobile/pages/catalogue/product_page.dart';
-import 'package:montana_mobile/pages/catalogue/start_order_modal.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:montana_mobile/utils/utils.dart';
 
@@ -103,47 +101,14 @@ class ProductItem extends StatelessWidget {
                   : Colors.white,
               icon: Icons.shopping_bag_outlined,
               label: 'Añadir al Pedido',
-              onPressed: () => openStartOrder(context),
+              onPressed: () => openStartOrder(
+                context,
+                onContinue: () => openAddProductModal(context, product),
+              ),
             ),
           ],
         ),
       ),
-    );
-  }
-
-  void openStartOrder(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: const BorderRadius.only(
-          topLeft: const Radius.circular(30.0),
-          topRight: const Radius.circular(30.0),
-        ),
-      ),
-      builder: (_) {
-        return StartOrderModal(
-          showCatalogue: false,
-          onPressed: () {
-            Navigator.pop(context);
-            openAddProduct(context);
-          },
-        );
-      },
-    );
-  }
-
-  void openAddProduct(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      enableDrag: false,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: const BorderRadius.only(
-          topLeft: const Radius.circular(30.0),
-          topRight: const Radius.circular(30.0),
-        ),
-      ),
-      builder: (_) => AddProductModal(product: product),
     );
   }
 }

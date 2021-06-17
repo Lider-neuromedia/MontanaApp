@@ -6,7 +6,7 @@ import 'package:montana_mobile/utils/utils.dart';
 class OrderItem extends StatelessWidget {
   const OrderItem({
     Key key,
-    this.order,
+    @required this.order,
   }) : super(key: key);
 
   final Pedido order;

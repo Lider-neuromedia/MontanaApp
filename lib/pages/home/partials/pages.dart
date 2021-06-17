@@ -43,8 +43,8 @@ class Pages extends StatelessWidget {
 class _PlaceHolderPage extends StatelessWidget {
   const _PlaceHolderPage({
     Key key,
-    this.background,
-    this.title,
+    @required this.background,
+    @required this.title,
   }) : super(key: key);
 
   final Color background;

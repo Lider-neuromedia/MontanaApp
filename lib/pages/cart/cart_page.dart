@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:montana_mobile/pages/cart/checkout_modal.dart';
-import 'package:montana_mobile/pages/catalogue/add_product_modal.dart';
 import 'package:montana_mobile/pages/catalogue/partials/action_button.dart';
 import 'package:montana_mobile/providers/cart_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
@@ -144,7 +143,7 @@ class _CartItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => openAddProduct(context),
+      onTap: () => openAddProductModal(context, cartProduct.product),
       child: Container(
         padding: const EdgeInsets.all(20.0),
         decoration: BoxDecoration(
@@ -172,23 +171,6 @@ class _CartItem extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-
-  void openAddProduct(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      enableDrag: false,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: const BorderRadius.only(
-          topLeft: const Radius.circular(30.0),
-          topRight: const Radius.circular(30.0),
-        ),
-      ),
-      builder: (_) {
-        return AddProductModal(product: cartProduct.product);
-      },
     );
   }
 }

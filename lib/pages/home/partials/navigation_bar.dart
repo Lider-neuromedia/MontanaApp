@@ -4,9 +4,7 @@ import 'package:montana_mobile/providers/navigation_provider.dart';
 import 'package:provider/provider.dart';
 
 class NavigationBar extends StatelessWidget {
-  const NavigationBar({
-    Key key,
-  }) : super(key: key);
+  const NavigationBar({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

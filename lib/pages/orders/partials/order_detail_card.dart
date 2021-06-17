@@ -4,8 +4,8 @@ import 'package:montana_mobile/theme/theme.dart';
 class OrderDetailCard extends StatelessWidget {
   const OrderDetailCard({
     Key key,
-    this.title,
-    this.value,
+    @required this.title,
+    @required this.value,
   }) : super(key: key);
 
   final String title;

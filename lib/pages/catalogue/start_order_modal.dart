@@ -142,7 +142,7 @@ class _StartOrderModalState extends State<StartOrderModal> {
 class _TitleModal extends StatelessWidget {
   const _TitleModal({
     Key key,
-    this.title,
+    @required this.title,
   }) : super(key: key);
 
   final String title;
@@ -183,7 +183,7 @@ class _FieldBox extends StatelessWidget {
 class _LabelField extends StatelessWidget {
   const _LabelField({
     Key key,
-    this.label,
+    @required this.label,
   }) : super(key: key);
 
   final String label;

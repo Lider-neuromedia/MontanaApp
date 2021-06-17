@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:montana_mobile/models/product.dart';
-import 'package:montana_mobile/pages/catalogue/add_product_modal.dart';
 import 'package:montana_mobile/pages/catalogue/partials/empty_message.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/pages/catalogue/partials/rating_form.dart';
 import 'package:montana_mobile/pages/catalogue/partials/ratings.dart';
 import 'package:montana_mobile/pages/catalogue/partials/section_card.dart';
-import 'package:montana_mobile/pages/catalogue/start_order_modal.dart';
 import 'package:montana_mobile/providers/products_provider.dart';
 import 'package:montana_mobile/providers/rating_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
@@ -155,54 +153,21 @@ class _ProductContent extends StatelessWidget {
             width: double.infinity,
             child: ElevatedButton(
               child: Text('Añadir al pedido'),
-              onPressed: () => _openStartOrder(context),
+              onPressed: () => openStartOrder(
+                context,
+                onContinue: () => openAddProductModal(context, product),
+              ),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 10.0),
+                primary: CustomTheme.green2Color,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30.0),
                 ),
-                primary: CustomTheme.green2Color,
               ),
             ),
           ),
         ),
       ],
-    );
-  }
-
-  void _openStartOrder(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: const BorderRadius.only(
-          topLeft: const Radius.circular(30.0),
-          topRight: const Radius.circular(30.0),
-        ),
-      ),
-      builder: (_) {
-        return StartOrderModal(
-          showCatalogue: false,
-          onPressed: () {
-            Navigator.pop(context);
-            _openAddProduct(context);
-          },
-        );
-      },
-    );
-  }
-
-  void _openAddProduct(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      enableDrag: false,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: const BorderRadius.only(
-          topLeft: const Radius.circular(30.0),
-          topRight: const Radius.circular(30.0),
-        ),
-      ),
-      builder: (_) => AddProductModal(product: product),
     );
   }
 }

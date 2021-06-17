@@ -65,9 +65,7 @@ class _MessagesPageState extends State<MessagesPage> {
 }
 
 class _MessagesList extends StatelessWidget {
-  const _MessagesList({
-    Key key,
-  }) : super(key: key);
+  const _MessagesList({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

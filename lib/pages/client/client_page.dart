@@ -97,9 +97,7 @@ class _ClientContent extends StatelessWidget {
 }
 
 class _StoresTitle extends StatelessWidget {
-  const _StoresTitle({
-    Key key,
-  }) : super(key: key);
+  const _StoresTitle({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -177,7 +175,7 @@ class _ClientData extends StatelessWidget {
 class _CardDataList extends StatelessWidget {
   const _CardDataList({
     Key key,
-    this.children,
+    @required this.children,
   }) : super(key: key);
 
   final List<Widget> children;

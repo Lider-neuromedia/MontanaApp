@@ -85,9 +85,7 @@ class _SectionTitle extends StatelessWidget {
 }
 
 class _ConsolidatedClients extends StatelessWidget {
-  const _ConsolidatedClients({
-    Key key,
-  }) : super(key: key);
+  const _ConsolidatedClients({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +114,7 @@ class _ConsolidatedClients extends StatelessWidget {
 class _CommisionsList extends StatelessWidget {
   const _CommisionsList({
     Key key,
-    this.children,
+    @required this.children,
   }) : super(key: key);
 
   final List<Widget> children;

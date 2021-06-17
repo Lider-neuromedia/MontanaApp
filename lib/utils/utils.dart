@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:montana_mobile/models/product.dart';
+import 'package:montana_mobile/pages/catalogue/add_product_modal.dart';
+import 'package:montana_mobile/pages/catalogue/start_order_modal.dart';
 
 bool isEmailValid(email) {
   return RegExp(
@@ -70,5 +73,41 @@ Widget snackbar(String title, String body, {String label, Function action}) {
             label: label,
             onPressed: action,
           ),
+  );
+}
+
+void openStartOrder(BuildContext context, {@required Function onContinue}) {
+  showModalBottomSheet(
+    context: context,
+    shape: const RoundedRectangleBorder(
+      borderRadius: const BorderRadius.only(
+        topLeft: const Radius.circular(30.0),
+        topRight: const Radius.circular(30.0),
+      ),
+    ),
+    builder: (_) {
+      return StartOrderModal(
+        showCatalogue: false,
+        onPressed: () {
+          Navigator.pop(context);
+          onContinue();
+        },
+      );
+    },
+  );
+}
+
+void openAddProductModal(BuildContext context, Producto product) {
+  showModalBottomSheet(
+    context: context,
+    enableDrag: false,
+    isScrollControlled: true,
+    shape: const RoundedRectangleBorder(
+      borderRadius: const BorderRadius.only(
+        topLeft: const Radius.circular(30.0),
+        topRight: const Radius.circular(30.0),
+      ),
+    ),
+    builder: (_) => AddProductModal(product: product),
   );
 }

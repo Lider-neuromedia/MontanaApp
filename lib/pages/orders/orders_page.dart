@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:montana_mobile/pages/cart/cart_page.dart';
 import 'package:montana_mobile/pages/catalogue/partials/empty_message.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
-import 'package:montana_mobile/pages/catalogue/start_order_modal.dart';
 import 'package:montana_mobile/pages/orders/partials/order_item.dart';
 import 'package:montana_mobile/providers/orders_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
+import 'package:montana_mobile/utils/utils.dart';
 import 'package:montana_mobile/widgets/cart_icon.dart';
 import 'package:provider/provider.dart';
 
@@ -64,9 +64,7 @@ class _OrdersPageState extends State<OrdersPage> {
 }
 
 class _ListOrders extends StatelessWidget {
-  const _ListOrders({
-    Key key,
-  }) : super(key: key);
+  const _ListOrders({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -93,45 +91,23 @@ class _ListOrders extends StatelessWidget {
 }
 
 class _CreateOrderButton extends StatelessWidget {
-  const _CreateOrderButton({
-    Key key,
-  }) : super(key: key);
+  const _CreateOrderButton({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
       backgroundColor: Theme.of(context).primaryColor,
       child: const Icon(Icons.add),
-      onPressed: () => openStartOrder(context),
-    );
-  }
-
-  void openStartOrder(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: const BorderRadius.only(
-          topLeft: const Radius.circular(30.0),
-          topRight: const Radius.circular(30.0),
-        ),
+      onPressed: () => openStartOrder(
+        context,
+        onContinue: () => Navigator.of(context).pushNamed(CartPage.route),
       ),
-      builder: (_) {
-        return StartOrderModal(
-          showCatalogue: false,
-          onPressed: () {
-            Navigator.pop(context);
-            Navigator.of(context).pushNamed(CartPage.route);
-          },
-        );
-      },
     );
   }
 }
 
 class _OrdersFilter extends StatefulWidget {
-  _OrdersFilter({
-    Key key,
-  }) : super(key: key);
+  _OrdersFilter({Key key}) : super(key: key);
 
   @override
   __OrdersFilterState createState() => __OrdersFilterState();

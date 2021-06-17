@@ -6,7 +6,7 @@ import 'package:montana_mobile/theme/theme.dart';
 class CatalogueItem extends StatelessWidget {
   const CatalogueItem({
     Key key,
-    this.catalogue,
+    @required this.catalogue,
   }) : super(key: key);
 
   final Catalogo catalogue;

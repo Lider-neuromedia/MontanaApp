@@ -99,7 +99,7 @@ class DashboardBuyerPage extends StatelessWidget {
 class _CardDataList extends StatelessWidget {
   const _CardDataList({
     Key key,
-    this.children,
+    @required this.children,
   }) : super(key: key);
 
   final List<Widget> children;

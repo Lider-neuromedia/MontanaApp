@@ -9,9 +9,7 @@ import 'package:montana_mobile/pages/home/partials/drawer_item.dart';
 import 'package:montana_mobile/providers/navigation_provider.dart';
 
 class BottomDrawer extends StatelessWidget {
-  const BottomDrawer({
-    Key key,
-  }) : super(key: key);
+  const BottomDrawer({Key key}) : super(key: key);
 
   final double boxHeight = 150.0;
 

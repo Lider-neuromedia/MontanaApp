@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:montana_mobile/models/seller.dart';
+import 'package:montana_mobile/models/store.dart';
 import 'package:montana_mobile/models/user_data.dart';
 
 ResponseClientes responseClientesFromJson(String str) =>
@@ -242,41 +243,5 @@ class Pedido {
         "estado": estado,
         "created_at": createdAt.toIso8601String(),
         "updated_at": updatedAt.toIso8601String(),
-      };
-}
-
-class Tienda {
-  Tienda({
-    this.idTiendas,
-    this.nombre,
-    this.lugar,
-    this.local,
-    this.direccion,
-    this.telefono,
-  });
-
-  int idTiendas;
-  String nombre;
-  String lugar;
-  String local;
-  String direccion;
-  String telefono;
-
-  factory Tienda.fromJson(Map<String, dynamic> json) => Tienda(
-        idTiendas: json["id_tiendas"],
-        nombre: json["nombre"],
-        lugar: json["lugar"],
-        local: json["local"] == null ? null : json["local"],
-        direccion: json["direccion"] == null ? null : json["direccion"],
-        telefono: json["telefono"] == null ? null : json["telefono"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "id_tiendas": idTiendas,
-        "nombre": nombre,
-        "lugar": lugar,
-        "local": local == null ? null : local,
-        "direccion": direccion == null ? null : direccion,
-        "telefono": telefono == null ? null : telefono,
       };
 }

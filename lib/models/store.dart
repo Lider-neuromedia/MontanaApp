@@ -1,10 +1,12 @@
 import 'dart:convert';
 
-List<Tienda> responseTiendasFromJson(String str) =>
-    List<Tienda>.from(json.decode(str).map((x) => Tienda.fromJson(x)));
+List<Tienda> responseTiendasFromJson(String str) => List<Tienda>.from(
+      json.decode(str).map((x) => Tienda.fromJson(x)),
+    );
 
-String responseTiendasToJson(List<Tienda> data) =>
-    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String responseTiendasToJson(List<Tienda> data) => json.encode(
+      List<dynamic>.from(data.map((x) => x.toJson())),
+    );
 
 class Tienda {
   Tienda({
@@ -38,9 +40,13 @@ class Tienda {
         local: json["local"] == null ? null : json["local"],
         direccion: json["direccion"] == null ? null : json["direccion"],
         telefono: json["telefono"] == null ? null : json["telefono"],
-        cliente: json["cliente"],
-        createdAt: DateTime.parse(json["created_at"]),
-        updatedAt: DateTime.parse(json["updated_at"]),
+        cliente: json["cliente"] == null ? null : json["cliente"],
+        createdAt: json["created_at"] == null
+            ? null
+            : DateTime.parse(json["created_at"]),
+        updatedAt: json["updated_at"] == null
+            ? null
+            : DateTime.parse(json["updated_at"]),
       );
 
   Map<String, dynamic> toJson() => {
@@ -50,8 +56,8 @@ class Tienda {
         "local": local == null ? null : local,
         "direccion": direccion == null ? null : direccion,
         "telefono": telefono == null ? null : telefono,
-        "cliente": cliente,
-        "created_at": createdAt.toIso8601String(),
-        "updated_at": updatedAt.toIso8601String(),
+        "cliente": cliente == null ? null : cliente,
+        "created_at": createdAt == null ? null : createdAt.toIso8601String(),
+        "updated_at": updatedAt == null ? null : updatedAt.toIso8601String(),
       };
 }

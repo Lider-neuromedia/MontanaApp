@@ -7,6 +7,7 @@ import 'package:montana_mobile/pages/dashboard/dashboard_seller_page.dart';
 import 'package:montana_mobile/pages/orders/orders_page.dart';
 import 'package:montana_mobile/pages/pqrs/pqrs_page.dart';
 import 'package:montana_mobile/pages/quota_expansion/quota_expansion_page.dart';
+import 'package:montana_mobile/pages/stores/stores_page.dart';
 import 'package:montana_mobile/providers/navigation_provider.dart';
 import 'package:montana_mobile/utils/preferences.dart';
 import 'package:provider/provider.dart';
@@ -26,44 +27,11 @@ class Pages extends StatelessWidget {
       CataloguePage(),
       OrdersPage(),
       ShowRoomPage(),
-      preferences.session.isVendedor
-          ? ClientsPage()
-          : _PlaceHolderPage(
-              background: Colors.green,
-              title: 'Tiendas',
-            ),
+      preferences.session.isVendedor ? ClientsPage() : StoresPage(),
       PqrsPage(),
       QuotaExpansionPage(),
     ];
 
     return _pages[navigationProvider.currentPage];
-  }
-}
-
-class _PlaceHolderPage extends StatelessWidget {
-  const _PlaceHolderPage({
-    Key key,
-    @required this.background,
-    @required this.title,
-  }) : super(key: key);
-
-  final Color background;
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: background,
-      child: Center(
-        child: Text(
-          title,
-          style: TextStyle(
-            fontSize: 34.0,
-            fontWeight: FontWeight.w900,
-            color: Colors.black,
-          ),
-        ),
-      ),
-    );
   }
 }

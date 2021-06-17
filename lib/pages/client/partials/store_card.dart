@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:montana_mobile/models/client.dart';
+import 'package:montana_mobile/models/store.dart';
 
 class StoreCard extends StatelessWidget {
   const StoreCard({

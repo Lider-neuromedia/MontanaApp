@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
+import 'package:montana_mobile/providers/stores_provider.dart';
 import 'package:montana_mobile/utils/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:montana_mobile/pages/cart/cart_page.dart';
@@ -62,6 +63,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => QuotaProvider()),
         ChangeNotifierProvider(create: (_) => CartProvider()),
         ChangeNotifierProvider(create: (_) => RatingProvider()),
+        ChangeNotifierProvider(create: (_) => StoresProvider()),
       ],
       child: MyApp(),
     ),
@@ -130,7 +132,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       scaffoldMessengerKey: _scaffoldKey,
       navigatorObservers: [NavigationHistoryObserver()],
-      title: 'Athletic Air',
+      title: 'Montana Group',
       debugShowCheckedModeBanner: false,
       theme: (CustomTheme()).theme,
       initialRoute: preferences.initialPage,

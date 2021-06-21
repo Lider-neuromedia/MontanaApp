@@ -57,11 +57,11 @@ class _QuotaExpansionPageState extends State<QuotaExpansionPage> {
         children: [
           _TitleQuota(title: 'Realiza tu Solicitud', size: 30.0),
           const SizedBox(height: 30.0),
-          _LabelField(label: 'CLIENTE'),
+          const _LabelField(label: 'CLIENTE'),
           const SizedBox(height: 10.0),
           _ClientsDropdown(),
           const SizedBox(height: 20.0),
-          _LabelField(label: 'Adjuntar documento de identidad'),
+          const _LabelField(label: 'Adjuntar documento de identidad'),
           const SizedBox(height: 10.0),
           FileButton(
             value: quotaProvider.descriptionIdentidad,
@@ -70,7 +70,7 @@ class _QuotaExpansionPageState extends State<QuotaExpansionPage> {
             },
           ),
           const SizedBox(height: 20.0),
-          _LabelField(label: 'Adjuntar RUT'),
+          const _LabelField(label: 'Adjuntar RUT'),
           const SizedBox(height: 10.0),
           FileButton(
             value: quotaProvider.descriptionRut,
@@ -79,7 +79,7 @@ class _QuotaExpansionPageState extends State<QuotaExpansionPage> {
             },
           ),
           const SizedBox(height: 20.0),
-          _LabelField(label: 'Adjuntar cámara de comercio'),
+          const _LabelField(label: 'Adjuntar cámara de comercio'),
           const SizedBox(height: 10.0),
           FileButton(
             value: quotaProvider.descriptionCamaraCom,
@@ -94,7 +94,7 @@ class _QuotaExpansionPageState extends State<QuotaExpansionPage> {
             size: 20.0,
           ),
           const SizedBox(height: 30.0),
-          _LabelField(label: 'Monto'),
+          const _LabelField(label: 'Monto'),
           const SizedBox(height: 10.0),
           TextField(
             keyboardType: TextInputType.number,

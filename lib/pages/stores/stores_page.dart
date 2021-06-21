@@ -3,6 +3,7 @@ import 'package:montana_mobile/models/store.dart';
 import 'package:montana_mobile/pages/catalogue/partials/empty_message.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/pages/client/partials/store_card.dart';
+import 'package:montana_mobile/pages/stores/store_form_page.dart';
 import 'package:montana_mobile/providers/stores_provider.dart';
 import 'package:montana_mobile/widgets/scaffold_logo.dart';
 import 'package:montana_mobile/widgets/search_box.dart';
@@ -50,6 +51,13 @@ class _StoresPageState extends State<StoresPage> {
           const SizedBox(width: 10.0),
         ],
       ),
+      floatingActionButton: _CreateStoreButton(
+        onPressed: () {
+          Navigator.pushNamed(context, StoreFormPage.route).then(
+            (_) => storesProvider.loadStores(),
+          );
+        },
+      ),
       body: storesProvider.isLoading
           ? const LoadingContainer()
           : storesProvider.stores.length == 0
@@ -62,6 +70,24 @@ class _StoresPageState extends State<StoresPage> {
                   color: Theme.of(context).primaryColor,
                   child: _StoresContent(),
                 ),
+    );
+  }
+}
+
+class _CreateStoreButton extends StatelessWidget {
+  const _CreateStoreButton({
+    Key key,
+    @required this.onPressed,
+  }) : super(key: key);
+
+  final Function onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton(
+      backgroundColor: Theme.of(context).primaryColor,
+      child: const Icon(Icons.add),
+      onPressed: onPressed,
     );
   }
 }

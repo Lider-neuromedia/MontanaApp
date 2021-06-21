@@ -98,10 +98,10 @@ class ResetPasswordProvider with ChangeNotifier {
     if (_isLoading) {
       isValid = false;
     }
-    if (_token.isEmptyAndHasError() ||
-        _email.isEmptyAndHasError() ||
-        _password.isEmptyAndHasError() ||
-        _passwordConfirmation.isEmptyAndHasError()) {
+    if (_token.isEmptyOrHasError() ||
+        _email.isEmptyOrHasError() ||
+        _password.isEmptyOrHasError() ||
+        _passwordConfirmation.isEmptyOrHasError()) {
       isValid = false;
     }
 

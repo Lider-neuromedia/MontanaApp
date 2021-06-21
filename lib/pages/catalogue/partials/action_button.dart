@@ -9,6 +9,7 @@ class ActionButton extends StatelessWidget {
     @required this.onPressed,
     @required this.borderColor,
     @required this.backgroundColor,
+    this.backgroundIconColor,
     @required this.textColor,
     @required this.iconColor,
   }) : super(key: key);
@@ -18,11 +19,14 @@ class ActionButton extends StatelessWidget {
   final IconData icon;
   final Color borderColor;
   final Color backgroundColor;
+  final Color backgroundIconColor;
   final Color iconColor;
   final Color textColor;
 
   @override
   Widget build(BuildContext context) {
+    final isDisabled = onPressed == null;
+
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
@@ -31,7 +35,7 @@ class ActionButton extends StatelessWidget {
           left: 0.0,
         ),
         side: BorderSide(
-          color: onPressed == null ? Colors.grey : borderColor,
+          color: isDisabled ? Colors.grey : borderColor,
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30.0),
@@ -44,10 +48,14 @@ class ActionButton extends StatelessWidget {
         children: [
           Container(
             decoration: BoxDecoration(
-              color: onPressed == null ? Colors.grey : backgroundColor,
+              color: isDisabled
+                  ? Colors.grey
+                  : backgroundIconColor == null
+                      ? backgroundColor
+                      : backgroundIconColor,
               shape: BoxShape.circle,
               border: Border.all(
-                color: onPressed == null ? Colors.grey : borderColor,
+                color: isDisabled ? Colors.grey : borderColor,
                 width: 2.0,
               ),
               boxShadow: [
@@ -64,7 +72,7 @@ class ActionButton extends StatelessWidget {
           const SizedBox(width: 10.0),
           Text(
             label,
-            style: TextStyle(color: textColor),
+            style: TextStyle(color: isDisabled ? Colors.grey : textColor),
           ),
           const SizedBox(width: 5.0),
         ],

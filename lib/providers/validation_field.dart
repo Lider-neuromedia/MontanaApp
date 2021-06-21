@@ -13,7 +13,7 @@ class ValidationField {
     return value.isEmpty;
   }
 
-  bool isEmptyAndHasError() {
+  bool isEmptyOrHasError() {
     return hasError() || isEmpty();
   }
 

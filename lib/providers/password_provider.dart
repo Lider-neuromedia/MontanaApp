@@ -9,16 +9,8 @@ class PasswordProvider with ChangeNotifier {
   final _preferences = Preferences();
 
   ValidationField _email = ValidationField();
-  bool _isLoading = false;
-
   String get email => _email.value;
   String get emailError => _email.error;
-  bool get isLoading => _isLoading;
-
-  set isLoading(bool value) {
-    _isLoading = value;
-    notifyListeners();
-  }
 
   set email(String value) {
     final errorLength = ValidationField.validateLength(value, max: 100);
@@ -32,6 +24,14 @@ class PasswordProvider with ChangeNotifier {
       _email = ValidationField(value: value);
     }
 
+    notifyListeners();
+  }
+
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+
+  set isLoading(bool value) {
+    _isLoading = value;
     notifyListeners();
   }
 

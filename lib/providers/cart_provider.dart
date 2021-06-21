@@ -138,8 +138,15 @@ class CartProvider with ChangeNotifier {
     request.headers.addAll(_preferences.signedHeaders);
     request.files.add(fileFirma);
 
-    request.fields['cliente'] = "${_cart.clientId}";
-    request.fields['vendedor'] = "${user.id}";
+    if (user.isVendedor) {
+      request.fields['cliente'] = "${_cart.clientId}";
+      request.fields['vendedor'] = "${user.id}";
+    } else {
+      // TODO: validar como guardar el pedido hecho desde el rol de cliente.
+      request.fields['cliente'] = "${user.id}";
+      request.fields['vendedor'] = "${user.id}";
+    }
+
     request.fields['codigo_pedido'] = "$orderCode";
     request.fields['descuento'] = "${_cart.discount}";
     request.fields['total_pedido'] = "${_cart.total}";

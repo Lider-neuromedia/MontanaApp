@@ -60,4 +60,12 @@ class Tienda {
         "created_at": createdAt == null ? null : createdAt.toIso8601String(),
         "updated_at": updatedAt == null ? null : updatedAt.toIso8601String(),
       };
+
+  Map<String, dynamic> createStoreToJson() => {
+        "nombre": nombre,
+        "lugar": lugar,
+        "local": local,
+        "direccion": direccion,
+        "telefono": telefono,
+      };
 }

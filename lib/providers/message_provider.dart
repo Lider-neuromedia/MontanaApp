@@ -52,7 +52,7 @@ class MessageProvider with ChangeNotifier {
 
   bool get canSend {
     if (_isLoading) return false;
-    if (_message.isEmptyAndHasError()) return false;
+    if (_message.isEmptyOrHasError()) return false;
     if (_userId == null) return false;
     if (_pqrsId == null) return false;
     return true;

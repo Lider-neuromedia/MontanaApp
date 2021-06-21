@@ -83,8 +83,8 @@ class PqrsTicketProvider with ChangeNotifier {
 
   bool get canSend {
     if (_isLoading) return false;
-    if (_pqrsType.isEmptyAndHasError()) return false;
-    if (_message.isEmptyAndHasError()) return false;
+    if (_pqrsType.isEmptyOrHasError()) return false;
+    if (_message.isEmptyOrHasError()) return false;
     if (_vendedorId == null) return false;
     if (_clienteId == null) return false;
     return true;

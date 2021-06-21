@@ -92,7 +92,7 @@ class QuotaProvider with ChangeNotifier {
 
   bool get canSend {
     if (_isLoading) return false;
-    if (_monto.isEmptyAndHasError()) return false;
+    if (_monto.isEmptyOrHasError()) return false;
     if (clienteId == null) return false;
     if (_docIdentidad == null) return false;
     if (_docRut == null) return false;

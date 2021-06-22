@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
@@ -61,11 +62,36 @@ class StoresProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<bool> makeDeleteStore(int id) async {
+    _isLoading = true;
+    notifyListeners();
+
+    final isSuccess = await deleteStore(id);
+    await loadStores();
+
+    return isSuccess;
+  }
+
   Future<List<Tienda>> getStores() async {
     final url = Uri.parse('$_url/tiendas-cliente/${_preferences.session.id}');
     final response = await http.get(url, headers: _preferences.signedHeaders);
 
     if (response.statusCode != 200) return [];
     return responseTiendasFromJson(response.body);
+  }
+
+  Future<bool> deleteStore(int id) async {
+    final url = Uri.parse('$_url/delete-tiendas');
+    final Map<String, dynamic> data = {
+      'tiendas': [id],
+    };
+
+    final response = await http.post(
+      url,
+      headers: _preferences.signedHeaders,
+      body: json.encode(data),
+    );
+
+    return response.statusCode == 200;
   }
 }

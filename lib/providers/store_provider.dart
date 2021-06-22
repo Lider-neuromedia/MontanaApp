@@ -10,6 +10,31 @@ class StoreProvider with ChangeNotifier {
   final String _url = dotenv.env['API_URL'];
   final _preferences = Preferences();
 
+  void initialize({Tienda store}) {
+    _stores = [];
+
+    if (store != null) {
+      _storeUpdate = store;
+      _nombre = ValidationField(value: store.nombre);
+      _lugar = ValidationField(value: store.lugar);
+      _local = ValidationField(value: store.local);
+      _direccion = ValidationField(value: store.direccion);
+      _telefono = ValidationField(value: store.telefono);
+    } else {
+      _storeUpdate = null;
+      _nombre = ValidationField();
+      _lugar = ValidationField();
+      _local = ValidationField();
+      _direccion = ValidationField();
+      _telefono = ValidationField();
+    }
+
+    notifyListeners();
+  }
+
+  Tienda _storeUpdate;
+  Tienda get storeUpdate => _storeUpdate;
+
   void clear() {
     _stores = [];
     _nombre = ValidationField();
@@ -147,7 +172,18 @@ class StoreProvider with ChangeNotifier {
 
   bool get canSend {
     if (_isLoading) return false;
-    if (_stores.length == 0) return false;
+
+    if (storeUpdate == null) {
+      if (_stores.length == 0) return false;
+    }
+
+    if (storeUpdate != null) {
+      if (_nombre.isEmptyOrHasError()) return false;
+      if (_lugar.isEmptyOrHasError()) return false;
+      if (_local.hasError()) return false;
+      if (_direccion.hasError()) return false;
+      if (_telefono.hasError()) return false;
+    }
 
     return true;
   }
@@ -158,7 +194,7 @@ class StoreProvider with ChangeNotifier {
       'cliente': _preferences.session.id,
       'tiendas': _stores
           .map<Map<String, dynamic>>(
-            (store) => store.createStoreToJson(),
+            (store) => store.toStoreFormJson(),
           )
           .toList(),
     };
@@ -169,7 +205,25 @@ class StoreProvider with ChangeNotifier {
       body: json.encode(data),
     );
 
-    print(response.body);
+    return response.statusCode == 200;
+  }
+
+  Future<bool> updateStore() async {
+    final url = Uri.parse('$_url/tiendas/${_storeUpdate.idTiendas}');
+
+    final store = Tienda(
+      nombre: _nombre.value,
+      lugar: _lugar.value,
+      local: _local.value,
+      direccion: _direccion.value,
+      telefono: _telefono.value,
+    );
+
+    final response = await http.put(
+      url,
+      headers: _preferences.signedHeaders,
+      body: json.encode(store.toStoreFormJson()),
+    );
 
     return response.statusCode == 200;
   }

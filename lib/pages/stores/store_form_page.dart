@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:montana_mobile/models/store.dart';
 import 'package:montana_mobile/pages/catalogue/partials/action_button.dart';
 import 'package:montana_mobile/pages/stores/partials/form_input.dart';
 import 'package:montana_mobile/pages/stores/partials/store_item.dart';
@@ -23,17 +24,27 @@ class _StoreFormPageState extends State<StoreFormPage> {
   TextEditingController _direccionController;
   TextEditingController _telefonoController;
 
+  Tienda _store;
+  StoreProvider _storeProvider;
+
   @override
   void initState() {
     super.initState();
 
-    final storeProvider = Provider.of<StoreProvider>(context, listen: false);
+    () async {
+      await Future.delayed(Duration.zero);
+      _store = ModalRoute.of(context).settings.arguments as Tienda;
 
-    _nombreController = TextEditingController(text: storeProvider.nombre);
-    _lugarController = TextEditingController(text: storeProvider.lugar);
-    _localController = TextEditingController(text: storeProvider.local);
-    _direccionController = TextEditingController(text: storeProvider.direccion);
-    _telefonoController = TextEditingController(text: storeProvider.telefono);
+      final storeProvider = Provider.of<StoreProvider>(context, listen: false);
+      storeProvider.initialize(store: _store);
+
+      _nombreController = TextEditingController(text: storeProvider.nombre);
+      _lugarController = TextEditingController(text: storeProvider.lugar);
+      _localController = TextEditingController(text: storeProvider.local);
+      _direccionController =
+          TextEditingController(text: storeProvider.direccion);
+      _telefonoController = TextEditingController(text: storeProvider.telefono);
+    }();
   }
 
   @override
@@ -48,12 +59,12 @@ class _StoreFormPageState extends State<StoreFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    final storeProvider = Provider.of<StoreProvider>(context);
+    _storeProvider = Provider.of<StoreProvider>(context);
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Agregar Tienda'),
+        title: Text(_store == null ? 'Agregar Tienda' : 'Editar tienda'),
       ),
       body: Column(
         children: [
@@ -65,64 +76,64 @@ class _StoreFormPageState extends State<StoreFormPage> {
                 FormInput(
                   label: 'Nombre de la tienda',
                   controller: _nombreController,
-                  error: storeProvider.nombreError,
-                  onChanged: (String value) => storeProvider.nombre = value,
+                  error: _storeProvider.nombreError,
+                  onChanged: (String value) => _storeProvider.nombre = value,
                 ),
                 const SizedBox(height: 15.0),
                 FormInput(
                   label: 'Lugar',
                   controller: _lugarController,
-                  error: storeProvider.lugarError,
-                  onChanged: (String value) => storeProvider.lugar = value,
+                  error: _storeProvider.lugarError,
+                  onChanged: (String value) => _storeProvider.lugar = value,
                 ),
                 const SizedBox(height: 15.0),
                 FormInput(
                   label: 'Número del local',
                   controller: _localController,
-                  error: storeProvider.localError,
-                  onChanged: (String value) => storeProvider.local = value,
+                  error: _storeProvider.localError,
+                  onChanged: (String value) => _storeProvider.local = value,
                 ),
                 const SizedBox(height: 15.0),
                 FormInput(
                   label: 'Dirección',
                   controller: _direccionController,
-                  error: storeProvider.direccionError,
-                  onChanged: (String value) => storeProvider.direccion = value,
+                  error: _storeProvider.direccionError,
+                  onChanged: (String value) => _storeProvider.direccion = value,
                 ),
                 const SizedBox(height: 15.0),
                 FormInput(
                   label: 'Teléfono',
                   controller: _telefonoController,
-                  error: storeProvider.telefonoError,
-                  onChanged: (String value) => storeProvider.telefono = value,
+                  error: _storeProvider.telefonoError,
+                  onChanged: (String value) => _storeProvider.telefono = value,
                 ),
                 const SizedBox(height: 50.0),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ActionButton(
-                      label: storeProvider.stores.length == 0
-                          ? "Agregar tienda"
-                          : "Agregar otra tienda",
-                      icon: Icons.add,
-                      borderColor: CustomTheme.mainColor,
-                      backgroundColor: Colors.white,
-                      backgroundIconColor: CustomTheme.mainColor,
-                      iconColor: Colors.white,
-                      textColor: CustomTheme.mainColor,
-                      onPressed: storeProvider.canAddStore
-                          ? () => _addStore(storeProvider)
-                          : null,
-                    ),
-                  ],
-                ),
+                _store != null
+                    ? Container()
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ActionButton(
+                            label: _storeProvider.stores.length == 0
+                                ? "Agregar tienda"
+                                : "Agregar otra tienda",
+                            icon: Icons.add,
+                            borderColor: CustomTheme.mainColor,
+                            backgroundColor: Colors.white,
+                            backgroundIconColor: CustomTheme.mainColor,
+                            iconColor: Colors.white,
+                            textColor: CustomTheme.mainColor,
+                            onPressed: _storeProvider.canAddStore
+                                ? () => _addStore(_storeProvider)
+                                : null,
+                          ),
+                        ],
+                      ),
               ],
             ),
           ),
           _FormActions(
-            onSave: storeProvider.canSend
-                ? () => _saveStores(context, storeProvider)
-                : null,
+            onSave: _storeProvider.canSend ? () => _save(context) : null,
           ),
         ],
       ),
@@ -142,24 +153,35 @@ class _StoreFormPageState extends State<StoreFormPage> {
     _telefonoController.clear();
   }
 
-  Future<void> _saveStores(
-      BuildContext context, StoreProvider storeProvider) async {
-    storeProvider.isLoading = true;
-    final success = await storeProvider.saveStores();
-    storeProvider.isLoading = false;
+  Future<void> _save(BuildContext context) async {
+    final isUpdate = _storeProvider.storeUpdate != null;
+    final successMessage = isUpdate
+        ? 'Tienda actualizada correctamente.'
+        : 'Tienda(s) creada(s) correctamente.';
+    final errorMessage = isUpdate
+        ? 'No se actualizó la tienda.'
+        : 'No se guardó la(s) tienda(s).';
+
+    _storeProvider.isLoading = true;
+
+    final success = isUpdate
+        ? await _storeProvider.updateStore()
+        : await _storeProvider.saveStores();
+
+    _storeProvider.isLoading = false;
 
     if (success) {
       _clear();
-      storeProvider.clear();
+      _storeProvider.clear();
 
       showMessageDialog(
         context,
         'Listo',
-        'Tienda(s) creada(s) correctamente.',
+        successMessage,
         onAccept: () => Navigator.pop(context),
       );
     } else {
-      showMessageDialog(context, 'Aviso', 'No se pudo guardar la tienda.');
+      showMessageDialog(context, 'Aviso', errorMessage);
     }
   }
 }
@@ -195,6 +217,9 @@ class _FormActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final storeProvider = Provider.of<StoreProvider>(context);
+    final countStores = storeProvider.stores.length;
+    final hasStoresInList = countStores > 0;
+    final isUpdate = storeProvider.storeUpdate != null;
 
     return Container(
       color: Colors.grey[100],
@@ -210,9 +235,11 @@ class _FormActions extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 ActionButton(
-                  label: storeProvider.stores.length == 0
+                  label: isUpdate
                       ? "Guardar"
-                      : "Guardar (${storeProvider.stores.length})",
+                      : !hasStoresInList
+                          ? "Guardar"
+                          : "Guardar (${storeProvider.stores.length})",
                   icon: Icons.add,
                   borderColor: CustomTheme.mainColor,
                   backgroundColor: CustomTheme.mainColor,

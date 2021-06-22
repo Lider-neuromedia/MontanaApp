@@ -38,7 +38,9 @@ class StoreCard extends StatelessWidget {
             Text("Tienda No. $index", style: textStyle),
             const SizedBox(height: 10.0),
             Text("${store.lugar}", style: subtitleStyle),
-            Text("${store.direccion}", style: textStyle),
+            store.direccion == null
+                ? Container()
+                : Text("${store.direccion}", style: textStyle),
           ],
         ),
       ),

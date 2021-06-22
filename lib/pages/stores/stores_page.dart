@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:fluttericon/font_awesome5_icons.dart';
+import 'package:fluttericon/font_awesome_icons.dart';
+import 'package:montana_mobile/theme/theme.dart';
+import 'package:montana_mobile/utils/utils.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:montana_mobile/models/store.dart';
 import 'package:montana_mobile/pages/catalogue/partials/empty_message.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
@@ -7,7 +13,6 @@ import 'package:montana_mobile/pages/stores/store_form_page.dart';
 import 'package:montana_mobile/providers/stores_provider.dart';
 import 'package:montana_mobile/widgets/scaffold_logo.dart';
 import 'package:montana_mobile/widgets/search_box.dart';
-import 'package:provider/provider.dart';
 
 class StoresPage extends StatefulWidget {
   const StoresPage({Key key}) : super(key: key);
@@ -53,9 +58,9 @@ class _StoresPageState extends State<StoresPage> {
       ),
       floatingActionButton: _CreateStoreButton(
         onPressed: () {
-          Navigator.pushNamed(context, StoreFormPage.route).then(
-            (_) => storesProvider.loadStores(),
-          );
+          Navigator.of(context)
+              .pushNamed(StoreFormPage.route)
+              .then((_) => storesProvider.loadStores());
         },
       ),
       body: storesProvider.isLoading
@@ -133,14 +138,48 @@ class _StoresListResults extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final storesProvider = Provider.of<StoresProvider>(context);
+
     return Expanded(
       child: ListView.separated(
         itemCount: stores.length,
         padding: const EdgeInsets.all(15.0),
         itemBuilder: (_, int index) {
-          return StoreCard(
-            index: index + 1,
-            store: stores[index],
+          final store = stores[index];
+
+          return Slidable(
+            actionPane: SlidableDrawerActionPane(),
+            actionExtentRatio: 0.25,
+            key: ValueKey<int>(store.idTiendas),
+            secondaryActions: <Widget>[
+              IconSlideAction(
+                color: CustomTheme.mainColor,
+                icon: FontAwesome.pencil,
+                onTap: () => Navigator.of(context)
+                    .pushNamed(StoreFormPage.route, arguments: store)
+                    .then((_) => storesProvider.loadStores()),
+              ),
+              IconSlideAction(
+                color: CustomTheme.mainColor,
+                icon: FontAwesome5.trash_alt,
+                onTap: () async {
+                  final isSuccess =
+                      await storesProvider.makeDeleteStore(store.idTiendas);
+
+                  if (!isSuccess) {
+                    showMessageDialog(
+                        context, 'Aviso', 'La tienda no pudo ser borrada.');
+                  }
+                },
+              ),
+            ],
+            child: Container(
+              width: double.infinity,
+              child: StoreCard(
+                index: index + 1,
+                store: store,
+              ),
+            ),
           );
         },
         separatorBuilder: (_, int index) {

@@ -61,7 +61,7 @@ class Tienda {
         "updated_at": updatedAt == null ? null : updatedAt.toIso8601String(),
       };
 
-  Map<String, dynamic> createStoreToJson() => {
+  Map<String, dynamic> toStoreFormJson() => {
         "nombre": nombre,
         "lugar": lugar,
         "local": local,

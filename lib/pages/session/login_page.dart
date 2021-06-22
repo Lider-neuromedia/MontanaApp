@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:montana_mobile/pages/home/home_page.dart';
 import 'package:montana_mobile/pages/session/password_page.dart';
 import 'package:montana_mobile/providers/login_provider.dart';
+import 'package:montana_mobile/providers/navigation_provider.dart';
 import 'package:montana_mobile/utils/preferences.dart';
 import 'package:montana_mobile/utils/utils.dart';
 import 'package:provider/provider.dart';
@@ -141,6 +142,10 @@ class _LoginCardState extends State<LoginCard> {
       _passwordController.clear();
       _loginProvider.email = '';
       _loginProvider.password = '';
+
+      final navigationProvider =
+          Provider.of<NavigationProvider>(context, listen: false);
+      navigationProvider.currentPage = 0;
 
       Navigator.of(context).pushReplacementNamed(HomePage.route);
     } else {

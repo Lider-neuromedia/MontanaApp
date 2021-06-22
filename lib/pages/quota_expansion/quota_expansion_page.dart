@@ -9,6 +9,7 @@ import 'package:montana_mobile/pages/quota_expansion/partials/file_button.dart';
 import 'package:montana_mobile/providers/clients_provider.dart';
 import 'package:montana_mobile/providers/quota_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
+import 'package:montana_mobile/utils/preferences.dart';
 import 'package:montana_mobile/utils/utils.dart';
 import 'package:provider/provider.dart';
 
@@ -47,6 +48,7 @@ class _QuotaExpansionPageState extends State<QuotaExpansionPage> {
   @override
   Widget build(BuildContext context) {
     final quotaProvider = Provider.of<QuotaProvider>(context);
+    final preferences = Preferences();
 
     return Scaffold(
       appBar: AppBar(
@@ -57,10 +59,16 @@ class _QuotaExpansionPageState extends State<QuotaExpansionPage> {
         children: [
           _TitleQuota(title: 'Realiza tu Solicitud', size: 30.0),
           const SizedBox(height: 30.0),
-          const _LabelField(label: 'CLIENTE'),
-          const SizedBox(height: 10.0),
-          _ClientsDropdown(),
-          const SizedBox(height: 20.0),
+          preferences.session.isCliente
+              ? Container()
+              : Column(
+                  children: [
+                    const _LabelField(label: 'CLIENTE'),
+                    const SizedBox(height: 10.0),
+                    _ClientsDropdown(),
+                    const SizedBox(height: 20.0),
+                  ],
+                ),
           const _LabelField(label: 'Adjuntar documento de identidad'),
           const SizedBox(height: 10.0),
           FileButton(

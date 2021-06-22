@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
@@ -93,7 +94,7 @@ class QuotaProvider with ChangeNotifier {
   bool get canSend {
     if (_isLoading) return false;
     if (_monto.isEmptyOrHasError()) return false;
-    if (clienteId == null) return false;
+    if (_preferences.session.isVendedor && clienteId == null) return false;
     if (_docIdentidad == null) return false;
     if (_docRut == null) return false;
     if (_docCamaraCom == null) return false;
@@ -132,9 +133,19 @@ class QuotaProvider with ChangeNotifier {
     final request = http.MultipartRequest('POST', url);
     request.headers.addAll(_preferences.signedHeaders);
 
+    if (user.isCliente) {
+      final sellerId = await getSellerId();
+
+      if (sellerId == null) return false;
+
+      request.fields['cliente'] = "${user.id}";
+      request.fields['vendedor'] = "$sellerId";
+    } else {
+      request.fields['vendedor'] = "${user.id}";
+      request.fields['cliente'] = "$clienteId";
+    }
+
     request.fields['monto'] = _monto.value;
-    request.fields['vendedor'] = "${user.id}";
-    request.fields['cliente'] = "$clienteId";
     request.files.add(fileDocIdentidad);
     request.files.add(fileDocRut);
     request.files.add(fileDocCamaraCom);
@@ -143,5 +154,15 @@ class QuotaProvider with ChangeNotifier {
     final response = await http.Response.fromStream(responseStream);
 
     return response.statusCode == 200 || response.statusCode == 201;
+  }
+
+  Future<int> getSellerId() async {
+    final url = Uri.parse('$_url/vendedor-asignado');
+    final response = await http.get(url, headers: _preferences.signedHeaders);
+
+    if (response.statusCode != 200) return null;
+
+    final decodedResponse = json.decode(response.body);
+    return decodedResponse['id'];
   }
 }

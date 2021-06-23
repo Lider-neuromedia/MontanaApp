@@ -192,21 +192,24 @@ class _CartItemHeader extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Container(
-          height: 60,
-          width: 60,
-          child: ClipRRect(
-            borderRadius: const BorderRadius.all(
-              const Radius.circular(10.0),
-            ),
-            child: FadeInImage(
-              placeholder: const AssetImage("assets/images/placeholder.png"),
-              image: NetworkImage(cartProduct.product.image),
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
-          ),
-        ),
+        cartProduct.product.image == null
+            ? Container()
+            : Container(
+                height: 60,
+                width: 60,
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.all(
+                    const Radius.circular(10.0),
+                  ),
+                  child: FadeInImage(
+                    placeholder:
+                        const AssetImage("assets/images/placeholder.png"),
+                    image: NetworkImage(cartProduct.product.image),
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
         const SizedBox(width: 25.0),
         Text("Ref: ${cartProduct.product.referencia}", style: titleStyle),
       ],

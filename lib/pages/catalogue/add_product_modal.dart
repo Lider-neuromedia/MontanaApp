@@ -5,6 +5,7 @@ import 'package:montana_mobile/pages/catalogue/partials/action_button.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/providers/cart_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
+import 'package:montana_mobile/utils/preferences.dart';
 import 'package:provider/provider.dart';
 
 class AddProductModal extends StatefulWidget {
@@ -21,6 +22,7 @@ class AddProductModal extends StatefulWidget {
 
 class _AddProductModalState extends State<AddProductModal> {
   CartProvider _cartProvider;
+  Preferences _preferences = Preferences();
   List<Tienda> _stores = [];
   bool _loading = false;
 
@@ -44,7 +46,10 @@ class _AddProductModalState extends State<AddProductModal> {
       _cartProvider = Provider.of<CartProvider>(context, listen: false);
       setState(() => _loading = true);
 
-      final stores = await _cartProvider.getStores(_cartProvider.clientId);
+      final stores = await _cartProvider.getStores(
+          _preferences.session.isVendedor
+              ? _cartProvider.clientId
+              : _preferences.session.id);
 
       setState(() {
         _stores = stores;

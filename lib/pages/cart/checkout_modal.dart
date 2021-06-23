@@ -6,6 +6,7 @@ import 'package:montana_mobile/pages/catalogue/partials/action_button.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/providers/cart_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
+import 'package:montana_mobile/utils/preferences.dart';
 import 'package:montana_mobile/utils/utils.dart';
 import 'package:montana_mobile/widgets/DropdownList.dart';
 import 'package:provider/provider.dart';
@@ -98,6 +99,7 @@ class __CheckoutFormState extends State<_CheckoutForm> {
   @override
   Widget build(BuildContext context) {
     final discountList = Iterable<int>.generate(100).toList();
+    final preferences = Preferences();
     final cartProvider = Provider.of<CartProvider>(context);
     final counterTheme = Theme.of(context).textTheme.bodyText1.copyWith(
           color: CustomTheme.mainColor,
@@ -116,21 +118,29 @@ class __CheckoutFormState extends State<_CheckoutForm> {
           minSpace,
           PaymentMethodsField(),
           maxSpace,
-          const _LabelField(label: 'Descuento asignado'),
-          minSpace,
-          DropdownList(
-            onChanged: (dynamic value) {
-              cartProvider.discount = value as int;
-            },
-            value: cartProvider.discount,
-            items: discountList
-                .map<Map<String, dynamic>>((int discount) => {
-                      'id': discount,
-                      'value': "$discount%",
-                    })
-                .toList(),
-          ),
-          maxSpace,
+          preferences.session.isCliente
+              ? Container()
+              : Column(
+                  children: [
+                    const _LabelField(label: 'Descuento asignado'),
+                    minSpace,
+                    DropdownList(
+                      onChanged: (dynamic value) {
+                        cartProvider.discount = value as int;
+                      },
+                      value: cartProvider.discount,
+                      items: discountList
+                          .map<Map<String, dynamic>>(
+                            (int discount) => {
+                              'id': discount,
+                              'value': "$discount%",
+                            },
+                          )
+                          .toList(),
+                    ),
+                    maxSpace,
+                  ],
+                ),
           const _LabelField(label: 'Notas adicionales'),
           minSpace,
           TextField(

@@ -92,7 +92,7 @@ class CartProvider with ChangeNotifier {
 
   bool get canFinalize {
     if (_cart.products.length == 0) return false;
-    if (_cart.clientId == null) return false;
+    if (_preferences.session.isVendedor && _cart.clientId == null) return false;
     return true;
   }
 
@@ -141,14 +141,18 @@ class CartProvider with ChangeNotifier {
     if (user.isVendedor) {
       request.fields['cliente'] = "${_cart.clientId}";
       request.fields['vendedor'] = "${user.id}";
+      request.fields['descuento'] = "${_cart.discount}";
     } else {
-      // TODO: validar como guardar el pedido hecho desde el rol de cliente.
+      final sellerId = await getSellerId();
+
+      if (sellerId == null) return false;
+
       request.fields['cliente'] = "${user.id}";
-      request.fields['vendedor'] = "${user.id}";
+      request.fields['vendedor'] = "$sellerId";
+      request.fields['descuento'] = "0";
     }
 
     request.fields['codigo_pedido'] = "$orderCode";
-    request.fields['descuento'] = "${_cart.discount}";
     request.fields['total_pedido'] = "${_cart.total}";
     request.fields['forma_pago'] = "${_cart.paymentMethod}";
 
@@ -171,6 +175,16 @@ class CartProvider with ChangeNotifier {
 
     return response.statusCode == 200 || response.statusCode == 201;
   }
+
+  Future<int> getSellerId() async {
+    final url = Uri.parse('$_url/vendedor-asignado');
+    final response = await http.get(url, headers: _preferences.signedHeaders);
+
+    if (response.statusCode != 200) return null;
+
+    final decodedResponse = json.decode(response.body);
+    return decodedResponse['id'];
+  }
 }
 
 class Cart {
@@ -178,6 +192,7 @@ class Cart {
   String paymentMethod;
   int discount;
   List<CartProduct> products;
+  bool isVendedor;
 
   Cart() {
     paymentMethod = 'contado';
@@ -192,10 +207,12 @@ class Cart {
   }
 
   bool get isValid {
+    final preferences = Preferences();
+
+    if (preferences.session.isVendedor && clientId == null) return false;
     if (total == null) return false;
     if (discount == null) return false;
     if (paymentMethod == null) return false;
-    if (clientId == null) return false;
     if (total < 0) return false;
     if (discount < 0 || discount > 100) return false;
     if (paymentMethod.isEmpty) return false;

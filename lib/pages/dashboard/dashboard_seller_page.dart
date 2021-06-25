@@ -4,6 +4,7 @@ import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/pages/dashboard/partials/card_data.dart';
 import 'package:montana_mobile/pages/dashboard/partials/card_statistic.dart';
 import 'package:montana_mobile/pages/dashboard/partials/consolidated_orders.dart';
+import 'package:montana_mobile/pages/dashboard/partials/filter_ready_clients_modal.dart';
 import 'package:montana_mobile/providers/dashboard_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:montana_mobile/widgets/cart_icon.dart';
@@ -133,20 +134,23 @@ class _ConsolidatedClients extends StatelessWidget {
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CardStatistic(
           isMain: false,
           title: 'Clientes Generados',
-          subtitle: 'Último mes',
           value: dashboardProvider.resumen.cantidadClientes,
           label: 'Clientes',
         ),
         CardStatistic(
           isMain: false,
           title: 'Clientes Atendidos',
-          subtitle: 'Último mes',
+          subtitle: dashboardProvider.currentClientsReadyDate != null
+              ? dashboardProvider.currentClientsReadyDate
+              : 'Último mes',
           value: dashboardProvider.resumen.cantidadClientesAtendidos,
           label: 'Clientes',
+          onTap: () => openFilterReadyClientsModal(context),
         ),
       ],
     );

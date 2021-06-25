@@ -1,8 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:montana_mobile/pages/dashboard/partials/circular_statistic.dart';
-import 'package:montana_mobile/theme/theme.dart';
 import 'dart:ui';
+import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:montana_mobile/theme/theme.dart';
 
 class CardStatistic extends StatelessWidget {
   final String title;
@@ -11,6 +10,7 @@ class CardStatistic extends StatelessWidget {
   final String label;
   final bool isMain;
   final IconData icon;
+  final Function onTap;
 
   const CardStatistic({
     Key key,
@@ -20,6 +20,7 @@ class CardStatistic extends StatelessWidget {
     @required this.value,
     @required this.label,
     this.icon,
+    this.onTap,
   }) : super(key: key);
 
   @override
@@ -60,16 +61,19 @@ class CardStatistic extends StatelessWidget {
                 ),
           subtitle == null
               ? Container()
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(subtitle, style: subtitleStyle),
-                    Icon(
-                      Icons.keyboard_arrow_down,
-                      color: textColor,
-                    ),
-                  ],
+              : InkWell(
+                  onTap: onTap,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(subtitle, style: subtitleStyle),
+                      Icon(
+                        Icons.keyboard_arrow_down,
+                        color: textColor,
+                      ),
+                    ],
+                  ),
                 ),
           const SizedBox(height: 10.0),
           Center(

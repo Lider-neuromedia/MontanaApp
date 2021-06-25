@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 import 'package:montana_mobile/pages/stores/store_form_page.dart';
+import 'package:montana_mobile/providers/dashboard_provider.dart';
 import 'package:montana_mobile/providers/store_provider.dart';
 import 'package:montana_mobile/providers/stores_provider.dart';
 import 'package:montana_mobile/utils/utils.dart';
@@ -67,6 +68,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => RatingProvider()),
         ChangeNotifierProvider(create: (_) => StoresProvider()),
         ChangeNotifierProvider(create: (_) => StoreProvider()),
+        ChangeNotifierProvider(create: (_) => DashboardProvider()),
       ],
       child: MyApp(),
     ),

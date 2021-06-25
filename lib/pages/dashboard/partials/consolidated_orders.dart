@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:montana_mobile/pages/dashboard/partials/circular_statistic.dart';
+import 'package:montana_mobile/providers/dashboard_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
+import 'package:provider/provider.dart';
 
 class ConsolidatedOrders extends StatelessWidget {
   const ConsolidatedOrders({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    PageController pageController = PageController(
+    final dashboardProvider = Provider.of<DashboardProvider>(context);
+    final pageController = PageController(
       initialPage: 1,
       viewportFraction: 0.45,
     );
@@ -22,17 +25,17 @@ class ConsolidatedOrders extends StatelessWidget {
         children: [
           CircularStatistic(
             title: 'Realizados',
-            value: 324,
+            value: dashboardProvider.resumen.cantidadPedidos.realizados,
             color: CustomTheme.yellowColor,
           ),
           CircularStatistic(
             title: 'Aprobados',
-            value: 304,
+            value: dashboardProvider.resumen.cantidadPedidos.aprobados,
             color: CustomTheme.greenColor,
           ),
           CircularStatistic(
             title: 'Rechazados',
-            value: 20,
+            value: dashboardProvider.resumen.cantidadPedidos.rechazados,
             color: CustomTheme.redColor,
           ),
         ],

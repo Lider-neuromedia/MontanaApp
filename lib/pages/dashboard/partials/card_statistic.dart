@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:montana_mobile/pages/dashboard/partials/circular_statistic.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'dart:ui';
 import 'package:percent_indicator/percent_indicator.dart';
@@ -117,7 +118,7 @@ class _CardChart extends StatelessWidget {
           radius: 145.0,
           lineWidth: 5.0,
           animation: true,
-          percent: value / 100,
+          percent: 1,
           center: chartData(
             valueStyle: valueStyle,
             labelStyle: labelStyle,

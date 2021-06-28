@@ -27,14 +27,6 @@ class PqrsTicketProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  int _vendedorId;
-  int get vendedorId => _vendedorId;
-
-  set vendedorId(int value) {
-    _vendedorId = value;
-    notifyListeners();
-  }
-
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
@@ -85,19 +77,29 @@ class PqrsTicketProvider with ChangeNotifier {
     if (_isLoading) return false;
     if (_pqrsType.isEmptyOrHasError()) return false;
     if (_message.isEmptyOrHasError()) return false;
-    if (_vendedorId == null) return false;
-    if (_clienteId == null) return false;
+    if (_preferences.session.isVendedor && _clienteId == null) return false;
     return true;
   }
 
   Future<bool> createPqrs() async {
     final url = Uri.parse('$_url/pqrs');
-    final Map<String, dynamic> data = {
+    Map<String, dynamic> data = {
       'mensaje': _message.value,
       'tipo': _pqrsType.value,
-      'vendedor': vendedorId,
-      'cliente': clienteId,
     };
+
+    if (_preferences.session.isVendedor) {
+      data['vendedor'] = _preferences.session.id;
+      data['cliente'] = clienteId;
+    } else {
+      final sellerId = await getSellerId();
+
+      if (sellerId == null) return false;
+
+      data['vendedor'] = sellerId;
+      data['cliente'] = _preferences.session.id;
+    }
+
     final response = await http.post(
       url,
       headers: _preferences.signedHeaders,
@@ -105,6 +107,16 @@ class PqrsTicketProvider with ChangeNotifier {
     );
 
     return response.statusCode == 200;
+  }
+
+  Future<int> getSellerId() async {
+    final url = Uri.parse('$_url/vendedor-asignado');
+    final response = await http.get(url, headers: _preferences.signedHeaders);
+
+    if (response.statusCode != 200) return null;
+
+    final decodedResponse = json.decode(response.body);
+    return decodedResponse['id'];
   }
 }
 

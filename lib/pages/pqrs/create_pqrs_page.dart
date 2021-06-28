@@ -27,8 +27,6 @@ class _CreatePqrsPageState extends State<CreatePqrsPage> {
     () async {
       await Future.delayed(Duration.zero);
 
-      final preferences = Preferences();
-      final user = preferences.session;
       final pqrsTicketProvider = Provider.of<PqrsTicketProvider>(
         context,
         listen: false,
@@ -46,7 +44,6 @@ class _CreatePqrsPageState extends State<CreatePqrsPage> {
       pqrsTicketProvider.message = '';
       pqrsTicketProvider.clienteId = null;
       pqrsTicketProvider.pqrsType = null;
-      pqrsTicketProvider.vendedorId = user.id;
     }();
   }
 
@@ -59,17 +56,19 @@ class _CreatePqrsPageState extends State<CreatePqrsPage> {
   @override
   Widget build(BuildContext context) {
     final pqrsTicketProvider = Provider.of<PqrsTicketProvider>(context);
+    final preferences = Preferences();
+    final isCliente = preferences.session.isCliente;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('PQRS'),
+        title: const Text('PQRS'),
       ),
       body: ListView(
         padding: const EdgeInsets.all(20.0),
         children: [
-          _TitlePqrs(title: 'Nuevo PQRS'),
+          const _TitlePqrs(title: 'Nuevo PQRS'),
           const SizedBox(height: 25.0),
-          _LabelField(label: 'Tipo de PQRS'),
+          const _LabelField(label: 'Tipo de PQRS'),
           const SizedBox(height: 10.0),
           DropdownPqrs(
             onChanged: (dynamic value) {
@@ -89,27 +88,35 @@ class _CreatePqrsPageState extends State<CreatePqrsPage> {
             ).toList(),
           ),
           const SizedBox(height: 25.0),
-          _LabelField(label: 'Cliente'),
-          const SizedBox(height: 10.0),
-          DropdownPqrs(
-            onChanged: (dynamic value) {
-              pqrsTicketProvider.clienteId = value as int;
-            },
-            value: pqrsTicketProvider.clienteId,
-            items: pqrsTicketProvider.clientes.map<DropdownMenuItem<int>>(
-              (Cliente client) {
-                return DropdownMenuItem<int>(
-                  value: client.id,
-                  child: Text(
-                    client.nombreCompleto,
-                    style: Theme.of(context).textTheme.bodyText1,
-                  ),
-                );
-              },
-            ).toList(),
-          ),
-          const SizedBox(height: 20.0),
-          _LabelField(label: 'Mensaje'),
+          isCliente
+              ? Container()
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const _LabelField(label: 'Cliente'),
+                    const SizedBox(height: 10.0),
+                    DropdownPqrs(
+                      onChanged: (dynamic value) {
+                        pqrsTicketProvider.clienteId = value as int;
+                      },
+                      value: pqrsTicketProvider.clienteId,
+                      items: pqrsTicketProvider.clientes
+                          .map<DropdownMenuItem<int>>(
+                        (Cliente client) {
+                          return DropdownMenuItem<int>(
+                            value: client.id,
+                            child: Text(
+                              client.nombreCompleto,
+                              style: Theme.of(context).textTheme.bodyText1,
+                            ),
+                          );
+                        },
+                      ).toList(),
+                    ),
+                    const SizedBox(height: 20.0),
+                  ],
+                ),
+          const _LabelField(label: 'Mensaje'),
           const SizedBox(height: 10.0),
           TextField(
             maxLines: 5,

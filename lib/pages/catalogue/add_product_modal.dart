@@ -131,7 +131,7 @@ class _AddProductModalState extends State<AddProductModal> {
                             : null,
                       ),
                       ActionButton(
-                        label: "Cancelar",
+                        label: "Cerrar",
                         icon: Icons.close,
                         borderColor: CustomTheme.redColor,
                         backgroundColor: Colors.grey[200],

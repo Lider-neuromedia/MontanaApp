@@ -7,6 +7,7 @@ import 'package:montana_mobile/providers/clients_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:montana_mobile/utils/utils.dart';
 import 'package:provider/provider.dart';
+import 'package:fluttericon/maki_icons.dart';
 
 class CartPage extends StatelessWidget {
   static final String route = 'cart';
@@ -22,21 +23,35 @@ class CartPage extends StatelessWidget {
       body: Column(
         children: [
           Expanded(
-            child: ListView.separated(
-              itemCount: cartProvider.cart.products.length,
-              padding: const EdgeInsets.all(10.0),
-              itemBuilder: (_, int index) {
-                return _CartItem(cartProduct: cartProvider.products[index]);
-              },
-              separatorBuilder: (_, int index) {
-                return const SizedBox(height: 20.0);
-              },
-            ),
+            child: cartProvider.cart.products.length == 0
+                ? const _EmptyCartMessage()
+                : ListView.separated(
+                    itemCount: cartProvider.cart.products.length,
+                    padding: const EdgeInsets.all(10.0),
+                    itemBuilder: (_, int index) {
+                      return _CartItem(
+                          cartProduct: cartProvider.products[index]);
+                    },
+                    separatorBuilder: (_, int index) {
+                      return const SizedBox(height: 20.0);
+                    },
+                  ),
           ),
           _CartTotals(cart: cartProvider.cart),
           _CartActions(),
         ],
       ),
+    );
+  }
+}
+
+class _EmptyCartMessage extends StatelessWidget {
+  const _EmptyCartMessage({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: const Text('Bolsa de compras vacía.'),
     );
   }
 }
@@ -134,8 +149,17 @@ class _CartActions extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           ActionButton(
+            label: "Limpiar",
+            icon: Maki.trash,
+            borderColor: CustomTheme.redColor,
+            backgroundColor: Colors.grey[200],
+            iconColor: CustomTheme.redColor,
+            textColor: CustomTheme.redColor,
+            onPressed: () => cartProvider.cleanCart(),
+          ),
+          ActionButton(
             label: "Finalizar el pedido",
-            icon: Icons.add,
+            icon: Icons.check,
             borderColor: CustomTheme.green2Color,
             backgroundColor: CustomTheme.green2Color,
             iconColor: Colors.white,
@@ -143,15 +167,6 @@ class _CartActions extends StatelessWidget {
             onPressed: cartProvider.canFinalize
                 ? () => openFinalizeOrder(context)
                 : null,
-          ),
-          ActionButton(
-            label: "Cancelar",
-            icon: Icons.close,
-            borderColor: CustomTheme.redColor,
-            backgroundColor: Colors.grey[200],
-            iconColor: CustomTheme.redColor,
-            textColor: CustomTheme.redColor,
-            onPressed: () => Navigator.pop(context),
           ),
         ],
       ),
@@ -184,35 +199,58 @@ class _CartItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () => openAddProductModal(context, cartProduct.product),
-      child: Container(
-        padding: const EdgeInsets.all(20.0),
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(
-            const Radius.circular(10.0),
-          ),
-          border: Border.all(
-            color: CustomTheme.greyColor,
-            width: 1.0,
+    return Stack(
+      children: [
+        InkWell(
+          onTap: () => openAddProductModal(context, cartProduct.product),
+          child: Container(
+            padding: const EdgeInsets.all(20.0),
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(
+                const Radius.circular(10.0),
+              ),
+              border: Border.all(
+                color: CustomTheme.greyColor,
+                width: 1.0,
+              ),
+            ),
+            child: Column(
+              children: [
+                _CartItemHeader(cartProduct: cartProduct),
+                Divider(
+                  color: CustomTheme.greyColor,
+                  height: 20.0,
+                  thickness: 2.0,
+                ),
+                Column(
+                  children: cartProduct.stores.map((store) {
+                    return _CartItemStock(cartStore: store);
+                  }).toList(),
+                ),
+              ],
+            ),
           ),
         ),
-        child: Column(
-          children: [
-            _CartItemHeader(cartProduct: cartProduct),
-            Divider(
-              color: CustomTheme.greyColor,
-              height: 20.0,
-              thickness: 2.0,
+        Positioned(
+          top: 0.0,
+          right: -8.0,
+          child: ElevatedButton(
+            onPressed: () {
+              final cartProvider =
+                  Provider.of<CartProvider>(context, listen: false);
+              cartProvider.removeCompleteProduct(cartProduct);
+            },
+            child: Icon(Icons.clear, size: 18.0),
+            style: ElevatedButton.styleFrom(
+              primary: Theme.of(context).primaryColor,
+              fixedSize: const Size(30.0, 30.0),
+              padding: EdgeInsets.all(0.0),
+              shape: CircleBorder(),
+              elevation: 0.0,
             ),
-            Column(
-              children: cartProduct.stores.map((store) {
-                return _CartItemStock(cartStore: store);
-              }).toList(),
-            ),
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 }
@@ -277,6 +315,7 @@ class _CartItemStock extends StatelessWidget {
           color: Theme.of(context).primaryColor,
           fontWeight: FontWeight.bold,
         );
+    final local = cartStore.store.local != null ? cartStore.store.local : '';
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 12.0),
@@ -284,7 +323,7 @@ class _CartItemStock extends StatelessWidget {
         children: [
           Text("${cartStore.store.lugar}", style: boldStyle),
           const SizedBox(width: 5.0),
-          Text("${cartStore.store.local}", style: regularStyle),
+          Text("$local", style: regularStyle),
           Expanded(child: Container()),
           Text("${cartStore.quantity}", style: mainStyle),
         ],

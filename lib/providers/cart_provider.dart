@@ -85,6 +85,11 @@ class CartProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void removeCompleteProduct(CartProduct cartProduct) {
+    _cart.removeCompleteProduct(cartProduct);
+    notifyListeners();
+  }
+
   void addProduct(Producto product, Tienda store, int stock) {
     _cart.addProduct(product, store, stock);
     notifyListeners();
@@ -101,6 +106,11 @@ class CartProvider with ChangeNotifier {
     if (!_cart.isValid) return false;
     if (_signData == null) return false;
     return true;
+  }
+
+  void cleanCart() {
+    _cart.cleanAll();
+    notifyListeners();
   }
 
   Future<List<Tienda>> getStores(int clientId) async {
@@ -200,6 +210,13 @@ class Cart {
     products = [];
   }
 
+  void cleanAll() {
+    clientId = null;
+    paymentMethod = 'contado';
+    discount = 0;
+    products = [];
+  }
+
   void clean() {
     paymentMethod = 'contado';
     discount = 0;
@@ -246,6 +263,19 @@ class Cart {
     }
 
     return quantity;
+  }
+
+  void removeCompleteProduct(CartProduct cartProduct) {
+    int pIndex = products.indexWhere((CartProduct item) {
+      return item.productId == cartProduct.productId;
+    });
+
+    // Si el producto no existe no se hace nada.
+    if (pIndex == -1) {
+      return;
+    }
+
+    products.removeAt(pIndex);
   }
 
   void removeProduct(Producto product, Tienda store) {

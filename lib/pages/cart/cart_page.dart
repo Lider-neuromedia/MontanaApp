@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:montana_mobile/models/client.dart';
 import 'package:montana_mobile/pages/cart/checkout_modal.dart';
 import 'package:montana_mobile/pages/catalogue/partials/action_button.dart';
 import 'package:montana_mobile/providers/cart_provider.dart';
+import 'package:montana_mobile/providers/clients_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:montana_mobile/utils/utils.dart';
 import 'package:provider/provider.dart';
@@ -39,6 +41,41 @@ class CartPage extends StatelessWidget {
   }
 }
 
+class ClientDescription extends StatelessWidget {
+  const ClientDescription({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final regularStyle = Theme.of(context).textTheme.subtitle1;
+    final mainStyle = Theme.of(context).textTheme.headline6.copyWith(
+          fontWeight: FontWeight.w700,
+        );
+    final clientsProvider = Provider.of<ClientsProvider>(context);
+    final cartProvider = Provider.of<CartProvider>(context);
+
+    return FutureBuilder(
+      future: clientsProvider.getClient(cartProvider.clientId),
+      builder: (_, AsyncSnapshot<Cliente> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Container();
+        }
+        if (!snapshot.hasData) {
+          return Container();
+        }
+
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text('Cliente', style: regularStyle),
+            Text(snapshot.data.name, style: mainStyle),
+          ],
+        );
+      },
+    );
+  }
+}
+
 class _CartTotals extends StatelessWidget {
   const _CartTotals({
     Key key,
@@ -65,12 +102,17 @@ class _CartTotals extends StatelessWidget {
           ),
         ),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
+      child: Column(
         children: [
-          Text('Total', style: regularStyle),
-          Text(formatMoney(cart.total), style: mainStyle),
+          ClientDescription(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text('Total', style: regularStyle),
+              Text(formatMoney(cart.total), style: mainStyle),
+            ],
+          ),
         ],
       ),
     );

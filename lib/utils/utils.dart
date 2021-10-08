@@ -3,7 +3,9 @@ import 'package:intl/intl.dart';
 import 'package:montana_mobile/models/product.dart';
 import 'package:montana_mobile/pages/catalogue/add_product_modal.dart';
 import 'package:montana_mobile/pages/catalogue/start_order_modal.dart';
+import 'package:montana_mobile/providers/cart_provider.dart';
 import 'package:montana_mobile/utils/preferences.dart';
+import 'package:provider/provider.dart';
 
 bool isEmailValid(email) {
   return RegExp(
@@ -82,6 +84,13 @@ void openStartOrderModal(BuildContext context,
   final preferences = Preferences();
 
   if (preferences.session.isCliente) {
+    onContinue();
+    return;
+  }
+
+  final cartProvider = Provider.of<CartProvider>(context, listen: false);
+
+  if (preferences.session.isVendedor && cartProvider.clientId != null) {
     onContinue();
     return;
   }

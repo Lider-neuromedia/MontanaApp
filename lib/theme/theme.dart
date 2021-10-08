@@ -37,12 +37,16 @@ class CustomTheme {
       primaryColor: mainColor,
       appBarTheme: original.appBarTheme.copyWith(
         brightness: Brightness.dark,
+        color: mainColor,
       ),
       scaffoldBackgroundColor: Colors.white,
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           primary: textColor2,
         ),
+      ),
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        selectedItemColor: mainColor,
       ),
       textTheme: original.textTheme.copyWith(
         bodyText1: textTheme.bodyText1.copyWith(

@@ -60,7 +60,7 @@ class CardStatistic extends StatelessWidget {
                   ],
                 ),
           subtitle == null
-              ? Container()
+              ? SizedBox(height: 24.0)
               : InkWell(
                   onTap: onTap,
                   child: Row(

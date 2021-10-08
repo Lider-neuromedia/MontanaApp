@@ -26,7 +26,7 @@ class CardData extends StatelessWidget {
             ? _ContentMain(title: title, value: value, icon: icon)
             : _ContentNormal(title: title, value: value),
         Positioned(
-          left: 5.0,
+          left: -5.0,
           top: -5.0,
           child: isMain
               ? Container()
@@ -119,7 +119,7 @@ class _ContentNormal extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 8.0),
+      padding: const EdgeInsets.only(top: 10.0, left: 8.0, bottom: 10.0),
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border.all(
@@ -134,7 +134,7 @@ class _ContentNormal extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 35.0),
+            padding: const EdgeInsets.only(left: 25.0),
             child: Text(title, style: titleStyle),
           ),
           const SizedBox(height: 5.0),

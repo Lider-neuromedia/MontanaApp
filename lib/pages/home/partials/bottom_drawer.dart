@@ -66,13 +66,13 @@ class BottomDrawer extends StatelessWidget {
                   : () => navigationProvider.currentPage = 4,
             ),
             const SizedBox(width: 20.0),
-            DrawerItem(
-              title: 'PQRS',
-              iconData: Octicons.comment_discussion,
-              active: navigationProvider.currentPage == 5,
-              onTap: () => navigationProvider.currentPage = 5,
-            ),
-            const SizedBox(width: 20.0),
+            // DrawerItem(
+            //   title: 'PQRS',
+            //   iconData: Octicons.comment_discussion,
+            //   active: navigationProvider.currentPage == 5,
+            //   onTap: () => navigationProvider.currentPage = 5,
+            // ),
+            // const SizedBox(width: 20.0),
             DrawerItem(
               title: 'Ampliación\nde Cupo',
               iconData: Icons.tab_unselected,

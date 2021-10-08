@@ -182,7 +182,9 @@ class _ProductStoreStock extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text("${store.lugar}", style: boldStyle),
-            Text("${store.local}", style: regularStyle),
+            store.local == null
+                ? Container()
+                : Text("${store.local}", style: regularStyle),
           ],
         ),
         Expanded(child: Container()),

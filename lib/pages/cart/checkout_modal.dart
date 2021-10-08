@@ -107,6 +107,7 @@ class __CheckoutFormState extends State<_CheckoutForm> {
 
     const minSpace = const SizedBox(height: 10.0);
     const maxSpace = const SizedBox(height: 15.0);
+    const canSelectDiscount = false;
 
     return Expanded(
       child: ListView(
@@ -120,27 +121,30 @@ class __CheckoutFormState extends State<_CheckoutForm> {
           maxSpace,
           preferences.session.isCliente
               ? Container()
-              : Column(
-                  children: [
-                    const _LabelField(label: 'Descuento asignado'),
-                    minSpace,
-                    DropdownList(
-                      onChanged: (dynamic value) {
-                        cartProvider.discount = value as int;
-                      },
-                      value: cartProvider.discount,
-                      items: discountList
-                          .map<Map<String, dynamic>>(
-                            (int discount) => {
-                              'id': discount,
-                              'value': "$discount%",
-                            },
-                          )
-                          .toList(),
+              : !canSelectDiscount
+                  ? Container()
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const _LabelField(label: 'Descuento asignado'),
+                        minSpace,
+                        DropdownList(
+                          onChanged: (dynamic value) {
+                            cartProvider.discount = value as int;
+                          },
+                          value: cartProvider.discount,
+                          items: discountList
+                              .map<Map<String, dynamic>>(
+                                (int discount) => {
+                                  'id': discount,
+                                  'value': "$discount%",
+                                },
+                              )
+                              .toList(),
+                        ),
+                        maxSpace,
+                      ],
                     ),
-                    maxSpace,
-                  ],
-                ),
           const _LabelField(label: 'Notas adicionales'),
           minSpace,
           TextField(

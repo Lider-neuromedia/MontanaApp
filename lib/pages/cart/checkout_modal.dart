@@ -5,6 +5,7 @@ import 'package:montana_mobile/pages/cart/partials/sign_box.dart';
 import 'package:montana_mobile/pages/catalogue/partials/action_button.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/providers/cart_provider.dart';
+import 'package:montana_mobile/providers/navigation_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:montana_mobile/utils/preferences.dart';
 import 'package:montana_mobile/utils/utils.dart';
@@ -62,6 +63,10 @@ class CheckoutModal extends StatelessWidget {
         'Listo',
         'Pedido creado correctamente.',
         onAccept: () {
+          final navigationProvider =
+              Provider.of<NavigationProvider>(context, listen: false);
+          navigationProvider.currentPage = 0;
+
           Navigator.pop(context);
           Navigator.pop(context);
           Navigator.pop(context);

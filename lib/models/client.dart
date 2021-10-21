@@ -11,13 +11,13 @@ String responseClientesToJson(ResponseClientes data) =>
 
 List<Cliente> responseVendedorClientesFromJson(String str) =>
     List<Cliente>.from(
-      json.decode(str).map((x) => Cliente.fromVendedorClientesJson(x)),
+      json.decode(str).map((x) => Cliente.fromJson(x)),
     );
 
 Cliente responseClienteFromJson(String str) =>
-    Cliente.detailFromJson(json.decode(str));
+    Cliente.fromJson(json.decode(str));
 
-String responseClienteToJson(Cliente data) => json.encode(data.detailToJson());
+String responseClienteToJson(Cliente data) => json.encode(data.toJson());
 
 class ResponseClientes {
   ResponseClientes({
@@ -51,6 +51,7 @@ class Cliente {
     this.email,
     this.tipoIdentificacion,
     this.dni,
+    this.nit,
     this.userData,
     this.vendedorId,
     this.vendedor,
@@ -65,6 +66,7 @@ class Cliente {
   String email;
   String tipoIdentificacion;
   String dni;
+  String nit;
   List<UserData> userData;
   int vendedorId;
   Vendedor vendedor;
@@ -99,34 +101,42 @@ class Cliente {
     return 'CL';
   }
 
-  factory Cliente.fromJson(Map<String, dynamic> json) => Cliente(
-        id: json["id"],
-        rolId: json["rol_id"],
-        name: json["name"],
-        apellidos: json["apellidos"],
-        email: json["email"],
-        tipoIdentificacion: json["tipo_identificacion"],
-        dni: json["dni"],
-        userData: List<UserData>.from(
-          json["user_data"].map((x) => UserData.fromJson(x)),
-        ),
-        vendedor: json["vendedor"] == null
-            ? null
-            : Vendedor.fromJson(json["vendedor"]),
-      );
+  factory Cliente.fromJson(Map<String, dynamic> json) {
+    List<UserData> userData = [];
 
-  factory Cliente.fromVendedorClientesJson(Map<String, dynamic> json) =>
-      Cliente(
-        vendedorId: json["id_vendedor_cliente"],
-        id: json["id_cliente"],
-        rolId: json["rol_id"],
-        name: json["name"],
-        apellidos: json["apellidos"],
-        email: json["email"],
-        userData: List<UserData>.from(
-          json["data"].map((x) => UserData.fromJson(x)),
-        ),
-      );
+    if (json.containsKey("user_data")) {
+      userData = List<UserData>.from(
+          json["user_data"].map((x) => UserData.fromJson(x)));
+    } else if (json.containsKey("data_user")) {
+      userData = List<UserData>.from(
+          json["data_user"].map((x) => UserData.fromJson(x)));
+    } else if (json.containsKey("data")) {
+      userData =
+          List<UserData>.from(json["data"].map((x) => UserData.fromJson(x)));
+    }
+
+    return Cliente(
+      id: json.containsKey("id_cliente") ? json["id_cliente"] : json["id"],
+      rolId: json["rol_id"],
+      name: json["name"],
+      apellidos: json["apellidos"],
+      email: json["email"],
+      tipoIdentificacion: json["tipo_identificacion"] ?? null,
+      dni: json["dni"] ?? null,
+      nit: json["nit"] ?? null,
+      userData: userData,
+      vendedorId: json["id_vendedor_cliente"] ?? null,
+      vendedor: json.containsKey("vendedor")
+          ? Vendedor.fromJson(json["vendedor"])
+          : null,
+      tiendas: json.containsKey("tiendas")
+          ? List<Tienda>.from(json["tiendas"].map((x) => Tienda.fromJson(x)))
+          : [],
+      pedidos: json.containsKey("pedidos")
+          ? List<Pedido>.from(json["pedidos"].map((x) => Pedido.fromJson(x)))
+          : [],
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         "id": id,
@@ -136,44 +146,18 @@ class Cliente {
         "email": email,
         "tipo_identificacion": tipoIdentificacion,
         "dni": dni,
+        "nit": nit,
         "user_data": List<dynamic>.from(userData.map((x) => x.toJson())),
-        "vendedor": vendedor == null ? null : vendedor.toJson(),
-      };
-
-  factory Cliente.detailFromJson(Map<String, dynamic> json) => Cliente(
-        id: json["id"],
-        rolId: json["rol_id"],
-        name: json["name"],
-        apellidos: json["apellidos"],
-        email: json["email"],
-        tipoIdentificacion: json["tipo_identificacion"],
-        dni: json["dni"],
-        userData: List<UserData>.from(
-          json["data_user"].map((x) => UserData.fromJson(x)),
-        ),
-        vendedor: json["vendedor"] == null
-            ? null
-            : Vendedor.detailFromJson(json["vendedor"]),
-        tiendas: List<Tienda>.from(
-          json["tiendas"].map((x) => Tienda.fromJson(x)),
-        ),
-        pedidos: List<Pedido>.from(
-          json["pedidos"].map((x) => Pedido.fromJson(x)),
-        ),
-      );
-
-  Map<String, dynamic> detailToJson() => {
-        "id": id,
-        "rol_id": rolId,
-        "name": name,
-        "apellidos": apellidos,
-        "email": email,
-        "tipo_identificacion": tipoIdentificacion,
-        "dni": dni,
-        "data_user": List<dynamic>.from(userData.map((x) => x.toJson())),
-        "vendedor": vendedor.detailToJson(),
-        "tiendas": List<dynamic>.from(tiendas.map((x) => x.toJson())),
-        "pedidos": List<dynamic>.from(pedidos.map((x) => x.toJson())),
+        "vendedor": vendedor != null ? vendedor.toJson() : null,
+        "data_user": userData != null
+            ? List<dynamic>.from(userData.map((x) => x.toJson()))
+            : [],
+        "tiendas": tiendas != null
+            ? List<dynamic>.from(tiendas.map((x) => x.toJson()))
+            : [],
+        "pedidos": pedidos != null
+            ? List<dynamic>.from(pedidos.map((x) => x.toJson()))
+            : [],
       };
 }
 
@@ -199,11 +183,11 @@ class Pedido {
   DateTime fecha;
   String codigo;
   String metodoPago;
-  int subTotal;
-  int total;
+  double subTotal;
+  double total;
   int descuento;
   String notas;
-  dynamic firma;
+  String firma;
   int vendedor;
   int cliente;
   int estado;
@@ -215,16 +199,22 @@ class Pedido {
         fecha: DateTime.parse(json["fecha"]),
         codigo: json["codigo"],
         metodoPago: json["metodo_pago"],
-        subTotal: json["sub_total"],
-        total: json["total"],
+        subTotal: json.containsKey("sub_total")
+            ? double.parse(json["sub_total"].toString())
+            : null,
+        total: double.parse(json["total"].toString()),
         descuento: json["descuento"],
-        notas: json["notas"] == null ? null : json["notas"],
-        firma: json["firma"],
+        notas: json["notas"] ?? null,
+        firma: json["firma"] ?? null,
         vendedor: json["vendedor"],
         cliente: json["cliente"],
         estado: json["estado"],
-        createdAt: DateTime.parse(json["created_at"]),
-        updatedAt: DateTime.parse(json["updated_at"]),
+        createdAt: json.containsKey("created_at")
+            ? DateTime.parse(json["created_at"])
+            : null,
+        updatedAt: json.containsKey("updated_at")
+            ? DateTime.parse(json["updated_at"])
+            : null,
       );
 
   Map<String, dynamic> toJson() => {
@@ -236,7 +226,7 @@ class Pedido {
         "sub_total": subTotal,
         "total": total,
         "descuento": descuento,
-        "notas": notas == null ? null : notas,
+        "notas": notas ?? null,
         "firma": firma,
         "vendedor": vendedor,
         "cliente": cliente,

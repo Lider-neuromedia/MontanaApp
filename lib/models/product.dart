@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:montana_mobile/models/image.dart';
 
 ResponseProductos responseProductosFromJson(String str) =>
     ResponseProductos.fromJson(json.decode(str));
@@ -61,13 +62,13 @@ class ResponseProducto {
       ResponseProducto(
         response: json["response"],
         status: json["status"],
-        producto: Producto.detailFromJson(json["producto"]),
+        producto: Producto.fromJson(json["producto"]),
       );
 
   Map<String, dynamic> toJson() => {
         "response": response,
         "status": status,
-        "producto": producto.detailToJson(),
+        "producto": producto.toJson(),
       };
 }
 
@@ -100,7 +101,7 @@ class Producto {
   int stock;
   double precio;
   String descripcion;
-  dynamic sku;
+  String sku;
   double total;
   int descuento;
   int iva;
@@ -128,8 +129,11 @@ class Producto {
         marcaId: json["marca"],
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
-        image: json["image"],
         nombreMarca: json["nombre_marca"],
+        image: json.containsKey("image") ? json["image"] : json["destacada"],
+        imagenes: json.containsKey("imagenes")
+            ? List<Imagen>.from(json["imagenes"].map((x) => Imagen.fromJson(x)))
+            : [],
       );
 
   Map<String, dynamic> toJson() => {
@@ -149,89 +153,10 @@ class Producto {
         "created_at": createdAt.toIso8601String(),
         "updated_at": updatedAt.toIso8601String(),
         "image": image,
-        "nombre_marca": nombreMarca,
-      };
-
-  factory Producto.detailFromJson(Map<String, dynamic> json) => Producto(
-        idProducto: json["id_producto"],
-        nombre: json["nombre"],
-        codigo: json["codigo"],
-        referencia: json["referencia"],
-        stock: json["stock"],
-        precio: double.parse(json["precio"].toString()),
-        descripcion: json["descripcion"],
-        sku: json["sku"],
-        total: double.parse(json["total"].toString()),
-        descuento: json["descuento"],
-        iva: json["iva"],
-        catalogo: json["catalogo"],
-        marcaId: json["marca"],
-        createdAt: DateTime.parse(json["created_at"]),
-        updatedAt: DateTime.parse(json["updated_at"]),
-        image: json["destacada"],
-        nombreMarca: json["nombre_marca"],
-        imagenes:
-            List<Imagen>.from(json["imagenes"].map((x) => Imagen.fromJson(x))),
-      );
-
-  Map<String, dynamic> detailToJson() => {
-        "id_producto": idProducto,
-        "nombre": nombre,
-        "codigo": codigo,
-        "referencia": referencia,
-        "stock": stock,
-        "precio": precio,
-        "descripcion": descripcion,
-        "sku": sku,
-        "total": total,
-        "descuento": descuento,
-        "iva": iva,
-        "catalogo": catalogo,
-        "marca": marcaId,
-        "created_at": createdAt.toIso8601String(),
-        "updated_at": updatedAt.toIso8601String(),
         "destacada": image,
         "nombre_marca": nombreMarca,
-        "imagenes": List<dynamic>.from(imagenes.map((x) => x.toJson())),
-      };
-}
-
-class Imagen {
-  Imagen({
-    this.idGaleriaProd,
-    this.image,
-    this.nameImg,
-    this.destacada,
-    this.producto,
-    this.createdAt,
-    this.updatedAt,
-  });
-
-  int idGaleriaProd;
-  String image;
-  String nameImg;
-  int destacada;
-  int producto;
-  DateTime createdAt;
-  DateTime updatedAt;
-
-  factory Imagen.fromJson(Map<String, dynamic> json) => Imagen(
-        idGaleriaProd: json["id_galeria_prod"],
-        image: json["image"],
-        nameImg: json["name_img"],
-        destacada: json["destacada"],
-        producto: json["producto"],
-        createdAt: DateTime.parse(json["created_at"]),
-        updatedAt: DateTime.parse(json["updated_at"]),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "id_galeria_prod": idGaleriaProd,
-        "image": image,
-        "name_img": nameImg,
-        "destacada": destacada,
-        "producto": producto,
-        "created_at": createdAt.toIso8601String(),
-        "updated_at": updatedAt.toIso8601String(),
+        "imagenes": imagenes != null
+            ? List<dynamic>.from(imagenes.map((x) => x.toJson()))
+            : [],
       };
 }

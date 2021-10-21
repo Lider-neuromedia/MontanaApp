@@ -1,6 +1,6 @@
 import 'dart:convert';
-
 import 'package:montana_mobile/models/message.dart';
+import 'package:montana_mobile/models/ticket_order.dart';
 
 ResponseTickets responseTicketsFromJson(String str) =>
     ResponseTickets.fromJson(json.decode(str));
@@ -27,13 +27,13 @@ class ResponseTicket {
   factory ResponseTicket.fromJson(Map<String, dynamic> json) => ResponseTicket(
         response: json["response"],
         status: json["status"],
-        ticket: Ticket.detailFromJson(json["pqrs"]),
+        ticket: Ticket.fromJson(json["pqrs"]),
       );
 
   Map<String, dynamic> toJson() => {
         "response": response,
         "status": status,
-        "pqrs": ticket.detailToJson(),
+        "pqrs": ticket.toJson(),
       };
 }
 
@@ -117,6 +117,16 @@ class Ticket {
         nameCliente: json["name_cliente"],
         apellidosCliente: json["apellidos_cliente"],
         estado: json["estado"],
+        idVendedor: json["vendedor"] ?? null,
+        idCliente: json["cliente"] ?? null,
+        mensajes: json.containsKey("messages_pqrs")
+            ? List<Mensaje>.from(
+                json["messages_pqrs"].map((x) => Mensaje.fromJson(x)))
+            : [],
+        pedidos: json.containsKey("pedidos")
+            ? List<TicketPedido>.from(
+                json["pedidos"].map((x) => TicketPedido.fromJson(x)))
+            : [],
       );
 
   Map<String, dynamic> toJson() => {
@@ -129,123 +139,9 @@ class Ticket {
         "name_cliente": nameCliente,
         "apellidos_cliente": apellidosCliente,
         "estado": estado,
-      };
-
-  factory Ticket.detailFromJson(Map<String, dynamic> json) => Ticket(
-        idPqrs: json["id_pqrs"],
-        codigo: json["codigo"],
-        fechaRegistro: DateTime.parse(json["fecha_registro"]),
-        idVendedor: json["vendedor"],
-        idCliente: json["cliente"],
-        nameVendedor: json["name_vendedor"],
-        apellidosVendedor: json["apellidos_vendedor"],
-        nameCliente: json["name_cliente"],
-        apellidosCliente: json["apellidos_cliente"],
-        estado: json["estado"],
-        mensajes: List<Mensaje>.from(
-            json["messages_pqrs"].map((x) => Mensaje.fromJson(x))),
-        pedidos: List<TicketPedido>.from(
-            json["pedidos"].map((x) => TicketPedido.fromJson(x))),
-      );
-
-  Map<String, dynamic> detailToJson() => {
-        "id_pqrs": idPqrs,
-        "codigo": codigo,
-        "fecha_registro":
-            "${fechaRegistro.year.toString().padLeft(4, '0')}-${fechaRegistro.month.toString().padLeft(2, '0')}-${fechaRegistro.day.toString().padLeft(2, '0')}",
         "vendedor": idVendedor,
         "cliente": idCliente,
-        "name_vendedor": nameVendedor,
-        "apellidos_vendedor": apellidosVendedor,
-        "name_cliente": nameCliente,
-        "apellidos_cliente": apellidosCliente,
-        "estado": estado,
         "messages_pqrs": List<dynamic>.from(mensajes.map((x) => x.toJson())),
         "pedidos": List<dynamic>.from(pedidos.map((x) => x.toJson())),
-      };
-}
-
-class TicketPedido {
-  TicketPedido({
-    this.idPedido,
-    this.fecha,
-    this.codigo,
-    this.metodoPago,
-    this.subTotal,
-    this.total,
-    this.descuento,
-    this.notas,
-    this.firma,
-    this.vendedor,
-    this.cliente,
-    this.estado,
-    this.createdAt,
-    this.updatedAt,
-    this.name,
-    this.apellidos,
-    this.rolId,
-    this.iniciales,
-  });
-
-  int idPedido;
-  DateTime fecha;
-  String codigo;
-  String metodoPago;
-  int subTotal;
-  int total;
-  int descuento;
-  String notas;
-  dynamic firma;
-  int vendedor;
-  int cliente;
-  int estado;
-  DateTime createdAt;
-  DateTime updatedAt;
-  String name;
-  String apellidos;
-  int rolId;
-  String iniciales;
-
-  factory TicketPedido.fromJson(Map<String, dynamic> json) => TicketPedido(
-        idPedido: json["id_pedido"],
-        fecha: DateTime.parse(json["fecha"]),
-        codigo: json["codigo"],
-        metodoPago: json["metodo_pago"],
-        subTotal: json["sub_total"],
-        total: json["total"],
-        descuento: json["descuento"],
-        notas: json["notas"] == null ? null : json["notas"],
-        firma: json["firma"],
-        vendedor: json["vendedor"],
-        cliente: json["cliente"],
-        estado: json["estado"],
-        createdAt: DateTime.parse(json["created_at"]),
-        updatedAt: DateTime.parse(json["updated_at"]),
-        name: json["name"],
-        apellidos: json["apellidos"],
-        rolId: json["rol_id"],
-        iniciales: json["iniciales"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "id_pedido": idPedido,
-        "fecha":
-            "${fecha.year.toString().padLeft(4, '0')}-${fecha.month.toString().padLeft(2, '0')}-${fecha.day.toString().padLeft(2, '0')}",
-        "codigo": codigo,
-        "metodo_pago": metodoPago,
-        "sub_total": subTotal,
-        "total": total,
-        "descuento": descuento,
-        "notas": notas == null ? null : notas,
-        "firma": firma,
-        "vendedor": vendedor,
-        "cliente": cliente,
-        "estado": estado,
-        "created_at": createdAt.toIso8601String(),
-        "updated_at": updatedAt.toIso8601String(),
-        "name": name,
-        "apellidos": apellidos,
-        "rol_id": rolId,
-        "iniciales": iniciales,
       };
 }

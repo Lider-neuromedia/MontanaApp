@@ -1,5 +1,9 @@
-import 'package:flutter/material.dart';
 import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:montana_mobile/models/client.dart';
+import 'package:montana_mobile/models/novelty.dart';
+import 'package:montana_mobile/models/order_product.dart';
+import 'package:montana_mobile/models/status.dart';
 
 ResponseOrders responsePedidosFromJson(String str) =>
     ResponseOrders.fromJson(json.decode(str));
@@ -48,13 +52,13 @@ class ResponseOrder {
   factory ResponseOrder.fromJson(Map<String, dynamic> json) => ResponseOrder(
         response: json["response"],
         status: json["status"],
-        pedido: Pedido.detailFromJson(json["pedido"]),
+        pedido: Pedido.fromJson(json["pedido"]),
       );
 
   Map<String, dynamic> toJson() => {
         "response": response,
         "status": status,
-        "pedido": pedido.detailToJson(),
+        "pedido": pedido.toJson(),
       };
 }
 
@@ -84,12 +88,12 @@ class Pedido {
 
   int idPedido;
   DateTime fecha;
-  String firma;
   String codigo;
-  double total;
+  String firma;
   int clienteId;
   String metodoPago;
   double subTotal;
+  double total;
   int descuento;
   String notas;
   int vendedorId;
@@ -106,15 +110,34 @@ class Pedido {
   factory Pedido.fromJson(Map<String, dynamic> json) => Pedido(
         idPedido: json["id_pedido"],
         fecha: DateTime.parse(json["fecha"]),
-        firma: json["firma"],
+        firma: json["firma"] ?? null,
         codigo: json["codigo"],
         total: double.parse(json["total"].toString()),
-        nameVendedor: json["name_vendedor"],
-        apellidoVendedor: json["apellido_vendedor"],
-        nameCliente: json["name_cliente"],
-        apellidoCliente: json["apellido_cliente"],
         estado: estadoValues.map[json["estado"]],
         idEstado: json["id_estado"],
+        nameVendedor: json["name_vendedor"] ?? null,
+        apellidoVendedor: json["apellido_vendedor"] ?? null,
+        nameCliente: json["name_cliente"] ?? null,
+        apellidoCliente: json["apellido_cliente"] ?? null,
+        descuento: json["descuento"] ?? null,
+        notas: json["notas"] ?? null,
+        vendedorId: json["vendedor"] ?? null,
+        metodoPago: json["metodo_pago"] ?? null,
+        subTotal: json.containsKey("sub_total")
+            ? double.parse(json["sub_total"].toString())
+            : null,
+        clienteId: json["cliente"] ?? null,
+        cliente: json.containsKey("info_cliente")
+            ? Cliente.fromJson(json["info_cliente"])
+            : null,
+        productos: json.containsKey("productos")
+            ? List<PedidoProducto>.from(
+                json["productos"].map((x) => PedidoProducto.fromJson(x)))
+            : [],
+        novedades: json.containsKey("novedades")
+            ? List<Novedad>.from(
+                json["novedades"].map((x) => Novedad.fromJson(x)))
+            : [],
       );
 
   Map<String, dynamic> toJson() => {
@@ -130,47 +153,19 @@ class Pedido {
         "apellido_cliente": apellidoCliente,
         "estado": estadoValues.reverse[estado],
         "id_estado": idEstado,
-      };
-
-  factory Pedido.detailFromJson(Map<String, dynamic> json) => Pedido(
-        idPedido: json["id_pedido"],
-        fecha: DateTime.parse(json["fecha"]),
-        firma: json["firma"],
-        codigo: json["codigo"],
-        metodoPago: json["metodo_pago"],
-        subTotal: double.parse(json["sub_total"].toString()),
-        total: double.parse(json["total"].toString()),
-        descuento: json["descuento"],
-        notas: json["notas"],
-        vendedorId: json["vendedor"],
-        estado: estadoValues.map[json["estado"]],
-        idEstado: json["id_estado"],
-        clienteId: json["cliente"],
-        cliente: Cliente.fromJson(json["info_cliente"]),
-        productos: List<PedidoProducto>.from(
-            json["productos"].map((x) => PedidoProducto.fromJson(x))),
-        novedades: List<Novedad>.from(
-            json["novedades"].map((x) => Novedad.fromJson(x))),
-      );
-
-  Map<String, dynamic> detailToJson() => {
-        "id_pedido": idPedido,
-        "fecha":
-            "${fecha.year.toString().padLeft(4, '0')}-${fecha.month.toString().padLeft(2, '0')}-${fecha.day.toString().padLeft(2, '0')}",
-        "firma": firma,
-        "codigo": codigo,
         "metodo_pago": metodoPago,
         "sub_total": subTotal,
-        "total": total,
         "descuento": descuento,
         "notas": notas,
         "vendedor": vendedorId,
-        "estado": estadoValues.reverse[estado],
-        "id_estado": idEstado,
         "cliente": clienteId,
-        "info_cliente": cliente.toJson(),
-        "productos": List<dynamic>.from(productos.map((x) => x.toJson())),
-        "novedades": List<dynamic>.from(novedades.map((x) => x.toJson())),
+        "info_cliente": cliente != null ? cliente.toJson() : null,
+        "productos": productos != null
+            ? List<dynamic>.from(productos.map((x) => x.toJson()))
+            : [],
+        "novedades": novedades != null
+            ? List<dynamic>.from(novedades.map((x) => x.toJson()))
+            : [],
       };
 
   String get clienteNombre => "$nameCliente $apellidoCliente";
@@ -193,132 +188,4 @@ class Pedido {
     String word = firstLetter + temp.substring(1, temp.length);
     return word;
   }
-}
-
-enum Estado { ENTREGADO, PENDIENTE, CANCELADO }
-
-final estadoValues = EnumValues({
-  "cancelado": Estado.CANCELADO,
-  "entregado": Estado.ENTREGADO,
-  "pendiente": Estado.PENDIENTE
-});
-
-class EnumValues<T> {
-  Map<String, T> map;
-  Map<T, String> reverseMap;
-
-  EnumValues(this.map);
-
-  Map<T, String> get reverse {
-    if (reverseMap == null) {
-      reverseMap = map.map((k, v) => new MapEntry(v, k));
-    }
-    return reverseMap;
-  }
-}
-
-class Cliente {
-  Cliente({
-    this.id,
-    this.rolId,
-    this.name,
-    this.apellidos,
-    this.email,
-    this.tipoIdentificacion,
-    this.dni,
-    this.nit,
-  });
-
-  int id;
-  int rolId;
-  String name;
-  String apellidos;
-  String email;
-  String tipoIdentificacion;
-  String dni;
-  String nit;
-
-  String get nombreCompleto => "$name $apellidos";
-
-  factory Cliente.fromJson(Map<String, dynamic> json) => Cliente(
-        id: json["id"],
-        rolId: json["rol_id"],
-        name: json["name"],
-        apellidos: json["apellidos"],
-        email: json["email"],
-        tipoIdentificacion: json["tipo_identificacion"],
-        dni: json["dni"],
-        nit: json["nit"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "rol_id": rolId,
-        "name": name,
-        "apellidos": apellidos,
-        "email": email,
-        "tipo_identificacion": tipoIdentificacion,
-        "dni": dni,
-        "nit": nit,
-      };
-}
-
-class Novedad {
-  Novedad({
-    this.idNovedad,
-    this.tipo,
-    this.descripcion,
-    this.pedido,
-    this.createdAt,
-    this.updatedAt,
-  });
-
-  int idNovedad;
-  String tipo;
-  String descripcion;
-  int pedido;
-  DateTime createdAt;
-  DateTime updatedAt;
-
-  factory Novedad.fromJson(Map<String, dynamic> json) => Novedad(
-        idNovedad: json["id_novedad"],
-        tipo: json["tipo"],
-        descripcion: json["descripcion"],
-        pedido: json["pedido"],
-        createdAt: DateTime.parse(json["created_at"]),
-        updatedAt: DateTime.parse(json["updated_at"]),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "id_novedad": idNovedad,
-        "tipo": tipo,
-        "descripcion": descripcion,
-        "pedido": pedido,
-        "created_at": createdAt.toIso8601String(),
-        "updated_at": updatedAt.toIso8601String(),
-      };
-}
-
-class PedidoProducto {
-  PedidoProducto({
-    this.referencia,
-    this.cantidadProducto,
-    this.lugar,
-  });
-
-  String referencia;
-  int cantidadProducto;
-  String lugar;
-
-  factory PedidoProducto.fromJson(Map<String, dynamic> json) => PedidoProducto(
-        referencia: json["referencia"],
-        cantidadProducto: json["cantidad_producto"],
-        lugar: json["lugar"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "referencia": referencia,
-        "cantidad_producto": cantidadProducto,
-        "lugar": lugar,
-      };
 }

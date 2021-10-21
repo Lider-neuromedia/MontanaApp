@@ -21,13 +21,13 @@ class ResponseMensaje {
       ResponseMensaje(
         response: json["response"],
         status: json["status"],
-        mensaje: Mensaje.detailFromJson(json["mensaje"]),
+        mensaje: Mensaje.fromJson(json["mensaje"]),
       );
 
   Map<String, dynamic> toJson() => {
         "response": response,
         "status": status,
-        "mensaje": mensaje.detailToJson(),
+        "mensaje": mensaje.toJson(),
       };
 }
 
@@ -66,6 +66,7 @@ class Mensaje {
         idSeguimiento: json["id_seguimiento"],
         idUsuario: json["usuario"],
         idTicket: json["pqrs"],
+        pqrs: json["pqrs"],
         mensaje: json["mensaje"],
         hora: json["hora"],
         createdAt: DateTime.parse(json["created_at"]),
@@ -80,37 +81,7 @@ class Mensaje {
   Map<String, dynamic> toJson() => {
         "id_seguimiento": idSeguimiento,
         "usuario": idUsuario,
-        "pqrs": idTicket,
-        "mensaje": mensaje,
-        "hora": hora,
-        "created_at": createdAt.toIso8601String(),
-        "updated_at": updatedAt.toIso8601String(),
-        "name": name,
-        "apellidos": apellidos,
-        "rol_id": rolId,
-        "iniciales": iniciales,
-        "addressee": addressee,
-      };
-
-  factory Mensaje.detailFromJson(Map<String, dynamic> json) => Mensaje(
-        idSeguimiento: json["id_seguimiento"],
-        idUsuario: json["usuario"],
-        pqrs: json["pqrs"],
-        mensaje: json["mensaje"],
-        hora: json["hora"],
-        createdAt: DateTime.parse(json["created_at"]),
-        updatedAt: DateTime.parse(json["updated_at"]),
-        name: json["name"],
-        apellidos: json["apellidos"],
-        rolId: json["rol_id"],
-        iniciales: json["iniciales"],
-        addressee: json["addressee"],
-      );
-
-  Map<String, dynamic> detailToJson() => {
-        "id_seguimiento": idSeguimiento,
-        "usuario": idUsuario,
-        "pqrs": pqrs,
+        "pqrs": idTicket ?? pqrs,
         "mensaje": mensaje,
         "hora": hora,
         "created_at": createdAt.toIso8601String(),

@@ -53,12 +53,12 @@ class Tienda {
         "id_tiendas": idTiendas,
         "nombre": nombre,
         "lugar": lugar,
-        "local": local == null ? null : local,
-        "direccion": direccion == null ? null : direccion,
-        "telefono": telefono == null ? null : telefono,
-        "cliente": cliente == null ? null : cliente,
-        "created_at": createdAt == null ? null : createdAt.toIso8601String(),
-        "updated_at": updatedAt == null ? null : updatedAt.toIso8601String(),
+        "local": local ?? null,
+        "direccion": direccion ?? null,
+        "telefono": telefono ?? null,
+        "cliente": cliente ?? null,
+        "created_at": createdAt != null ? createdAt.toIso8601String() : null,
+        "updated_at": updatedAt != null ? updatedAt.toIso8601String() : null,
       };
 
   Map<String, dynamic> toStoreFormJson() => {

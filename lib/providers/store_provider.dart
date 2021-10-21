@@ -193,9 +193,7 @@ class StoreProvider with ChangeNotifier {
     final Map<String, dynamic> data = {
       'cliente': _preferences.session.id,
       'tiendas': _stores
-          .map<Map<String, dynamic>>(
-            (store) => store.toStoreFormJson(),
-          )
+          .map<Map<String, dynamic>>((store) => store.toStoreFormJson())
           .toList(),
     };
 

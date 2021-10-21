@@ -41,7 +41,7 @@ class _OrdersPageState extends State<OrdersPage> {
           const CartIcon(),
         ],
       ),
-      floatingActionButton: _CreateOrderButton(),
+      // floatingActionButton: _CreateOrderButton(),
       body: ordersProvider.isLoading
           ? const LoadingContainer()
           : ordersProvider.orders.length == 0

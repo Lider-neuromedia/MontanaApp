@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fluttericon/octicons_icons.dart';
 import 'package:fluttericon/web_symbols_icons.dart';
 import 'package:montana_mobile/pages/session/login_page.dart';
 import 'package:montana_mobile/providers/login_provider.dart';

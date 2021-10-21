@@ -83,7 +83,7 @@ class ClientDescription extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text('Cliente', style: regularStyle),
-            Text(snapshot.data.name, style: mainStyle),
+            Text('${snapshot.data.name}', style: mainStyle),
           ],
         );
       },

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:montana_mobile/models/client_order.dart';
 import 'package:montana_mobile/models/seller.dart';
 import 'package:montana_mobile/models/store.dart';
 import 'package:montana_mobile/models/user_data.dart';
@@ -71,7 +72,7 @@ class Cliente {
   int vendedorId;
   Vendedor vendedor;
   List<Tienda> tiendas;
-  List<Pedido> pedidos;
+  List<PedidoCliente> pedidos;
 
   String get nombreCompleto => "$name $apellidos";
 
@@ -133,7 +134,8 @@ class Cliente {
           ? List<Tienda>.from(json["tiendas"].map((x) => Tienda.fromJson(x)))
           : [],
       pedidos: json.containsKey("pedidos")
-          ? List<Pedido>.from(json["pedidos"].map((x) => Pedido.fromJson(x)))
+          ? List<PedidoCliente>.from(
+              json["pedidos"].map((x) => PedidoCliente.fromJson(x)))
           : [],
     );
   }
@@ -158,80 +160,5 @@ class Cliente {
         "pedidos": pedidos != null
             ? List<dynamic>.from(pedidos.map((x) => x.toJson()))
             : [],
-      };
-}
-
-class Pedido {
-  Pedido({
-    this.idPedido,
-    this.fecha,
-    this.codigo,
-    this.metodoPago,
-    this.subTotal,
-    this.total,
-    this.descuento,
-    this.notas,
-    this.firma,
-    this.vendedor,
-    this.cliente,
-    this.estado,
-    this.createdAt,
-    this.updatedAt,
-  });
-
-  int idPedido;
-  DateTime fecha;
-  String codigo;
-  String metodoPago;
-  double subTotal;
-  double total;
-  int descuento;
-  String notas;
-  String firma;
-  int vendedor;
-  int cliente;
-  int estado;
-  DateTime createdAt;
-  DateTime updatedAt;
-
-  factory Pedido.fromJson(Map<String, dynamic> json) => Pedido(
-        idPedido: json["id_pedido"],
-        fecha: DateTime.parse(json["fecha"]),
-        codigo: json["codigo"],
-        metodoPago: json["metodo_pago"],
-        subTotal: json.containsKey("sub_total")
-            ? double.parse(json["sub_total"].toString())
-            : null,
-        total: double.parse(json["total"].toString()),
-        descuento: json["descuento"],
-        notas: json["notas"] ?? null,
-        firma: json["firma"] ?? null,
-        vendedor: json["vendedor"],
-        cliente: json["cliente"],
-        estado: json["estado"],
-        createdAt: json.containsKey("created_at")
-            ? DateTime.parse(json["created_at"])
-            : null,
-        updatedAt: json.containsKey("updated_at")
-            ? DateTime.parse(json["updated_at"])
-            : null,
-      );
-
-  Map<String, dynamic> toJson() => {
-        "id_pedido": idPedido,
-        "fecha":
-            "${fecha.year.toString().padLeft(4, '0')}-${fecha.month.toString().padLeft(2, '0')}-${fecha.day.toString().padLeft(2, '0')}",
-        "codigo": codigo,
-        "metodo_pago": metodoPago,
-        "sub_total": subTotal,
-        "total": total,
-        "descuento": descuento,
-        "notas": notas ?? null,
-        "firma": firma,
-        "vendedor": vendedor,
-        "cliente": cliente,
-        "estado": estado,
-        "created_at": createdAt.toIso8601String(),
-        "updated_at": updatedAt.toIso8601String(),
       };
 }

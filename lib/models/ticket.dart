@@ -119,11 +119,11 @@ class Ticket {
         estado: json["estado"],
         idVendedor: json["vendedor"] ?? null,
         idCliente: json["cliente"] ?? null,
-        mensajes: json.containsKey("messages_pqrs")
+        mensajes: json["messages_pqrs"] != null
             ? List<Mensaje>.from(
                 json["messages_pqrs"].map((x) => Mensaje.fromJson(x)))
             : [],
-        pedidos: json.containsKey("pedidos")
+        pedidos: json["pedidos"] != null
             ? List<TicketPedido>.from(
                 json["pedidos"].map((x) => TicketPedido.fromJson(x)))
             : [],

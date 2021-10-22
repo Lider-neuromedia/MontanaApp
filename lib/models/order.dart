@@ -132,7 +132,7 @@ class Pedido {
       codigo: json["codigo"],
       metodoPago: json["metodo_pago"] ?? null,
       total: double.parse(json["total"].toString()),
-      subTotal: json.containsKey("sub_total")
+      subTotal: json["sub_total"] != null
           ? double.parse(json["sub_total"].toString())
           : null,
       descuento: json["descuento"] ?? null,
@@ -141,25 +141,25 @@ class Pedido {
       clienteId: json["cliente"] ?? null,
       idEstado: temporalEstadoId,
       estado: temporalEstado,
-      cliente: json.containsKey("info_cliente")
+      cliente: json["info_cliente"] != null
           ? Cliente.fromJson(json["info_cliente"])
           : null,
       nameVendedor: json["name_vendedor"] ?? '',
       apellidoVendedor: json["apellido_vendedor"] ?? '',
       nameCliente: json["name_cliente"] ?? '',
       apellidoCliente: json["apellido_cliente"] ?? '',
-      productos: json.containsKey("productos")
+      productos: json["productos"] != null
           ? List<PedidoProducto>.from(
               json["productos"].map((x) => PedidoProducto.fromJson(x)))
           : [],
-      novedades: json.containsKey("novedades")
+      novedades: json["novedades"] != null
           ? List<Novedad>.from(
               json["novedades"].map((x) => Novedad.fromJson(x)))
           : [],
-      createdAt: json.containsKey("created_at")
+      createdAt: json["created_at"] != null
           ? DateTime.parse(json["created_at"])
           : DateTime.now(),
-      updatedAt: json.containsKey("updated_at")
+      updatedAt: json["updated_at"] != null
           ? DateTime.parse(json["updated_at"])
           : DateTime.now(),
     );

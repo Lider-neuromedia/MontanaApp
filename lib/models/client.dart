@@ -127,13 +127,12 @@ class Cliente {
       nit: json["nit"] ?? null,
       userData: userData,
       vendedorId: json["id_vendedor_cliente"] ?? null,
-      vendedor: json.containsKey("vendedor")
-          ? Vendedor.fromJson(json["vendedor"])
-          : null,
-      tiendas: json.containsKey("tiendas")
+      vendedor:
+          json["vendedor"] != null ? Vendedor.fromJson(json["vendedor"]) : null,
+      tiendas: json["tiendas"] != null
           ? List<Tienda>.from(json["tiendas"].map((x) => Tienda.fromJson(x)))
           : [],
-      pedidos: json.containsKey("pedidos")
+      pedidos: json["pedidos"] != null
           ? List<Pedido>.from(json["pedidos"].map((x) => Pedido.fromJson(x)))
           : [],
     );

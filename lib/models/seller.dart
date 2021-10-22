@@ -41,7 +41,7 @@ class Vendedor {
         email: json["email"],
         tipoIdentificacion: json["tipo_identificacion"] ?? null,
         dni: json["dni"] ?? null,
-        userData: json.containsKey("user_data")
+        userData: json["user_data"] != null
             ? List<UserData>.from(
                 json["user_data"].map((x) => UserData.fromJson(x)))
             : [],

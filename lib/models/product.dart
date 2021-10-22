@@ -131,7 +131,7 @@ class Producto {
         updatedAt: DateTime.parse(json["updated_at"]),
         nombreMarca: json["nombre_marca"],
         image: json.containsKey("image") ? json["image"] : json["destacada"],
-        imagenes: json.containsKey("imagenes")
+        imagenes: json["imagenes"] != null
             ? List<Imagen>.from(json["imagenes"].map((x) => Imagen.fromJson(x)))
             : [],
       );

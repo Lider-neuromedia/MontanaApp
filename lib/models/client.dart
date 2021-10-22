@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:montana_mobile/models/client_order.dart';
+import 'package:montana_mobile/models/order.dart';
 import 'package:montana_mobile/models/seller.dart';
 import 'package:montana_mobile/models/store.dart';
 import 'package:montana_mobile/models/user_data.dart';
@@ -72,7 +72,7 @@ class Cliente {
   int vendedorId;
   Vendedor vendedor;
   List<Tienda> tiendas;
-  List<PedidoCliente> pedidos;
+  List<Pedido> pedidos;
 
   String get nombreCompleto => "$name $apellidos";
 
@@ -134,8 +134,7 @@ class Cliente {
           ? List<Tienda>.from(json["tiendas"].map((x) => Tienda.fromJson(x)))
           : [],
       pedidos: json.containsKey("pedidos")
-          ? List<PedidoCliente>.from(
-              json["pedidos"].map((x) => PedidoCliente.fromJson(x)))
+          ? List<Pedido>.from(json["pedidos"].map((x) => Pedido.fromJson(x)))
           : [],
     );
   }

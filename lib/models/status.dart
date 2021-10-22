@@ -6,6 +6,12 @@ final estadoValues = EnumValues({
   "pendiente": Estado.PENDIENTE
 });
 
+final estadoValuesById = {
+  1: Estado.ENTREGADO,
+  2: Estado.PENDIENTE,
+  3: Estado.CANCELADO,
+};
+
 class EnumValues<T> {
   Map<String, T> map;
   Map<T, String> reverseMap;

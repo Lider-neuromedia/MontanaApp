@@ -58,12 +58,15 @@ class PushNotificationService {
     if (token == null) return false;
     if (token.isEmpty) return false;
 
-    final response = await http.post(
-      url,
-      headers: preferences.signedHeaders,
-      body: json.encode(data),
-    );
-
-    return response.statusCode == 200;
+    try {
+      final response = await http.post(
+        url,
+        headers: preferences.signedHeaders,
+        body: json.encode(data),
+      );
+      return response.statusCode == 200;
+    } catch (error) {
+      return false;
+    }
   }
 }

@@ -4,6 +4,7 @@ import 'package:montana_mobile/pages/catalogue/partials/empty_message.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/pages/orders/partials/order_detail_card.dart';
 import 'package:montana_mobile/pages/orders/partials/products_table.dart';
+import 'package:montana_mobile/providers/connection_provider.dart';
 import 'package:montana_mobile/providers/orders_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:montana_mobile/utils/utils.dart';
@@ -31,12 +32,18 @@ class _OrderPageState extends State<OrderPage> {
   void _loadData(BuildContext context) {
     final orderId = ModalRoute.of(context).settings.arguments as int;
     final ordersProvider = Provider.of<OrdersProvider>(context, listen: false);
-    ordersProvider.loadOrder(orderId);
+    final connectionProvider =
+        Provider.of<ConnectionProvider>(context, listen: false);
+    ordersProvider.loadOrder(
+      orderId,
+      local: connectionProvider.isNotConnected,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final ordersProvider = Provider.of<OrdersProvider>(context);
+    final connectionProvider = Provider.of<ConnectionProvider>(context);
     final orderId = ModalRoute.of(context).settings.arguments as int;
 
     return Scaffold(
@@ -50,11 +57,17 @@ class _OrderPageState extends State<OrderPage> {
           ? const LoadingContainer()
           : ordersProvider.order == null
               ? EmptyMessage(
-                  onPressed: () => ordersProvider.loadOrder(orderId),
+                  onPressed: () => ordersProvider.loadOrder(
+                    orderId,
+                    local: connectionProvider.isNotConnected,
+                  ),
                   message: 'No hay información.',
                 )
               : RefreshIndicator(
-                  onRefresh: () => ordersProvider.loadOrder(orderId),
+                  onRefresh: () => ordersProvider.loadOrder(
+                    orderId,
+                    local: connectionProvider.isNotConnected,
+                  ),
                   color: Theme.of(context).primaryColor,
                   child: _OrderDetailContent(order: ordersProvider.order),
                 ),

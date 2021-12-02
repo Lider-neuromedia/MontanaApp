@@ -210,9 +210,9 @@ class Pedido {
   }
 
   String get estadoFormatted {
-    String temp = estado.toString().split('.')[1].toLowerCase();
-    String firstLetter = temp.substring(0, 1).toUpperCase();
-    String word = firstLetter + temp.substring(1, temp.length);
+    final temp = estado.toString().split('.')[1].toLowerCase();
+    final firstLetter = temp.substring(0, 1).toUpperCase();
+    final word = firstLetter + temp.substring(1, temp.length);
     return word;
   }
 }

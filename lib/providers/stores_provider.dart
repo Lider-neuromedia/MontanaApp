@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 import 'package:montana_mobile/models/store.dart';
+import 'package:montana_mobile/providers/database_provider.dart';
 import 'package:montana_mobile/utils/preferences.dart';
 
 class StoresProvider with ChangeNotifier {
@@ -52,22 +53,25 @@ class StoresProvider with ChangeNotifier {
     }).toList();
   }
 
-  Future<void> loadStores() async {
+  Future<void> loadStores({@required bool local}) async {
     _stores = [];
     _search = '';
     _isLoading = true;
     notifyListeners();
-    _stores = await getStores();
+
+    _stores = local ? await getStoresLocal() : await getStores();
+
     _isLoading = false;
     notifyListeners();
   }
 
-  Future<bool> makeDeleteStore(int id) async {
+  Future<bool> makeDeleteStore(int id, {@required bool local}) async {
     _isLoading = true;
     notifyListeners();
 
-    final isSuccess = await deleteStore(id);
-    await loadStores();
+    final isSuccess =
+        local ? await deleteStoreLocal(id) : await deleteStore(id);
+    await loadStores(local: local);
 
     return isSuccess;
   }
@@ -78,6 +82,21 @@ class StoresProvider with ChangeNotifier {
 
     if (response.statusCode != 200) return [];
     return responseTiendasFromJson(response.body);
+  }
+
+  Future<List<Tienda>> getStoresLocal() async {
+    final list = await DatabaseProvider.db.getRecords(
+      'stores',
+      withDeleted: false,
+    );
+
+    List<Tienda> stores = List<Tienda>.from(list.map((x) {
+      Map<String, Object> row = Map<String, Object>.of(x);
+      row['id_tiendas'] = row['id'];
+      return Tienda.fromJson(row);
+    }));
+
+    return stores;
   }
 
   Future<bool> deleteStore(int id) async {
@@ -93,5 +112,31 @@ class StoresProvider with ChangeNotifier {
     );
 
     return response.statusCode == 200;
+  }
+
+  Future<bool> deleteStoreLocal(int id) async {
+    await DatabaseProvider.db.checkRecordToDelete('stores', id);
+    return true;
+  }
+
+  Future<void> syncDeletedStoresInLocal() async {
+    final db = await DatabaseProvider.db.database;
+    final records = await db.query(
+      'stores',
+      columns: ['id', 'check_delete'],
+      where: 'check_delete = ?',
+      whereArgs: [1],
+    );
+
+    if (records.isEmpty) return;
+
+    for (final record in records) {
+      final storeId = record['id'];
+      final isSuccessResponse = await deleteStore(storeId);
+
+      if (isSuccessResponse) {
+        await DatabaseProvider.db.deleteRecord('stores', storeId);
+      }
+    }
   }
 }

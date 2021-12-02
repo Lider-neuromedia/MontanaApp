@@ -3,6 +3,8 @@ import 'package:montana_mobile/models/store.dart';
 import 'package:montana_mobile/pages/catalogue/partials/action_button.dart';
 import 'package:montana_mobile/pages/stores/partials/form_input.dart';
 import 'package:montana_mobile/pages/stores/partials/store_item.dart';
+import 'package:montana_mobile/providers/connection_provider.dart';
+import 'package:montana_mobile/providers/database_provider.dart';
 import 'package:montana_mobile/providers/store_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:montana_mobile/utils/utils.dart';
@@ -23,9 +25,7 @@ class _StoreFormPageState extends State<StoreFormPage> {
   TextEditingController _localController;
   TextEditingController _direccionController;
   TextEditingController _telefonoController;
-
   Tienda _store;
-  StoreProvider _storeProvider;
 
   @override
   void initState() {
@@ -59,7 +59,8 @@ class _StoreFormPageState extends State<StoreFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    _storeProvider = Provider.of<StoreProvider>(context);
+    final storeProvider = Provider.of<StoreProvider>(context);
+    final connectionProvider = Provider.of<ConnectionProvider>(context);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -76,36 +77,36 @@ class _StoreFormPageState extends State<StoreFormPage> {
                 FormInput(
                   label: 'Nombre de la tienda',
                   controller: _nombreController,
-                  error: _storeProvider.nombreError,
-                  onChanged: (String value) => _storeProvider.nombre = value,
+                  error: storeProvider.nombreError,
+                  onChanged: (String value) => storeProvider.nombre = value,
                 ),
                 const SizedBox(height: 15.0),
                 FormInput(
                   label: 'Lugar',
                   controller: _lugarController,
-                  error: _storeProvider.lugarError,
-                  onChanged: (String value) => _storeProvider.lugar = value,
+                  error: storeProvider.lugarError,
+                  onChanged: (String value) => storeProvider.lugar = value,
                 ),
                 const SizedBox(height: 15.0),
                 FormInput(
                   label: 'Número del local',
                   controller: _localController,
-                  error: _storeProvider.localError,
-                  onChanged: (String value) => _storeProvider.local = value,
+                  error: storeProvider.localError,
+                  onChanged: (String value) => storeProvider.local = value,
                 ),
                 const SizedBox(height: 15.0),
                 FormInput(
                   label: 'Dirección',
                   controller: _direccionController,
-                  error: _storeProvider.direccionError,
-                  onChanged: (String value) => _storeProvider.direccion = value,
+                  error: storeProvider.direccionError,
+                  onChanged: (String value) => storeProvider.direccion = value,
                 ),
                 const SizedBox(height: 15.0),
                 FormInput(
                   label: 'Teléfono',
                   controller: _telefonoController,
-                  error: _storeProvider.telefonoError,
-                  onChanged: (String value) => _storeProvider.telefono = value,
+                  error: storeProvider.telefonoError,
+                  onChanged: (String value) => storeProvider.telefono = value,
                 ),
                 const SizedBox(height: 50.0),
                 _store != null
@@ -114,7 +115,7 @@ class _StoreFormPageState extends State<StoreFormPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           ActionButton(
-                            label: _storeProvider.stores.length == 0
+                            label: storeProvider.stores.length == 0
                                 ? "Agregar tienda"
                                 : "Agregar otra tienda",
                             icon: Icons.add,
@@ -123,8 +124,8 @@ class _StoreFormPageState extends State<StoreFormPage> {
                             backgroundIconColor: CustomTheme.mainColor,
                             iconColor: Colors.white,
                             textColor: CustomTheme.mainColor,
-                            onPressed: _storeProvider.canAddStore
-                                ? () => _addStore(_storeProvider)
+                            onPressed: storeProvider.canAddStore
+                                ? () => _addStore(storeProvider)
                                 : null,
                           ),
                         ],
@@ -133,7 +134,9 @@ class _StoreFormPageState extends State<StoreFormPage> {
             ),
           ),
           _FormActions(
-            onSave: _storeProvider.canSend ? () => _save(context) : null,
+            onSave: storeProvider.canSend
+                ? () => _save(context, storeProvider, connectionProvider)
+                : null,
           ),
         ],
       ),
@@ -153,8 +156,12 @@ class _StoreFormPageState extends State<StoreFormPage> {
     _telefonoController.clear();
   }
 
-  Future<void> _save(BuildContext context) async {
-    final isUpdate = _storeProvider.storeUpdate != null;
+  Future<void> _save(
+    BuildContext context,
+    StoreProvider storeProvider,
+    ConnectionProvider connectionProvider,
+  ) async {
+    final isUpdate = storeProvider.storeUpdate != null;
     final successMessage = isUpdate
         ? 'Tienda actualizada correctamente.'
         : 'Tienda(s) creada(s) correctamente.';
@@ -162,17 +169,24 @@ class _StoreFormPageState extends State<StoreFormPage> {
         ? 'No se actualizó la tienda.'
         : 'No se guardó la(s) tienda(s).';
 
-    _storeProvider.isLoading = true;
+    storeProvider.isLoading = true;
+    bool success = false;
 
-    final success = isUpdate
-        ? await _storeProvider.updateStore()
-        : await _storeProvider.saveStores();
+    if (connectionProvider.isNotConnected) {
+      success = isUpdate
+          ? await storeProvider.updateStore()
+          : await storeProvider.saveStores();
+    } else {
+      success = isUpdate
+          ? await storeProvider.updateStore()
+          : await storeProvider.saveStores();
+    }
 
-    _storeProvider.isLoading = false;
+    storeProvider.isLoading = false;
 
     if (success) {
       _clear();
-      _storeProvider.clear();
+      storeProvider.clear();
 
       showMessageDialog(
         context,

@@ -3,6 +3,7 @@ import 'package:montana_mobile/pages/catalogue/partials/empty_message.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/pages/pqrs/partials/message_card.dart';
 import 'package:montana_mobile/pages/pqrs/partials/message_form.dart';
+import 'package:montana_mobile/providers/connection_provider.dart';
 import 'package:montana_mobile/providers/pqrs_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:provider/provider.dart';
@@ -24,13 +25,16 @@ class _MessagesPageState extends State<MessagesPage> {
 
       final idPqrs = ModalRoute.of(context).settings.arguments as int;
       final pqrsProvider = Provider.of<PqrsProvider>(context, listen: false);
-      pqrsProvider.loadTicket(idPqrs);
+      final connectionProvider =
+          Provider.of<ConnectionProvider>(context, listen: false);
+      pqrsProvider.loadTicket(idPqrs, local: connectionProvider.isNotConnected);
     }();
   }
 
   @override
   Widget build(BuildContext context) {
     final pqrsProvider = Provider.of<PqrsProvider>(context);
+    final connectionProvider = Provider.of<ConnectionProvider>(context);
 
     return Scaffold(
       backgroundColor: CustomTheme.grey3Color,
@@ -44,13 +48,17 @@ class _MessagesPageState extends State<MessagesPage> {
                 ? const LoadingContainer()
                 : pqrsProvider.ticket == null
                     ? EmptyMessage(
-                        onPressed: () =>
-                            pqrsProvider.loadTicket(pqrsProvider.ticket.idPqrs),
+                        onPressed: () => pqrsProvider.loadTicket(
+                          pqrsProvider.ticket.idPqrs,
+                          local: connectionProvider.isNotConnected,
+                        ),
                         message: 'No hay información.',
                       )
                     : RefreshIndicator(
-                        onRefresh: () =>
-                            pqrsProvider.loadTicket(pqrsProvider.ticket.idPqrs),
+                        onRefresh: () => pqrsProvider.loadTicket(
+                          pqrsProvider.ticket.idPqrs,
+                          local: connectionProvider.isNotConnected,
+                        ),
                         color: Theme.of(context).primaryColor,
                         child: _MessagesList(),
                       ),

@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 import 'package:montana_mobile/models/message.dart';
 import 'package:montana_mobile/models/ticket.dart';
+import 'package:montana_mobile/providers/database_provider.dart';
 import 'package:montana_mobile/utils/preferences.dart';
 import 'package:montana_mobile/utils/utils.dart';
 
@@ -123,23 +124,28 @@ class PqrsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> loadTickets() async {
+  Future<void> loadTickets({@required bool local}) async {
     _tickets = [];
     _sortBy = SortValue.RECENT_FIRST;
     _isLoadingTickets = true;
     notifyListeners();
-    _tickets = await getTickets();
+
+    _tickets = local ? await getTicketsLocal() : await getTickets();
+
     _sortTickets();
     _isLoadingTickets = false;
     notifyListeners();
   }
 
-  Future<void> loadTicket(int id) async {
+  Future<void> loadTicket(int id, {@required bool local}) async {
     _ticket = null;
     _isLoadingTicket = true;
     notifyListeners();
 
-    _ticket = await getTicketWithMessages(id);
+    _ticket = local
+        ? await getTicketWithMessagesLocal(id)
+        : await getTicketWithMessages(id);
+
     _ticket.mensajes.sort((Mensaje mensaje, Mensaje previus) {
       return mensaje.createdAt.compareTo(previus.createdAt) * -1;
     });
@@ -156,12 +162,22 @@ class PqrsProvider with ChangeNotifier {
     return responseTicketsFromJson(response.body).tickets;
   }
 
+  Future<List<Ticket>> getTicketsLocal() async {
+    // TODO
+    return [];
+  }
+
   Future<Ticket> getTicketWithMessages(int id) async {
     final url = Uri.parse('$_url/pqrs/$id');
     final response = await http.get(url, headers: _preferences.signedHeaders);
 
     if (response.statusCode != 200) return null;
     return responseTicketFromJson(response.body).ticket;
+  }
+
+  Future<Ticket> getTicketWithMessagesLocal(int id) async {
+    // TODO
+    return null;
   }
 }
 

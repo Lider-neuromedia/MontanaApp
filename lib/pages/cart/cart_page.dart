@@ -4,8 +4,11 @@ import 'package:montana_mobile/pages/cart/checkout_modal.dart';
 import 'package:montana_mobile/pages/catalogue/partials/action_button.dart';
 import 'package:montana_mobile/providers/cart_provider.dart';
 import 'package:montana_mobile/providers/clients_provider.dart';
+import 'package:montana_mobile/providers/connection_provider.dart';
+import 'package:montana_mobile/providers/database_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:montana_mobile/utils/utils.dart';
+import 'package:montana_mobile/widgets/image_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:fluttericon/maki_icons.dart';
 
@@ -67,9 +70,12 @@ class ClientDescription extends StatelessWidget {
         );
     final clientsProvider = Provider.of<ClientsProvider>(context);
     final cartProvider = Provider.of<CartProvider>(context);
+    final connectionProvider = Provider.of<ConnectionProvider>(context);
 
     return FutureBuilder(
-      future: clientsProvider.getClient(cartProvider.clientId),
+      future: connectionProvider.isNotConnected
+          ? clientsProvider.getClientLocal(cartProvider.clientId)
+          : clientsProvider.getClient(cartProvider.clientId),
       builder: (_, AsyncSnapshot<Cliente> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Container();
@@ -281,11 +287,8 @@ class _CartItemHeader extends StatelessWidget {
                   borderRadius: const BorderRadius.all(
                     const Radius.circular(10.0),
                   ),
-                  child: FadeInImage(
-                    placeholder:
-                        const AssetImage("assets/images/placeholder.png"),
-                    image: NetworkImage(cartProduct.product.image),
-                    width: double.infinity,
+                  child: ImageWidget(
+                    imageUrl: cartProduct.product.image,
                     fit: BoxFit.cover,
                   ),
                 ),

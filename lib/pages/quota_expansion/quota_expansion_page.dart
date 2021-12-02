@@ -7,6 +7,7 @@ import 'package:montana_mobile/pages/pqrs/partials/dropdown_pqrs.dart';
 import 'package:montana_mobile/pages/quota_expansion/partials/continue_button.dart';
 import 'package:montana_mobile/pages/quota_expansion/partials/file_button.dart';
 import 'package:montana_mobile/providers/clients_provider.dart';
+import 'package:montana_mobile/providers/connection_provider.dart';
 import 'package:montana_mobile/providers/quota_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:montana_mobile/utils/preferences.dart';
@@ -27,10 +28,10 @@ class _QuotaExpansionPageState extends State<QuotaExpansionPage> {
       await Future.delayed(Duration.zero);
 
       final quotaProvider = Provider.of<QuotaProvider>(context, listen: false);
-      final clientsProvider = Provider.of<ClientsProvider>(
-        context,
-        listen: false,
-      );
+      final clientsProvider =
+          Provider.of<ClientsProvider>(context, listen: false);
+      final connectionProvider =
+          Provider.of<ConnectionProvider>(context, listen: false);
 
       quotaProvider.clienteId = null;
       quotaProvider.monto = '0';
@@ -39,9 +40,15 @@ class _QuotaExpansionPageState extends State<QuotaExpansionPage> {
       quotaProvider.docCamaraCom = null;
       quotaProvider.clientes = [];
 
-      clientsProvider.getSellerClients().then((clients) {
-        quotaProvider.clientes = clients;
-      });
+      if (connectionProvider.isNotConnected) {
+        clientsProvider.getSellerClientsLocal().then((clients) {
+          quotaProvider.clientes = clients;
+        });
+      } else {
+        clientsProvider.getSellerClients().then((clients) {
+          quotaProvider.clientes = clients;
+        });
+      }
     }();
   }
 
@@ -135,6 +142,7 @@ class _SubmitAction extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final quotaProvider = Provider.of<QuotaProvider>(context);
+    final connectionProvider = Provider.of<ConnectionProvider>(context);
     return quotaProvider.isLoading
         ? LoadingContainer()
         : Center(
@@ -144,7 +152,11 @@ class _SubmitAction extends StatelessWidget {
                 label: 'Enviar',
                 icon: Icons.arrow_forward,
                 onPressed: quotaProvider.canSend
-                    ? () => _createQuota(context, quotaProvider)
+                    ? () => _createQuota(
+                          context,
+                          quotaProvider,
+                          connectionProvider,
+                        )
                     : null,
               ),
             ),
@@ -152,9 +164,14 @@ class _SubmitAction extends StatelessWidget {
   }
 
   Future<void> _createQuota(
-      BuildContext context, QuotaProvider quotaProvider) async {
+    BuildContext context,
+    QuotaProvider quotaProvider,
+    ConnectionProvider connectionProvider,
+  ) async {
     quotaProvider.isLoading = true;
-    final success = await quotaProvider.createQuotaExpansion();
+    final success = await quotaProvider.createQuotaExpansion(
+      local: connectionProvider.isNotConnected,
+    );
     quotaProvider.isLoading = false;
 
     if (!success) {

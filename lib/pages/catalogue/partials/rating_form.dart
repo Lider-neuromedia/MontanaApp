@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:montana_mobile/models/question.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/pages/catalogue/partials/section_card.dart';
+import 'package:montana_mobile/providers/connection_provider.dart';
 import 'package:montana_mobile/providers/rating_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:montana_mobile/utils/utils.dart';
@@ -18,6 +19,7 @@ class RatingForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ratingProvider = Provider.of<RatingProvider>(context);
+    final connectionProvider = Provider.of<ConnectionProvider>(context);
     final titleStyle = Theme.of(context).textTheme.headline6.copyWith(
           color: Theme.of(context).textTheme.bodyText1.color,
           fontWeight: FontWeight.w700,
@@ -59,9 +61,10 @@ class RatingForm extends StatelessWidget {
                       primary: Theme.of(context).primaryColor,
                       shape: StadiumBorder(),
                     ),
-                    onPressed: ratingProvider.canSend
-                        ? () => rateProduct(context, ratingProvider)
-                        : null,
+                    onPressed:
+                        connectionProvider.isConnected && ratingProvider.canSend
+                            ? () => rateProduct(context, ratingProvider)
+                            : null,
                   ),
           )
         ],

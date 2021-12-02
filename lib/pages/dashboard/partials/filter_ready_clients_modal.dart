@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:montana_mobile/providers/connection_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:montana_mobile/providers/dashboard_provider.dart';
 import 'package:montana_mobile/widgets/DropdownList.dart';
@@ -9,11 +10,9 @@ class FilterReadyClientsModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final size = MediaQuery.of(context).size;
     final dashboardProvider = Provider.of<DashboardProvider>(context);
 
     return Container(
-      // height: size.height / 2,
       padding: const EdgeInsets.all(20.0),
       decoration: const BoxDecoration(
         color: Colors.white,
@@ -58,7 +57,13 @@ class FilterReadyClientsModal extends StatelessWidget {
             label: 'Filtrar',
             onPressed: () {
               Navigator.pop(context);
-              dashboardProvider.loadDashboardResume();
+              final connectionProvider = Provider.of<ConnectionProvider>(
+                context,
+                listen: false,
+              );
+              dashboardProvider.loadDashboardResume(
+                local: connectionProvider.isNotConnected,
+              );
             },
           ),
         ],

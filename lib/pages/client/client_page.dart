@@ -5,6 +5,7 @@ import 'package:montana_mobile/pages/client/partials/store_card.dart';
 import 'package:montana_mobile/pages/dashboard/partials/buyer_card.dart';
 import 'package:montana_mobile/pages/dashboard/partials/card_data.dart';
 import 'package:montana_mobile/providers/clients_provider.dart';
+import 'package:montana_mobile/providers/connection_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:provider/provider.dart';
 
@@ -13,6 +14,7 @@ class ClientPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final connectionProvider = Provider.of<ConnectionProvider>(context);
     final clientsProvider = Provider.of<ClientsProvider>(context);
     final client = ModalRoute.of(context).settings.arguments as Cliente;
 
@@ -21,7 +23,9 @@ class ClientPage extends StatelessWidget {
         title: Text('Cliente'),
       ),
       body: FutureBuilder(
-        future: clientsProvider.getClient(client.id),
+        future: connectionProvider.isNotConnected
+            ? clientsProvider.getClientLocal(client.id)
+            : clientsProvider.getClient(client.id),
         builder: (_, AsyncSnapshot<Cliente> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const LoadingContainer();

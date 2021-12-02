@@ -4,6 +4,8 @@ import 'package:montana_mobile/models/store.dart';
 import 'package:montana_mobile/pages/catalogue/partials/action_button.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/providers/cart_provider.dart';
+import 'package:montana_mobile/providers/connection_provider.dart';
+import 'package:montana_mobile/providers/database_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:montana_mobile/utils/preferences.dart';
 import 'package:provider/provider.dart';
@@ -44,12 +46,18 @@ class _AddProductModalState extends State<AddProductModal> {
     () async {
       await Future.delayed(Duration.zero);
       _cartProvider = Provider.of<CartProvider>(context, listen: false);
+      final connectionProvider =
+          Provider.of<ConnectionProvider>(context, listen: false);
+
       setState(() => _loading = true);
 
-      final stores = await _cartProvider.getStores(
-          _preferences.session.isVendedor
-              ? _cartProvider.clientId
-              : _preferences.session.id);
+      final clientId = _preferences.session.isVendedor
+          ? _cartProvider.clientId
+          : _preferences.session.id;
+
+      final stores = connectionProvider.isNotConnected
+          ? await _cartProvider.getClientStoresLocal(clientId)
+          : await _cartProvider.getClientStores(clientId);
 
       setState(() {
         _stores = stores;

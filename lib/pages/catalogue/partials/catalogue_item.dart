@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:montana_mobile/models/catalogue.dart';
 import 'package:montana_mobile/pages/catalogue/catalogue_products_page.dart';
 import 'package:montana_mobile/theme/theme.dart';
+import 'package:montana_mobile/widgets/image_widget.dart';
 
 class CatalogueItem extends StatelessWidget {
   const CatalogueItem({
@@ -141,13 +142,7 @@ class _CatalogueCard extends StatelessWidget {
                 borderRadius: const BorderRadius.all(
                   const Radius.circular(10.0),
                 ),
-                child: FadeInImage(
-                  placeholder:
-                      const AssetImage("assets/images/placeholder.png"),
-                  image: NetworkImage(catalogue.imagen),
-                  width: double.infinity,
-                  fit: BoxFit.contain,
-                ),
+                child: ImageWidget(imageUrl: catalogue.imagen),
               ),
               const SizedBox(height: 5.0),
               Text(catalogue.titulo.toUpperCase(), style: textStyle1),

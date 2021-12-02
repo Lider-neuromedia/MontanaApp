@@ -3,6 +3,7 @@ import 'package:montana_mobile/pages/cart/cart_page.dart';
 import 'package:montana_mobile/pages/catalogue/partials/empty_message.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/pages/orders/partials/order_item.dart';
+import 'package:montana_mobile/providers/connection_provider.dart';
 import 'package:montana_mobile/providers/orders_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:montana_mobile/utils/utils.dart';
@@ -22,18 +23,18 @@ class _OrdersPageState extends State<OrdersPage> {
     () async {
       await Future.delayed(Duration.zero);
 
-      final ordersProvider = Provider.of<OrdersProvider>(
-        context,
-        listen: false,
-      );
-      ordersProvider.loadOrders();
+      final ordersProvider =
+          Provider.of<OrdersProvider>(context, listen: false);
+      final connectionProvider =
+          Provider.of<ConnectionProvider>(context, listen: false);
+      ordersProvider.loadOrders(local: connectionProvider.isNotConnected);
     }();
   }
 
   @override
   Widget build(BuildContext context) {
     final ordersProvider = Provider.of<OrdersProvider>(context);
-
+    final connectionProvider = Provider.of<ConnectionProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('Pedidos'),
@@ -46,11 +47,15 @@ class _OrdersPageState extends State<OrdersPage> {
           ? const LoadingContainer()
           : ordersProvider.orders.length == 0
               ? EmptyMessage(
-                  onPressed: () => ordersProvider.loadOrders(),
+                  onPressed: () => ordersProvider.loadOrders(
+                    local: connectionProvider.isNotConnected,
+                  ),
                   message: 'No hay pedidos.',
                 )
               : RefreshIndicator(
-                  onRefresh: () => ordersProvider.loadOrders(),
+                  onRefresh: () => ordersProvider.loadOrders(
+                    local: connectionProvider.isNotConnected,
+                  ),
                   color: Theme.of(context).primaryColor,
                   child: Column(
                     children: [
@@ -79,12 +84,10 @@ class _ListOrders extends StatelessWidget {
           bottom: 100.0,
         ),
         itemCount: ordersProvider.orders.length,
-        itemBuilder: (_, index) {
-          return OrderItem(order: ordersProvider.orders[index]);
-        },
-        separatorBuilder: (_, index) {
-          return const SizedBox(height: 10.0);
-        },
+        itemBuilder: (_, index) => OrderItem(
+          order: ordersProvider.orders[index],
+        ),
+        separatorBuilder: (_, i) => const SizedBox(height: 10.0),
       ),
     );
   }

@@ -206,6 +206,11 @@ class StoreProvider with ChangeNotifier {
     return response.statusCode == 200;
   }
 
+  Future<bool> saveStoresLocal() async {
+    // TODO
+    return false;
+  }
+
   Future<bool> updateStore() async {
     final url = Uri.parse('$_url/tiendas/${_storeUpdate.idTiendas}');
 
@@ -224,5 +229,10 @@ class StoreProvider with ChangeNotifier {
     );
 
     return response.statusCode == 200;
+  }
+
+  Future<bool> updateStoreLocal() async {
+    // TODO
+    return false;
   }
 }

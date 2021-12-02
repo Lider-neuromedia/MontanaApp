@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 import 'package:montana_mobile/models/client.dart';
+import 'package:montana_mobile/providers/database_provider.dart';
 import 'package:montana_mobile/providers/validation_field.dart';
 import 'package:montana_mobile/utils/preferences.dart';
 
@@ -81,7 +82,7 @@ class PqrsTicketProvider with ChangeNotifier {
     return true;
   }
 
-  Future<bool> createPqrs() async {
+  Future<bool> createPqrs({@required bool local}) async {
     final url = Uri.parse('$_url/pqrs');
     Map<String, dynamic> data = {
       'mensaje': _message.value,
@@ -92,7 +93,7 @@ class PqrsTicketProvider with ChangeNotifier {
       data['vendedor'] = _preferences.session.id;
       data['cliente'] = clienteId;
     } else {
-      final sellerId = await getSellerId();
+      final sellerId = local ? await getSellerIdLocal() : await getSellerId();
 
       if (sellerId == null) return false;
 
@@ -117,6 +118,11 @@ class PqrsTicketProvider with ChangeNotifier {
 
     final decodedResponse = json.decode(response.body);
     return decodedResponse['id'];
+  }
+
+  Future<int> getSellerIdLocal() async {
+    // TODO
+    return null;
   }
 }
 

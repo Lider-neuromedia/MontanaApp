@@ -2,9 +2,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:montana_mobile/models/question.dart';
 import 'package:montana_mobile/models/rating.dart';
+import 'package:montana_mobile/providers/database_provider.dart';
 import 'package:montana_mobile/utils/preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
+import 'package:montana_mobile/models/question_rating.dart' as vp;
 
 class RatingProvider with ChangeNotifier {
   final String _url = dotenv.env['API_URL'];
@@ -55,15 +57,19 @@ class RatingProvider with ChangeNotifier {
     return true;
   }
 
-  Future<void> loadData(int catalogId, int productId) async {
+  Future<void> loadData(int catalogId, int productId,
+      {@required bool local}) async {
     _isLoading = true;
     _valoracion = null;
     _rating = null;
     notifyListeners();
 
     final user = _preferences.session;
-    final questions = await getQuestions(catalogId);
-    _rating = await getRatings(productId);
+    final questions = local
+        ? await getQuestionsLocal(catalogId)
+        : await getQuestions(catalogId);
+    _rating =
+        local ? await getRatingsLocal(productId) : await getRatings(productId);
 
     _valoracion = Valoracion(
       user.id,
@@ -86,12 +92,53 @@ class RatingProvider with ChangeNotifier {
     return reponsePreguntasFromJson(response.body).preguntas;
   }
 
+  Future<List<Pregunta>> getQuestionsLocal(int catalogueId) async {
+    final db = await DatabaseProvider.db.database;
+    List<Map<String, Object>> list = await db.query(
+      'questions',
+      where: 'catalogo = ?',
+      whereArgs: [catalogueId],
+    );
+    return List<Pregunta>.from(list.map((x) => Pregunta.fromJson(x)));
+  }
+
   Future<Rating> getRatings(int productId) async {
     final url = Uri.parse('$_url/getProductoValoraciones/$productId');
     final response = await http.get(url, headers: _preferences.signedHeaders);
 
     if (response.statusCode != 200) return null;
     return responseValoracionesFromJson(response.body);
+  }
+
+  Future<Rating> getRatingsLocal(int productId) async {
+    final db = await DatabaseProvider.db.database;
+    final response = await db.query(
+      'ratings',
+      where: 'producto_id = ?',
+      whereArgs: [productId],
+    );
+
+    if (response.length == 0) {
+      return Rating(
+        productoId: productId.toString(),
+        cantidadValoraciones: 0,
+        usuarios: [],
+        valoraciones: [],
+      );
+    }
+
+    Map<String, Object> record = response.first;
+    Map<String, Object> recordTemp = Map<String, Object>.of(record);
+
+    final usuarios = jsonDecode(recordTemp['usuarios']);
+    final valoraciones = jsonDecode(recordTemp["valoraciones"]);
+
+    recordTemp['usuarios'] = List<int>.from(usuarios.map((x) => x));
+    recordTemp['valoraciones'] = List<vp.ValoracionPregunta>.from(
+      valoraciones.map((x) => vp.ValoracionPregunta.fromJson(x)),
+    );
+
+    return Rating.fromJson(recordTemp);
   }
 
   Future<bool> saveRating() async {

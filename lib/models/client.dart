@@ -122,9 +122,9 @@ class Cliente {
       name: json["name"],
       apellidos: json["apellidos"],
       email: json["email"],
-      tipoIdentificacion: json["tipo_identificacion"] ?? null,
-      dni: json["dni"] ?? null,
-      nit: json["nit"] ?? null,
+      tipoIdentificacion: json["tipo_identificacion"] ?? '',
+      dni: json["dni"] ?? '',
+      nit: json["nit"] ?? '',
       userData: userData,
       vendedorId: json["id_vendedor_cliente"] ?? null,
       vendedor:

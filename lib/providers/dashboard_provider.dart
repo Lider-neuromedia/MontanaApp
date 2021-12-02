@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 import 'package:montana_mobile/models/dashboard_resume.dart';
+import 'package:montana_mobile/providers/database_provider.dart';
 import 'package:montana_mobile/utils/preferences.dart';
 
 class DashboardProvider with ChangeNotifier {
@@ -44,12 +47,15 @@ class DashboardProvider with ChangeNotifier {
   DashboardResumen _resumen;
   DashboardResumen get resumen => _resumen;
 
-  Future<void> loadDashboardResume() async {
+  Future<void> loadDashboardResume({@required bool local}) async {
     _resumen = null;
     _isLoading = true;
     _currentClientsReadyDate = clientsReadyDate;
     notifyListeners();
-    _resumen = await getDashboardResume();
+
+    _resumen =
+        local ? await getDashboardResumeLocal() : await getDashboardResume();
+
     _isLoading = false;
     notifyListeners();
   }
@@ -68,6 +74,31 @@ class DashboardProvider with ChangeNotifier {
 
     if (response.statusCode != 200) return null;
     return dashboardResumenFromJson(response.body);
+  }
+
+  Future<DashboardResumen> getDashboardResumeLocal() async {
+    final resume =
+        await DatabaseProvider.db.getRecordById('dashboard_resume', 1);
+
+    if (resume == null) {
+      return DashboardResumen(
+        cantidadClientes: 0,
+        cantidadClientesAtendidos: 0,
+        cantidadTiendas: 0,
+        cantidadPqrs: 0,
+        cantidadPedidos: CantidadPedidos(
+          realizados: 0,
+          aprobados: 0,
+          rechazados: 0,
+          pendientes: 0,
+        ),
+      );
+    }
+
+    Map<String, Object> resumeTemp = Map<String, Object>.of(resume);
+    resumeTemp['cantidad_pedidos'] = jsonDecode(resumeTemp['cantidad_pedidos']);
+
+    return DashboardResumen.fromJson(resumeTemp);
   }
 }
 

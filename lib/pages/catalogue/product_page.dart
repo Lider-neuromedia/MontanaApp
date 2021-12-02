@@ -6,11 +6,14 @@ import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/pages/catalogue/partials/rating_form.dart';
 import 'package:montana_mobile/pages/catalogue/partials/ratings.dart';
 import 'package:montana_mobile/pages/catalogue/partials/section_card.dart';
+import 'package:montana_mobile/providers/connection_provider.dart';
 import 'package:montana_mobile/providers/products_provider.dart';
 import 'package:montana_mobile/providers/rating_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:montana_mobile/utils/utils.dart';
 import 'package:montana_mobile/widgets/cart_icon.dart';
+import 'package:montana_mobile/widgets/image_ink_widget.dart';
+import 'package:montana_mobile/widgets/image_widget.dart';
 import 'package:provider/provider.dart';
 
 class ProductPage extends StatefulWidget {
@@ -34,18 +37,22 @@ class _ProductPageState extends State<ProductPage> {
   }
 
   void _loadData(BuildContext context) {
-    final productsProvider = Provider.of<ProductsProvider>(
-      context,
-      listen: false,
-    );
+    final productsProvider =
+        Provider.of<ProductsProvider>(context, listen: false);
+    final connectionProvider =
+        Provider.of<ConnectionProvider>(context, listen: false);
 
     _productArgs = ModalRoute.of(context).settings.arguments as ProductPageArgs;
-    productsProvider.loadProduct(_productArgs.productId);
+    productsProvider.loadProduct(
+      _productArgs.productId,
+      local: connectionProvider.isNotConnected,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final productsProvider = Provider.of<ProductsProvider>(context);
+    final connectionProvider = Provider.of<ConnectionProvider>(context);
 
     return Scaffold(
       backgroundColor: CustomTheme.grey3Color,
@@ -60,14 +67,18 @@ class _ProductPageState extends State<ProductPage> {
           : productsProvider.product == null
               ? EmptyMessage(
                   message: 'No hay información.',
-                  onPressed: () =>
-                      productsProvider.loadProduct(_productArgs.productId),
+                  onPressed: () => productsProvider.loadProduct(
+                    _productArgs.productId,
+                    local: connectionProvider.isNotConnected,
+                  ),
                 )
               : RefreshIndicator(
                   color: Theme.of(context).primaryColor,
                   child: _ProductContent(product: productsProvider.product),
-                  onRefresh: () =>
-                      productsProvider.loadProduct(_productArgs.productId),
+                  onRefresh: () => productsProvider.loadProduct(
+                    _productArgs.productId,
+                    local: connectionProvider.isNotConnected,
+                  ),
                 ),
     );
   }
@@ -192,14 +203,15 @@ class __RatingsContentState extends State<_RatingsContent> {
     () async {
       await Future.delayed(Duration.zero);
 
-      final ratingProvider = Provider.of<RatingProvider>(
-        context,
-        listen: false,
-      );
+      final ratingProvider =
+          Provider.of<RatingProvider>(context, listen: false);
+      final connectionProvider =
+          Provider.of<ConnectionProvider>(context, listen: false);
 
       ratingProvider.loadData(
         widget.product.catalogo,
         widget.product.idProducto,
+        local: connectionProvider.isNotConnected,
       );
     }();
   }
@@ -207,6 +219,7 @@ class __RatingsContentState extends State<_RatingsContent> {
   @override
   Widget build(BuildContext context) {
     final ratingProvider = Provider.of<RatingProvider>(context);
+    final connectionProvider = Provider.of<ConnectionProvider>(context);
 
     return Container(
       child: ratingProvider.isLoading
@@ -217,6 +230,7 @@ class __RatingsContentState extends State<_RatingsContent> {
                   onPressed: () => ratingProvider.loadData(
                     widget.product.catalogo,
                     widget.product.idProducto,
+                    local: connectionProvider.isNotConnected,
                   ),
                 )
               : Column(
@@ -229,6 +243,7 @@ class __RatingsContentState extends State<_RatingsContent> {
                             onCompleted: () => ratingProvider.loadData(
                               widget.product.catalogo,
                               widget.product.idProducto,
+                              local: connectionProvider.isNotConnected,
                             ),
                           ),
                   ],
@@ -315,12 +330,7 @@ class __GalleryProductState extends State<_GalleryProduct> {
             padding: const EdgeInsets.all(10.0),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(5.0),
-              child: FadeInImage(
-                placeholder: const AssetImage("assets/images/placeholder.png"),
-                image: NetworkImage(selectedImage),
-                width: double.infinity,
-                fit: BoxFit.contain,
-              ),
+              child: ImageWidget(imageUrl: selectedImage),
             ),
           ),
           const SizedBox(height: 10.0),
@@ -335,14 +345,8 @@ class __GalleryProductState extends State<_GalleryProduct> {
                       final image = widget.product.imagenes[index].image;
                       final imageWidget = Material(
                         child: InkWell(
-                          onTap: () {
-                            setState(() => selectedImage = image);
-                          },
-                          child: Ink.image(
-                            image: NetworkImage(image),
-                            fit: BoxFit.cover,
-                            width: 100.0,
-                          ),
+                          onTap: () => setState(() => selectedImage = image),
+                          child: ImageInkWidget(imageUrl: image),
                         ),
                       );
 

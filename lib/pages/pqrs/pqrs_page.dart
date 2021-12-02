@@ -4,6 +4,7 @@ import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/pages/pqrs/create_pqrs_page.dart';
 import 'package:montana_mobile/pages/pqrs/partials/pqrs_card.dart';
 import 'package:montana_mobile/pages/pqrs/partials/pqrs_filter.dart';
+import 'package:montana_mobile/providers/connection_provider.dart';
 import 'package:montana_mobile/providers/pqrs_provider.dart';
 import 'package:montana_mobile/widgets/scaffold_logo.dart';
 import 'package:montana_mobile/widgets/search_box.dart';
@@ -21,13 +22,16 @@ class _PqrsPageState extends State<PqrsPage> {
     () async {
       await Future.delayed(Duration.zero);
 
+      final connectionProvider =
+          Provider.of<ConnectionProvider>(context, listen: false);
       final pqrsProvider = Provider.of<PqrsProvider>(context, listen: false);
-      pqrsProvider.loadTickets();
+      pqrsProvider.loadTickets(local: connectionProvider.isNotConnected);
     }();
   }
 
   @override
   Widget build(BuildContext context) {
+    final connectionProvider = Provider.of<ConnectionProvider>(context);
     final pqrsProvider = Provider.of<PqrsProvider>(context);
 
     return Scaffold(
@@ -44,11 +48,15 @@ class _PqrsPageState extends State<PqrsPage> {
           ? const LoadingContainer()
           : pqrsProvider.tickets.length == 0
               ? EmptyMessage(
-                  onPressed: () => pqrsProvider.loadTickets(),
+                  onPressed: () => pqrsProvider.loadTickets(
+                    local: connectionProvider.isNotConnected,
+                  ),
                   message: 'No hay PQRS.',
                 )
               : RefreshIndicator(
-                  onRefresh: () => pqrsProvider.loadTickets(),
+                  onRefresh: () => pqrsProvider.loadTickets(
+                    local: connectionProvider.isNotConnected,
+                  ),
                   color: Theme.of(context).primaryColor,
                   child: _PqrsContent(),
                 ),

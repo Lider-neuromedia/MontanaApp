@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:montana_mobile/pages/catalogue/partials/empty_message.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/pages/catalogue/partials/product_item.dart';
+import 'package:montana_mobile/providers/connection_provider.dart';
 import 'package:montana_mobile/providers/show_room_provider.dart';
 import 'package:montana_mobile/widgets/cart_icon.dart';
 import 'package:montana_mobile/widgets/scaffold_logo.dart';
@@ -20,17 +21,21 @@ class _ShowRoomPageState extends State<ShowRoomPage> {
     () async {
       await Future.delayed(Duration.zero);
 
-      final showRoomProvider = Provider.of<ShowRoomProvider>(
-        context,
-        listen: false,
+      final showRoomProvider =
+          Provider.of<ShowRoomProvider>(context, listen: false);
+      final connectionProvider =
+          Provider.of<ConnectionProvider>(context, listen: false);
+
+      showRoomProvider.loadShowRoomProducts(
+        local: connectionProvider.isNotConnected,
       );
-      showRoomProvider.loadShowRoomProducts();
     }();
   }
 
   @override
   Widget build(BuildContext context) {
     final showRoomProvider = Provider.of<ShowRoomProvider>(context);
+    final connectionProvider = Provider.of<ConnectionProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -44,11 +49,15 @@ class _ShowRoomPageState extends State<ShowRoomPage> {
           ? const LoadingContainer()
           : showRoomProvider.products.length == 0
               ? EmptyMessage(
-                  onPressed: () => showRoomProvider.loadShowRoomProducts(),
+                  onPressed: () => showRoomProvider.loadShowRoomProducts(
+                    local: connectionProvider.isNotConnected,
+                  ),
                   message: 'No hay productos disponibles en ShowRoom.',
                 )
               : RefreshIndicator(
-                  onRefresh: () => showRoomProvider.loadShowRoomProducts(),
+                  onRefresh: () => showRoomProvider.loadShowRoomProducts(
+                    local: connectionProvider.isNotConnected,
+                  ),
                   color: Theme.of(context).primaryColor,
                   child: _ProductsList(),
                 ),

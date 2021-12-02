@@ -1,23 +1,15 @@
+import 'dart:async';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
-import 'package:montana_mobile/pages/stores/store_form_page.dart';
+import 'package:provider/provider.dart';
+import 'package:navigation_history_observer/navigation_history_observer.dart';
+import 'package:montana_mobile/providers/database_provider.dart';
+import 'package:montana_mobile/providers/connection_provider.dart';
 import 'package:montana_mobile/providers/dashboard_provider.dart';
 import 'package:montana_mobile/providers/store_provider.dart';
 import 'package:montana_mobile/providers/stores_provider.dart';
-import 'package:montana_mobile/utils/utils.dart';
-import 'package:provider/provider.dart';
-import 'package:montana_mobile/pages/cart/cart_page.dart';
-import 'package:montana_mobile/pages/catalogue/catalogue_products_page.dart';
-import 'package:montana_mobile/pages/catalogue/product_page.dart';
-import 'package:montana_mobile/pages/client/client_page.dart';
-import 'package:montana_mobile/pages/home/home_page.dart';
-import 'package:montana_mobile/pages/orders/order_page.dart';
-import 'package:montana_mobile/pages/pqrs/create_pqrs_page.dart';
-import 'package:montana_mobile/pages/pqrs/messages_page.dart';
-import 'package:montana_mobile/pages/session/login_page.dart';
-import 'package:montana_mobile/pages/session/password_page.dart';
-import 'package:montana_mobile/pages/session/reset_password_page.dart';
 import 'package:montana_mobile/providers/cart_provider.dart';
 import 'package:montana_mobile/providers/catalogues_provider.dart';
 import 'package:montana_mobile/providers/clients_provider.dart';
@@ -34,10 +26,22 @@ import 'package:montana_mobile/providers/rating_provider.dart';
 import 'package:montana_mobile/providers/reset_password_provider.dart';
 import 'package:montana_mobile/providers/session_provider.dart';
 import 'package:montana_mobile/providers/show_room_provider.dart';
+import 'package:montana_mobile/utils/utils.dart';
+import 'package:montana_mobile/utils/preferences.dart';
+import 'package:montana_mobile/pages/stores/store_form_page.dart';
+import 'package:montana_mobile/pages/cart/cart_page.dart';
+import 'package:montana_mobile/pages/catalogue/catalogue_products_page.dart';
+import 'package:montana_mobile/pages/catalogue/product_page.dart';
+import 'package:montana_mobile/pages/client/client_page.dart';
+import 'package:montana_mobile/pages/home/home_page.dart';
+import 'package:montana_mobile/pages/orders/order_page.dart';
+import 'package:montana_mobile/pages/pqrs/create_pqrs_page.dart';
+import 'package:montana_mobile/pages/pqrs/messages_page.dart';
+import 'package:montana_mobile/pages/session/login_page.dart';
+import 'package:montana_mobile/pages/session/password_page.dart';
+import 'package:montana_mobile/pages/session/reset_password_page.dart';
 import 'package:montana_mobile/services/push_notification_service.dart';
 import 'package:montana_mobile/theme/theme.dart';
-import 'package:montana_mobile/utils/preferences.dart';
-import 'package:navigation_history_observer/navigation_history_observer.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,10 +51,12 @@ Future<void> main() async {
   await preferences.initialize();
   await (SessionProvider()).isUserSessionValid();
   await PushNotificationService.initializeApp();
+  // await DatabaseProvider.db.dropDatabase();
 
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => ConnectionProvider()),
         ChangeNotifierProvider(create: (_) => NavigationProvider()),
         ChangeNotifierProvider(create: (_) => LoginProvider()),
         ChangeNotifierProvider(create: (_) => PasswordProvider()),
@@ -82,49 +88,107 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final _scaffoldKey = GlobalKey<ScaffoldMessengerState>();
+  final _preferences = Preferences();
   final historyObserver = NavigationHistoryObserver();
+  StreamSubscription<ConnectivityResult> _subscription;
 
   @override
   void initState() {
     super.initState();
 
     () async {
+      final connectivityResult = await (Connectivity().checkConnectivity());
+      final isConnected = connectivityResult != ConnectivityResult.none;
+      _updateConnectionProvider(connectivityResult != ConnectivityResult.none);
+
+      if (isConnected) _syncDataNow();
+
       await Future.delayed(Duration.zero);
-
-      final navProvider =
-          Provider.of<NavigationProvider>(context, listen: false);
-      final pqrsProvider = Provider.of<PqrsProvider>(context, listen: false);
-
-      PushNotificationService.messageStream.listen((message) {
-        final currentRoute = historyObserver.top.settings.name;
-
-        if (message.data['type'] == 'pqrs-message') {
-          final idPqrs = pqrsProvider.ticket?.idPqrs;
-          final messageIdPqrs = int.parse(message.data['id_pqrs']);
-
-          // Mostrar snackbar.
-          if (currentRoute != MessagesPage.route ||
-              (currentRoute == MessagesPage.route && idPqrs != messageIdPqrs)) {
-            _scaffoldKey.currentState.showSnackBar(snackbar(
-              message.notification.title,
-              message.notification.body,
-              label: 'Aceptar',
-              action: () {},
-            ));
-          }
-
-          // Si la ruta es el listado de pqrs se recarga.
-          if (currentRoute == HomePage.route && navProvider.currentPage == 5) {
-            pqrsProvider.loadTickets();
-          }
-
-          // Si la ruta es la pantalla de mensajes del pqrs actual se recarga.
-          if (currentRoute == MessagesPage.route && idPqrs == messageIdPqrs) {
-            pqrsProvider.loadTicket(idPqrs);
-          }
-        }
-      });
+      initPushNotifications(context);
     }();
+
+    _subscription = Connectivity().onConnectivityChanged.listen(
+      (ConnectivityResult connectivity) {
+        final isConnected = connectivity != ConnectivityResult.none;
+        _updateConnectionProvider(isConnected);
+
+        if (isConnected) _syncDataNow();
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    super.dispose();
+  }
+
+  void initPushNotifications(BuildContext context) {
+    final navProvider = Provider.of<NavigationProvider>(context, listen: false);
+    final pqrsProvider = Provider.of<PqrsProvider>(context, listen: false);
+    final connectionProvider =
+        Provider.of<ConnectionProvider>(context, listen: false);
+
+    PushNotificationService.messageStream.listen((message) {
+      final currentRoute = historyObserver.top.settings.name;
+
+      if (message.data['type'] == 'pqrs-message') {
+        final idPqrs = pqrsProvider.ticket?.idPqrs;
+        final messageIdPqrs = int.parse(message.data['id_pqrs']);
+
+        // Mostrar snackbar.
+        if (currentRoute != MessagesPage.route ||
+            (currentRoute == MessagesPage.route && idPqrs != messageIdPqrs)) {
+          _scaffoldKey.currentState.showSnackBar(snackbar(
+            message.notification.title,
+            message.notification.body,
+            label: 'Aceptar',
+            action: () {},
+          ));
+        }
+
+        // Si la ruta es el listado de pqrs se recarga.
+        if (currentRoute == HomePage.route && navProvider.currentPage == 5) {
+          pqrsProvider.loadTickets(local: connectionProvider.isNotConnected);
+        }
+
+        // Si la ruta es la pantalla de mensajes del pqrs actual se recarga.
+        if (currentRoute == MessagesPage.route && idPqrs == messageIdPqrs) {
+          pqrsProvider.loadTicket(
+            idPqrs,
+            local: connectionProvider.isNotConnected,
+          );
+        }
+      }
+    });
+  }
+
+  void _updateConnectionProvider(bool isConnected) {
+    final connectionProvider =
+        Provider.of<ConnectionProvider>(context, listen: false);
+    connectionProvider.isConnected = isConnected;
+  }
+
+  Future<void> _syncDataNow() async {
+    final connectionProvider =
+        Provider.of<ConnectionProvider>(context, listen: false);
+
+    if (connectionProvider.isSyncing) return;
+    if (_preferences.token == null) return;
+    // if (!_preferences.canSync) return;
+
+    await connectionProvider.syncData(
+      dashboardProvider: Provider.of<DashboardProvider>(context, listen: false),
+      showRoomProvider: Provider.of<ShowRoomProvider>(context, listen: false),
+      productsProvider: Provider.of<ProductsProvider>(context, listen: false),
+      clientsProvider: Provider.of<ClientsProvider>(context, listen: false),
+      ratingProvider: Provider.of<RatingProvider>(context, listen: false),
+      storesProvider: Provider.of<StoresProvider>(context, listen: false),
+      ordersProvider: Provider.of<OrdersProvider>(context, listen: false),
+      cartProvider: Provider.of<CartProvider>(context, listen: false),
+      cataloguesProvider:
+          Provider.of<CataloguesProvider>(context, listen: false),
+    );
   }
 
   @override
@@ -142,19 +206,72 @@ class _MyAppState extends State<MyApp> {
       theme: (CustomTheme()).theme,
       initialRoute: preferences.initialPage,
       routes: {
-        HomePage.route: (_) => HomePage(),
-        LoginPage.route: (_) => LoginPage(),
-        PasswordPage.route: (_) => PasswordPage(),
-        ResetPasswordPage.route: (_) => ResetPasswordPage(),
-        OrderPage.route: (_) => OrderPage(),
-        CatalogueProductsPage.route: (_) => CatalogueProductsPage(),
-        ProductPage.route: (_) => ProductPage(),
-        CartPage.route: (_) => CartPage(),
-        ClientPage.route: (_) => ClientPage(),
-        CreatePqrsPage.route: (_) => CreatePqrsPage(),
-        MessagesPage.route: (_) => MessagesPage(),
-        StoreFormPage.route: (_) => StoreFormPage(),
+        HomePage.route: (_) => _ScreenWrapper(child: HomePage()),
+        LoginPage.route: (_) => _ScreenWrapper(child: LoginPage()),
+        PasswordPage.route: (_) => _ScreenWrapper(child: PasswordPage()),
+        ResetPasswordPage.route: (_) =>
+            _ScreenWrapper(child: ResetPasswordPage()),
+        OrderPage.route: (_) => _ScreenWrapper(child: OrderPage()),
+        CatalogueProductsPage.route: (_) =>
+            _ScreenWrapper(child: CatalogueProductsPage()),
+        ProductPage.route: (_) => _ScreenWrapper(child: ProductPage()),
+        CartPage.route: (_) => _ScreenWrapper(child: CartPage()),
+        ClientPage.route: (_) => _ScreenWrapper(child: ClientPage()),
+        CreatePqrsPage.route: (_) => _ScreenWrapper(child: CreatePqrsPage()),
+        MessagesPage.route: (_) => _ScreenWrapper(child: MessagesPage()),
+        StoreFormPage.route: (_) => _ScreenWrapper(child: StoreFormPage()),
       },
+    );
+  }
+}
+
+class _ScreenWrapper extends StatelessWidget {
+  const _ScreenWrapper({Key key, @required this.child}) : super(key: key);
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final connectionProvider = Provider.of<ConnectionProvider>(context);
+
+    return connectionProvider.isConnected && connectionProvider.isNotSyncing
+        ? child
+        : Material(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(child: child),
+                connectionProvider.isSyncing
+                    ? connectionProvider.message.isNotEmpty
+                        ? AppMessage(message: connectionProvider.message)
+                        : AppMessage(message: "Sincronizando datos.")
+                    : AppMessage(message: "Sin conexión."),
+              ],
+            ),
+          );
+  }
+}
+
+class AppMessage extends StatelessWidget {
+  const AppMessage({Key key, @required this.message}) : super(key: key);
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.black87,
+      child: Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: Center(
+          child: Text(
+            message,
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

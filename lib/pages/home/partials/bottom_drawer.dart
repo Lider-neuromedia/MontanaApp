@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:fluttericon/web_symbols_icons.dart';
-import 'package:montana_mobile/pages/session/login_page.dart';
-import 'package:montana_mobile/providers/login_provider.dart';
-import 'package:montana_mobile/utils/preferences.dart';
 import 'package:provider/provider.dart';
-import 'package:montana_mobile/pages/home/partials/drawer_item.dart';
+import 'package:montana_mobile/utils/preferences.dart';
+import 'package:montana_mobile/providers/login_provider.dart';
 import 'package:montana_mobile/providers/navigation_provider.dart';
+import 'package:montana_mobile/pages/session/login_page.dart';
+import 'package:montana_mobile/pages/home/partials/drawer_item.dart';
 
 class BottomDrawer extends StatelessWidget {
   const BottomDrawer({Key key}) : super(key: key);
@@ -65,6 +65,7 @@ class BottomDrawer extends StatelessWidget {
                   : () => navigationProvider.currentPage = 4,
             ),
             const SizedBox(width: 20.0),
+            // TODO: Botón de PQRS ocultado.
             // DrawerItem(
             //   title: 'PQRS',
             //   iconData: Octicons.comment_discussion,

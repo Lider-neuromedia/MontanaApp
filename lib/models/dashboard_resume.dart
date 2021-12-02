@@ -23,10 +23,10 @@ class DashboardResumen {
 
   factory DashboardResumen.fromJson(Map<String, dynamic> json) =>
       DashboardResumen(
-        cantidadClientes: json["cantidad_clientes"],
-        cantidadClientesAtendidos: json["cantidad_clientes_atendidos"],
-        cantidadTiendas: json["cantidad_tiendas"],
-        cantidadPqrs: json["cantidad_pqrs"],
+        cantidadClientes: json["cantidad_clientes"] ?? 0,
+        cantidadClientesAtendidos: json["cantidad_clientes_atendidos"] ?? 0,
+        cantidadTiendas: json["cantidad_tiendas"] ?? 0,
+        cantidadPqrs: json["cantidad_pqrs"] ?? 0,
         cantidadPedidos: CantidadPedidos.fromJson(json["cantidad_pedidos"]),
       );
 
@@ -54,10 +54,10 @@ class CantidadPedidos {
 
   factory CantidadPedidos.fromJson(Map<String, dynamic> json) =>
       CantidadPedidos(
-        realizados: json["realizados"],
-        aprobados: json["aprobados"],
-        rechazados: json["rechazados"],
-        pendientes: json["pendientes"],
+        realizados: json["realizados"] ?? 0,
+        aprobados: json["aprobados"] ?? 0,
+        rechazados: json["rechazados"] ?? 0,
+        pendientes: json["pendientes"] ?? 0,
       );
 
   Map<String, dynamic> toJson() => {

@@ -6,6 +6,7 @@ import 'package:montana_mobile/pages/dashboard/partials/buyer_card.dart';
 import 'package:montana_mobile/pages/dashboard/partials/card_data.dart';
 import 'package:montana_mobile/pages/dashboard/partials/card_statistic.dart';
 import 'package:montana_mobile/pages/dashboard/partials/consolidated_orders.dart';
+import 'package:montana_mobile/providers/connection_provider.dart';
 import 'package:montana_mobile/providers/dashboard_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:montana_mobile/utils/preferences.dart';
@@ -19,8 +20,6 @@ class DashboardBuyerPage extends StatefulWidget {
 }
 
 class _DashboardBuyerPageState extends State<DashboardBuyerPage> {
-  final _preferences = Preferences();
-
   @override
   void initState() {
     super.initState();
@@ -30,17 +29,17 @@ class _DashboardBuyerPageState extends State<DashboardBuyerPage> {
 
       final dashboardProvider =
           Provider.of<DashboardProvider>(context, listen: false);
-      dashboardProvider.loadDashboardResume();
+      final connectionProvider =
+          Provider.of<ConnectionProvider>(context, listen: false);
+      dashboardProvider.loadDashboardResume(
+          local: connectionProvider.isNotConnected);
     }();
   }
 
   @override
   Widget build(BuildContext context) {
     final dashboardProvider = Provider.of<DashboardProvider>(context);
-    final titleStyle = Theme.of(context).textTheme.headline5.copyWith(
-          color: CustomTheme.textColor1,
-          fontWeight: FontWeight.w600,
-        );
+    final connectionProvider = Provider.of<ConnectionProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -50,88 +49,111 @@ class _DashboardBuyerPageState extends State<DashboardBuyerPage> {
         ],
       ),
       body: RefreshIndicator(
-        onRefresh: () => dashboardProvider.loadDashboardResume(),
+        onRefresh: () => dashboardProvider.loadDashboardResume(
+          local: connectionProvider.isNotConnected,
+        ),
         color: Theme.of(context).primaryColor,
-        child: ListView(
+        child: _ResumeData(local: connectionProvider.isNotConnected),
+      ),
+    );
+  }
+}
+
+class _ResumeData extends StatelessWidget {
+  _ResumeData({
+    Key key,
+    @required this.local,
+  }) : super(key: key);
+
+  final _preferences = Preferences();
+  final bool local;
+
+  @override
+  Widget build(BuildContext context) {
+    final dashboardProvider = Provider.of<DashboardProvider>(context);
+    final titleStyle = Theme.of(context).textTheme.headline5.copyWith(
+          color: CustomTheme.textColor1,
+          fontWeight: FontWeight.w600,
+        );
+
+    return ListView(
+      children: [
+        const SizedBox(height: 20.0),
+        BuyerCard(client: _preferences.sessionCliente),
+        _CardDataList(
           children: [
-            const SizedBox(height: 20.0),
-            BuyerCard(client: _preferences.sessionCliente),
-            _CardDataList(
-              children: [
-                CardData(
-                  title: 'Cupo preaprobado',
-                  value: '\$4.300.400',
-                  icon: Icons.sentiment_neutral_rounded,
-                  color: CustomTheme.yellowColor,
-                  isMain: false,
-                ),
-                CardData(
-                  title: 'Cupo disponible',
-                  value: '\$3.500.400',
-                  icon: Icons.sentiment_very_satisfied,
-                  color: CustomTheme.greenColor,
-                  isMain: false,
-                ),
-              ],
+            CardData(
+              title: 'Cupo preaprobado',
+              value: '\$4.300.400',
+              icon: Icons.sentiment_neutral_rounded,
+              color: CustomTheme.yellowColor,
+              isMain: false,
             ),
-            _CardDataList(
-              children: [
-                CardData(
-                  title: 'Saldo total deuda',
-                  value: '\$4.300.400',
-                  icon: Icons.error_outline,
-                  color: CustomTheme.purpleColor,
-                  isMain: false,
-                ),
-                CardData(
-                  title: 'Saldo en mora',
-                  value: '\$3.500.400',
-                  icon: Icons.sentiment_dissatisfied_rounded,
-                  color: CustomTheme.redColor,
-                  isMain: false,
-                ),
-              ],
+            CardData(
+              title: 'Cupo disponible',
+              value: '\$3.500.400',
+              icon: Icons.sentiment_very_satisfied,
+              color: CustomTheme.greenColor,
+              isMain: false,
             ),
-            dashboardProvider.isLoading
-                ? const LoadingContainer()
-                : dashboardProvider.resumen == null
-                    ? EmptyMessage(
-                        onPressed: () =>
-                            dashboardProvider.loadDashboardResume(),
-                        message: 'No hay información.',
-                      )
-                    : Column(
-                        children: [
-                          _CardDataList(children: [
-                            CardStatistic(
-                              isMain: true,
-                              title: 'Tiendas Creadas',
-                              value: dashboardProvider.resumen.cantidadTiendas,
-                              label: 'Tiendas',
-                              icon: Icons.storefront,
-                            ),
-                            CardStatistic(
-                              isMain: false,
-                              icon: Octicons.comment_discussion,
-                              title: 'PQRS Generados',
-                              value: dashboardProvider.resumen.cantidadPqrs,
-                              label: 'PQRS',
-                            ),
-                          ]),
-                          const SizedBox(height: 20.0),
-                          Text(
-                            'CONSOLIDADO PEDIDOS',
-                            style: titleStyle,
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: 20.0),
-                          const ConsolidatedOrders(),
-                          const SizedBox(height: 50.0),
-                        ],
-                      ),
           ],
         ),
-      ),
+        _CardDataList(
+          children: [
+            CardData(
+              title: 'Saldo total deuda',
+              value: '\$4.300.400',
+              icon: Icons.error_outline,
+              color: CustomTheme.purpleColor,
+              isMain: false,
+            ),
+            CardData(
+              title: 'Saldo en mora',
+              value: '\$3.500.400',
+              icon: Icons.sentiment_dissatisfied_rounded,
+              color: CustomTheme.redColor,
+              isMain: false,
+            ),
+          ],
+        ),
+        dashboardProvider.isLoading
+            ? const LoadingContainer()
+            : dashboardProvider.resumen == null
+                ? EmptyMessage(
+                    onPressed: () =>
+                        dashboardProvider.loadDashboardResume(local: local),
+                    message: 'No hay información.',
+                  )
+                : Column(
+                    children: [
+                      _CardDataList(children: [
+                        CardStatistic(
+                          isMain: true,
+                          title: 'Tiendas Creadas',
+                          value: dashboardProvider.resumen.cantidadTiendas,
+                          label: 'Tiendas',
+                          icon: Icons.storefront,
+                        ),
+                        CardStatistic(
+                          isMain: false,
+                          icon: Octicons.comment_discussion,
+                          title: 'PQRS Generados',
+                          value: dashboardProvider.resumen.cantidadPqrs,
+                          label: 'PQRS',
+                        ),
+                      ]),
+                      const SizedBox(height: 20.0),
+                      Text(
+                        'CONSOLIDADO PEDIDOS',
+                        style: titleStyle,
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 20.0),
+                      const ConsolidatedOrders(),
+                      const SizedBox(height: 50.0),
+                    ],
+                  ),
+      ],
     );
   }
 }

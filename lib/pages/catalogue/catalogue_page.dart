@@ -3,6 +3,7 @@ import 'package:montana_mobile/pages/catalogue/partials/catalogue_item.dart';
 import 'package:montana_mobile/pages/catalogue/partials/empty_message.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/providers/catalogues_provider.dart';
+import 'package:montana_mobile/providers/connection_provider.dart';
 import 'package:montana_mobile/widgets/cart_icon.dart';
 import 'package:provider/provider.dart';
 
@@ -18,17 +19,20 @@ class _CataloguePageState extends State<CataloguePage> {
 
     () async {
       await Future.delayed(Duration.zero);
-      final cataloguesProvider = Provider.of<CataloguesProvider>(
-        context,
-        listen: false,
-      );
-      cataloguesProvider.loadCatalogues();
+      final cataloguesProvider =
+          Provider.of<CataloguesProvider>(context, listen: false);
+      final connectionProvider =
+          Provider.of<ConnectionProvider>(context, listen: false);
+
+      cataloguesProvider.loadCatalogues(
+          local: connectionProvider.isNotConnected);
     }();
   }
 
   @override
   Widget build(BuildContext context) {
     final cataloguesProvider = Provider.of<CataloguesProvider>(context);
+    final connectionProvider = Provider.of<ConnectionProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -41,11 +45,15 @@ class _CataloguePageState extends State<CataloguePage> {
           ? const LoadingContainer()
           : cataloguesProvider.catalogues.length == 0
               ? EmptyMessage(
-                  onPressed: () => cataloguesProvider.loadCatalogues(),
+                  onPressed: () => cataloguesProvider.loadCatalogues(
+                    local: connectionProvider.isNotConnected,
+                  ),
                   message: 'No hay catálogos disponibles.',
                 )
               : RefreshIndicator(
-                  onRefresh: () => cataloguesProvider.loadCatalogues(),
+                  onRefresh: () => cataloguesProvider.loadCatalogues(
+                    local: connectionProvider.isNotConnected,
+                  ),
                   color: Theme.of(context).primaryColor,
                   child: const _CataloguesList(),
                 ),
@@ -63,13 +71,12 @@ class _CataloguesList extends StatelessWidget {
     return ListView.separated(
       padding: const EdgeInsets.all(20.0),
       itemCount: cataloguesProvider.catalogues.length,
+      separatorBuilder: (_, i) => const SizedBox(height: 30.0),
       itemBuilder: (_, index) {
         return CatalogueItem(
+          key: UniqueKey(),
           catalogue: cataloguesProvider.catalogues[index],
         );
-      },
-      separatorBuilder: (_, index) {
-        return const SizedBox(height: 30.0);
       },
     );
   }

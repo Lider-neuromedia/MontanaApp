@@ -6,6 +6,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 import 'package:http_parser/http_parser.dart';
 import 'package:montana_mobile/models/product.dart';
 import 'package:montana_mobile/models/store.dart';
+import 'package:montana_mobile/providers/database_provider.dart';
 import 'package:montana_mobile/providers/validation_field.dart';
 import 'package:montana_mobile/utils/preferences.dart';
 
@@ -27,6 +28,12 @@ class CartProvider with ChangeNotifier {
       _notes = ValidationField(value: value);
     }
 
+    if (_notes.value != null && _notes.value.isNotEmpty) {
+      _cart.notes = "${_notes.value}";
+    } else {
+      _cart.notes = null;
+    }
+
     notifyListeners();
   }
 
@@ -34,11 +41,10 @@ class CartProvider with ChangeNotifier {
   Cart get cart => _cart;
   List<CartProduct> get products => _cart.products;
 
-  int _catalogueId;
-  int get catalogueId => _catalogueId;
+  int get catalogueId => _cart.catalogueId;
 
   set catalogueId(int value) {
-    _catalogueId = value;
+    _cart.catalogueId = value;
     notifyListeners();
   }
 
@@ -64,11 +70,10 @@ class CartProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Uint8List _signData;
-  Uint8List get signData => _signData;
+  Uint8List get signData => _cart.signData;
 
   set signData(Uint8List value) {
-    _signData = value;
+    _cart.signData = value;
     notifyListeners();
   }
 
@@ -104,7 +109,6 @@ class CartProvider with ChangeNotifier {
   bool get canSend {
     if (_isLoading) return false;
     if (!_cart.isValid) return false;
-    if (_signData == null) return false;
     return true;
   }
 
@@ -113,12 +117,29 @@ class CartProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<List<Tienda>> getStores(int clientId) async {
+  Future<List<Tienda>> getClientStores(int clientId) async {
     final url = Uri.parse('$_url/tiendas-cliente/$clientId');
     final response = await http.get(url, headers: _preferences.signedHeaders);
 
     if (response.statusCode != 200) return [];
     return responseTiendasFromJson(response.body);
+  }
+
+  Future<List<Tienda>> getClientStoresLocal(int clientId) async {
+    final db = await DatabaseProvider.db.database;
+    List<Map<String, Object>> list = await db.query(
+      'stores',
+      where: 'cliente = ?',
+      whereArgs: [clientId],
+    );
+
+    List<Tienda> stores = List<Tienda>.from(list.map((x) {
+      Map<String, Object> row = Map<String, Object>.of(x);
+      row['id_tiendas'] = row['id'];
+      return Tienda.fromJson(row);
+    }));
+
+    return stores;
   }
 
   Future<String> getOrderCode() async {
@@ -130,47 +151,46 @@ class CartProvider with ChangeNotifier {
     return decodedResponse['code'];
   }
 
-  Future<bool> createOrder() async {
+  Future<bool> createOrder(Cart cartCompleted) async {
     final orderCode = await getOrderCode();
+    final user = _preferences.session;
+
     if (orderCode.isEmpty) return false;
 
     final fileFirma = http.MultipartFile.fromBytes(
       'firma',
-      signData,
+      cartCompleted.signData,
       filename: 'firma.png',
       contentType: MediaType('image', 'image/png'),
     );
 
-    final user = _preferences.session;
     final url = Uri.parse('$_url/pedidos');
-
     final request = http.MultipartRequest('POST', url);
     request.headers.addAll(_preferences.signedHeaders);
     request.files.add(fileFirma);
 
     if (user.isVendedor) {
-      request.fields['cliente'] = "${_cart.clientId}";
+      request.fields['cliente'] = "${cartCompleted.clientId}";
       request.fields['vendedor'] = "${user.id}";
-      request.fields['descuento'] = "${_cart.discount}";
-    } else {
+      request.fields['descuento'] = "${cartCompleted.discount}";
+    }
+    if (user.isCliente) {
       final sellerId = await getSellerId();
-
       if (sellerId == null) return false;
-
       request.fields['cliente'] = "${user.id}";
       request.fields['vendedor'] = "$sellerId";
       request.fields['descuento'] = "0";
     }
 
     request.fields['codigo_pedido'] = "$orderCode";
-    request.fields['total_pedido'] = "${_cart.total}";
-    request.fields['forma_pago'] = "${_cart.paymentMethod}";
+    request.fields['total_pedido'] = "${cartCompleted.total}";
+    request.fields['forma_pago'] = "${cartCompleted.paymentMethod}";
 
-    if (_notes.value != null && _notes.value.isNotEmpty) {
-      request.fields['notas'] = "${_notes.value}";
+    if (cartCompleted.notes != null && cartCompleted.notes.isNotEmpty) {
+      request.fields['notas'] = cartCompleted.notes;
     }
 
-    _cart.products.asMap().forEach((int i, CartProduct product) {
+    cartCompleted.products.asMap().forEach((int i, CartProduct product) {
       request.fields['productos[$i][id_producto]'] = "${product.productId}";
       product.stores.asMap().forEach((int j, CartStore store) {
         request.fields['productos[$i][tiendas][$j][id_tienda]'] =
@@ -182,8 +202,30 @@ class CartProvider with ChangeNotifier {
 
     final responseStream = await request.send();
     final response = await http.Response.fromStream(responseStream);
-
     return response.statusCode == 200 || response.statusCode == 201;
+  }
+
+  Future<bool> createOrderLocal(Cart cartCompleted) async {
+    final response = await DatabaseProvider.db.saveRecord('offline_orders', {
+      'content': jsonEncode(cartCompleted.toJson()),
+    });
+    return response != 0;
+  }
+
+  Future<void> syncOfflineOrdersInLocal() async {
+    final db = await DatabaseProvider.db.database;
+    final records = await db.query('offline_orders');
+
+    if (records.isEmpty) return;
+
+    for (final record in records) {
+      final cartId = record['id'];
+      final cart = Cart.fromJson(jsonDecode(record['content']));
+      final isSuccessResponse = await createOrder(cart);
+
+      if (isSuccessResponse) {}
+      await DatabaseProvider.db.deleteRecord('offline_orders', cartId);
+    }
   }
 
   Future<int> getSellerId() async {
@@ -202,7 +244,9 @@ class Cart {
   String paymentMethod;
   int discount;
   List<CartProduct> products;
-  bool isVendedor;
+  Uint8List signData;
+  int catalogueId;
+  String notes;
 
   Cart() {
     paymentMethod = 'contado';
@@ -210,17 +254,53 @@ class Cart {
     products = [];
   }
 
+  Cart.format({
+    this.clientId,
+    this.paymentMethod,
+    this.discount,
+    this.products,
+    this.signData,
+    this.catalogueId,
+    this.notes,
+  });
+
+  factory Cart.fromJson(Map<String, dynamic> json) => Cart.format(
+        clientId: json['client_id'],
+        paymentMethod: json['payment_method'],
+        discount: json['discount'],
+        catalogueId: json['catalogue_id'],
+        // signData: utf8.encode(json['sign_data']),
+        signData: base64Decode(json['sign_data']),
+        notes: json['notes'] ?? '',
+        products: List<CartProduct>.from(
+            json["products"].map((x) => CartProduct.fromJson(x))),
+      );
+
+  Map<String, dynamic> toJson() => {
+        'client_id': clientId,
+        'payment_method': paymentMethod,
+        'discount': discount,
+        'catalogue_id': catalogueId,
+        // 'sign_data': utf8.decode(signData.toList(), allowMalformed: true),
+        'sign_data': base64Encode(signData),
+        'notes': notes,
+        'products': List<dynamic>.from(products.map((x) => x.toJson())),
+      };
+
   void cleanAll() {
     clientId = null;
     paymentMethod = 'contado';
     discount = 0;
     products = [];
+    notes = null;
+    signData = null;
   }
 
   void clean() {
     paymentMethod = 'contado';
     discount = 0;
     products = [];
+    notes = null;
   }
 
   bool get isValid {
@@ -234,6 +314,7 @@ class Cart {
     if (discount < 0 || discount > 100) return false;
     if (paymentMethod.isEmpty) return false;
     if (products.length == 0) return false;
+    if (signData == null) return false;
     return true;
   }
 
@@ -316,9 +397,15 @@ class Cart {
       // Si el producto es nuevo.
       products.add(
         CartProduct(
-          product.idProducto,
-          [CartStore(store.idTiendas, stock, store)],
-          product,
+          productId: product.idProducto,
+          product: product,
+          stores: [
+            CartStore(
+              storeId: store.idTiendas,
+              quantity: stock,
+              store: store,
+            ),
+          ],
         ),
       );
     }
@@ -332,7 +419,11 @@ class Cart {
       if (sIndex == -1) {
         // Si la tienda es nueva.
         products[pIndex].stores.add(
-              CartStore(store.idTiendas, stock, store),
+              CartStore(
+                storeId: store.idTiendas,
+                quantity: stock,
+                store: store,
+              ),
             );
       }
       if (sIndex != -1) {
@@ -348,13 +439,23 @@ class CartProduct {
   Producto product;
   List<CartStore> stores;
 
-  CartProduct(this.productId, this.stores, this.product);
+  CartProduct({
+    this.productId,
+    this.stores,
+    this.product,
+  });
+
+  factory CartProduct.fromJson(Map<String, dynamic> json) => CartProduct(
+        productId: json['product_id'],
+        product: Producto.fromJson(json['product']),
+        stores: List<CartStore>.from(
+            json['stores'].map((x) => CartStore.fromJson(x))),
+      );
 
   Map<String, dynamic> toJson() => {
-        "id_producto": productId,
-        "tiendas": List<dynamic>.from(
-          stores.map((x) => x.toJson()),
-        ),
+        'product_id': productId,
+        'product': product.toJson(),
+        'stores': List<dynamic>.from(stores.map((x) => x.toJson())),
       };
 
   double get subtotal {
@@ -375,11 +476,22 @@ class CartStore {
   int quantity;
   Tienda store;
 
-  CartStore(this.storeId, this.quantity, this.store);
+  CartStore({
+    this.storeId,
+    this.quantity,
+    this.store,
+  });
+
+  factory CartStore.fromJson(Map<String, dynamic> json) => CartStore(
+        storeId: json['store_id'],
+        quantity: json['quantity'],
+        store: Tienda.fromJson(json['store']),
+      );
 
   Map<String, dynamic> toJson() => {
-        "id_tienda": storeId,
-        "cantidad": quantity,
+        'store_id': storeId,
+        'quantity': quantity,
+        'store': store.toJson(),
       };
 }
 

@@ -20,6 +20,29 @@ class Preferences {
     _prefs = await SharedPreferences.getInstance();
   }
 
+  DateTime get lastSync {
+    final temp = _prefs.getString('last_sync');
+
+    if (temp == null || temp.isEmpty) {
+      return DateTime.now().subtract(Duration(minutes: 30));
+    }
+
+    return DateTime.parse(_prefs.getString('last_sync'));
+  }
+
+  int get lastSyncInMinutes => DateTime.now().difference(lastSync).inMinutes;
+
+  bool get canSync => DateTime.now().difference(lastSync).inMinutes >= 2;
+  // bool get canSync => DateTime.now().difference(lastSync).inMinutes >= 5;
+
+  set lastSync(DateTime value) {
+    if (value == null) {
+      _prefs.remove('last_sync');
+    } else {
+      _prefs.setString('last_sync', value.toIso8601String());
+    }
+  }
+
   String get token {
     return _prefs.getString('token') ?? null;
   }

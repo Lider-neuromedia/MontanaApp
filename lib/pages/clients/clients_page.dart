@@ -4,6 +4,7 @@ import 'package:montana_mobile/pages/catalogue/partials/empty_message.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/pages/clients/partials/client_card.dart';
 import 'package:montana_mobile/providers/clients_provider.dart';
+import 'package:montana_mobile/providers/connection_provider.dart';
 import 'package:montana_mobile/widgets/scaffold_logo.dart';
 import 'package:montana_mobile/widgets/search_box.dart';
 import 'package:provider/provider.dart';
@@ -21,11 +22,11 @@ class _ClientsPageState extends State<ClientsPage> {
     () async {
       await Future.delayed(Duration.zero);
 
-      final clientsProvider = Provider.of<ClientsProvider>(
-        context,
-        listen: false,
-      );
-      clientsProvider.loadClients();
+      final clientsProvider =
+          Provider.of<ClientsProvider>(context, listen: false);
+      final connectionProvider =
+          Provider.of<ConnectionProvider>(context, listen: false);
+      clientsProvider.loadClients(local: connectionProvider.isNotConnected);
     }();
   }
 
@@ -35,6 +36,7 @@ class _ClientsPageState extends State<ClientsPage> {
           color: Colors.white,
         );
     final clientsProvider = Provider.of<ClientsProvider>(context);
+    final connectionProvider = Provider.of<ConnectionProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -53,11 +55,15 @@ class _ClientsPageState extends State<ClientsPage> {
           ? const LoadingContainer()
           : clientsProvider.clients.length == 0
               ? EmptyMessage(
-                  onPressed: () => clientsProvider.loadClients(),
+                  onPressed: () => clientsProvider.loadClients(
+                    local: connectionProvider.isNotConnected,
+                  ),
                   message: 'No hay clientes encontrados.',
                 )
               : RefreshIndicator(
-                  onRefresh: () => clientsProvider.loadClients(),
+                  onRefresh: () => clientsProvider.loadClients(
+                    local: connectionProvider.isNotConnected,
+                  ),
                   color: Theme.of(context).primaryColor,
                   child: _ClientsContent(),
                 ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:montana_mobile/pages/session/login_page.dart';
 import 'package:montana_mobile/providers/session_provider.dart';
+import 'package:montana_mobile/pages/session/login_page.dart';
 import 'package:montana_mobile/pages/home/partials/bottom_drawer.dart';
 import 'package:montana_mobile/pages/home/partials/navigation_bar.dart';
 import 'package:montana_mobile/pages/home/partials/pages.dart';

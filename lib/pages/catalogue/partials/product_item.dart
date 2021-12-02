@@ -3,6 +3,7 @@ import 'package:montana_mobile/models/product.dart';
 import 'package:montana_mobile/pages/catalogue/product_page.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:montana_mobile/utils/utils.dart';
+import 'package:montana_mobile/widgets/image_widget.dart';
 
 class ProductItem extends StatelessWidget {
   const ProductItem({
@@ -53,13 +54,7 @@ class ProductItem extends StatelessWidget {
                 ? Container()
                 : ClipRRect(
                     borderRadius: BorderRadius.circular(5.0),
-                    child: FadeInImage(
-                      placeholder:
-                          const AssetImage("assets/images/placeholder.png"),
-                      image: NetworkImage(product.image),
-                      width: double.infinity,
-                      fit: BoxFit.contain,
-                    ),
+                    child: ImageWidget(imageUrl: product.image),
                   ),
             const SizedBox(height: 15.0),
             Row(

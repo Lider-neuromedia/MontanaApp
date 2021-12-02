@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
+import 'package:montana_mobile/providers/connection_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:montana_mobile/utils/utils.dart';
 import 'package:provider/provider.dart';
@@ -28,11 +29,11 @@ class _StoresPageState extends State<StoresPage> {
 
     () async {
       await Future.delayed(Duration.zero);
-      final storesProvider = Provider.of<StoresProvider>(
-        context,
-        listen: false,
-      );
-      storesProvider.loadStores();
+      final storesProvider =
+          Provider.of<StoresProvider>(context, listen: false);
+      final connectionProvider =
+          Provider.of<ConnectionProvider>(context, listen: false);
+      storesProvider.loadStores(local: connectionProvider.isNotConnected);
     }();
   }
 
@@ -42,7 +43,7 @@ class _StoresPageState extends State<StoresPage> {
           color: Colors.white,
         );
     final storesProvider = Provider.of<StoresProvider>(context);
-
+    final connectionProvider = Provider.of<ConnectionProvider>(context);
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -60,18 +61,24 @@ class _StoresPageState extends State<StoresPage> {
         onPressed: () {
           Navigator.of(context)
               .pushNamed(StoreFormPage.route)
-              .then((_) => storesProvider.loadStores());
+              .then((_) => storesProvider.loadStores(
+                    local: connectionProvider.isNotConnected,
+                  ));
         },
       ),
       body: storesProvider.isLoading
           ? const LoadingContainer()
           : storesProvider.stores.length == 0
               ? EmptyMessage(
-                  onPressed: () => storesProvider.loadStores(),
+                  onPressed: () => storesProvider.loadStores(
+                    local: connectionProvider.isNotConnected,
+                  ),
                   message: 'No hay tiendas encontradas.',
                 )
               : RefreshIndicator(
-                  onRefresh: () => storesProvider.loadStores(),
+                  onRefresh: () => storesProvider.loadStores(
+                    local: connectionProvider.isNotConnected,
+                  ),
                   color: Theme.of(context).primaryColor,
                   child: _StoresContent(),
                 ),
@@ -139,6 +146,7 @@ class _StoresListResults extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final storesProvider = Provider.of<StoresProvider>(context);
+    final connectionProvider = Provider.of<ConnectionProvider>(context);
 
     return Expanded(
       child: ListView.separated(
@@ -157,14 +165,18 @@ class _StoresListResults extends StatelessWidget {
                 icon: FontAwesome.pencil,
                 onTap: () => Navigator.of(context)
                     .pushNamed(StoreFormPage.route, arguments: store)
-                    .then((_) => storesProvider.loadStores()),
+                    .then((_) => storesProvider.loadStores(
+                          local: connectionProvider.isNotConnected,
+                        )),
               ),
               IconSlideAction(
                 color: CustomTheme.mainColor,
                 icon: FontAwesome5.trash_alt,
                 onTap: () async {
-                  final isSuccess =
-                      await storesProvider.makeDeleteStore(store.idTiendas);
+                  final isSuccess = await storesProvider.makeDeleteStore(
+                    store.idTiendas,
+                    local: connectionProvider.isNotConnected,
+                  );
 
                   if (!isSuccess) {
                     showMessageDialog(

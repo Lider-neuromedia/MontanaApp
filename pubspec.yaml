@@ -48,6 +48,8 @@ dependencies:
   firebase_messaging: ^10.0.1
   navigation_history_observer: ^1.1.0
   flutter_slidable: ^0.6.0
+  sqflite: ^2.0.0+4
+  connectivity_plus: ^2.0.2
 
 dev_dependencies:
   flutter_test:

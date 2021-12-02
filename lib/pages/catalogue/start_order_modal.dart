@@ -5,6 +5,7 @@ import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/providers/cart_provider.dart';
 import 'package:montana_mobile/providers/catalogues_provider.dart';
 import 'package:montana_mobile/providers/clients_provider.dart';
+import 'package:montana_mobile/providers/connection_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:montana_mobile/widgets/DropdownList.dart';
 import 'package:provider/provider.dart';
@@ -24,38 +25,39 @@ class StartOrderModal extends StatefulWidget {
 }
 
 class _StartOrderModalState extends State<StartOrderModal> {
-  ClientsProvider _clientsProvider;
-  CataloguesProvider _cataloguesProvider;
-
   List<Cliente> _clients = [];
   List<Catalogo> _catalogues = [];
   bool _loading = false;
 
   @override
   void initState() {
-    _clientsProvider = Provider.of<ClientsProvider>(
-      context,
-      listen: false,
-    );
-    _cataloguesProvider = Provider.of<CataloguesProvider>(
-      context,
-      listen: false,
-    );
-    _loadData();
+    () async {
+      await Future.delayed(Duration.zero);
+
+      final clientsProvider =
+          Provider.of<ClientsProvider>(context, listen: false);
+      final cataloguesProvider =
+          Provider.of<CataloguesProvider>(context, listen: false);
+      final connectionProvider =
+          Provider.of<ConnectionProvider>(context, listen: false);
+
+      setState(() => _loading = true);
+
+      final clients = connectionProvider.isNotConnected
+          ? await clientsProvider.getSellerClientsLocal()
+          : await clientsProvider.getSellerClients();
+      final catalogues = connectionProvider.isNotConnected
+          ? await cataloguesProvider.getCataloguesLocal()
+          : await cataloguesProvider.getCatalogues();
+
+      setState(() {
+        _loading = false;
+        _clients = clients;
+        _catalogues = catalogues;
+      });
+    }();
+
     super.initState();
-  }
-
-  void _loadData() async {
-    setState(() => _loading = true);
-
-    final clients = await _clientsProvider.getSellerClients();
-    final catalogues = await _cataloguesProvider.getCatalogues();
-
-    setState(() {
-      _loading = false;
-      _clients = clients;
-      _catalogues = catalogues;
-    });
   }
 
   @override

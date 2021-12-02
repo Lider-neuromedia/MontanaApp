@@ -3,6 +3,8 @@ import 'package:montana_mobile/models/client.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/pages/pqrs/partials/dropdown_pqrs.dart';
 import 'package:montana_mobile/providers/clients_provider.dart';
+import 'package:montana_mobile/providers/connection_provider.dart';
+import 'package:montana_mobile/providers/database_provider.dart';
 import 'package:montana_mobile/providers/pqrs_provider.dart';
 import 'package:montana_mobile/providers/pqrs_ticket_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
@@ -27,19 +29,24 @@ class _CreatePqrsPageState extends State<CreatePqrsPage> {
     () async {
       await Future.delayed(Duration.zero);
 
-      final pqrsTicketProvider = Provider.of<PqrsTicketProvider>(
-        context,
-        listen: false,
-      );
-      final clientsProvider = Provider.of<ClientsProvider>(
-        context,
-        listen: false,
-      );
+      final pqrsTicketProvider =
+          Provider.of<PqrsTicketProvider>(context, listen: false);
+      final clientsProvider =
+          Provider.of<ClientsProvider>(context, listen: false);
+      final connectionProvider =
+          Provider.of<ConnectionProvider>(context, listen: false);
 
       pqrsTicketProvider.clientes = [];
-      clientsProvider.getSellerClients().then((clients) {
-        pqrsTicketProvider.clientes = clients;
-      });
+
+      if (connectionProvider.isNotConnected) {
+        clientsProvider.getSellerClientsLocal().then((clients) {
+          pqrsTicketProvider.clientes = clients;
+        });
+      } else {
+        clientsProvider.getSellerClients().then((clients) {
+          pqrsTicketProvider.clientes = clients;
+        });
+      }
 
       pqrsTicketProvider.message = '';
       pqrsTicketProvider.clienteId = null;
@@ -56,6 +63,7 @@ class _CreatePqrsPageState extends State<CreatePqrsPage> {
   @override
   Widget build(BuildContext context) {
     final pqrsTicketProvider = Provider.of<PqrsTicketProvider>(context);
+    final connectionProvider = Provider.of<ConnectionProvider>(context);
     final preferences = Preferences();
     final isCliente = preferences.session.isCliente;
 
@@ -145,7 +153,11 @@ class _CreatePqrsPageState extends State<CreatePqrsPage> {
                       label: 'Enviar',
                       icon: Icons.arrow_forward,
                       onPressed: pqrsTicketProvider.canSend
-                          ? () => _createMessage(context, pqrsTicketProvider)
+                          ? () => _createMessage(
+                                context,
+                                pqrsTicketProvider,
+                                connectionProvider,
+                              )
                           : null,
                     ),
                   ),
@@ -156,9 +168,14 @@ class _CreatePqrsPageState extends State<CreatePqrsPage> {
   }
 
   Future<void> _createMessage(
-      BuildContext context, PqrsTicketProvider pqrsTicketProvider) async {
+    BuildContext context,
+    PqrsTicketProvider pqrsTicketProvider,
+    ConnectionProvider connectionProvider,
+  ) async {
     pqrsTicketProvider.isLoading = true;
-    bool success = await pqrsTicketProvider.createPqrs();
+    bool success = await pqrsTicketProvider.createPqrs(
+      local: connectionProvider.isNotConnected,
+    );
     pqrsTicketProvider.isLoading = false;
 
     if (!success) {
@@ -182,7 +199,9 @@ class _CreatePqrsPageState extends State<CreatePqrsPage> {
             listen: false,
           );
           pqrsProvider.sortBy = SortValue.RECENT_FIRST;
-          pqrsProvider.loadTickets();
+          pqrsProvider.loadTickets(
+            local: connectionProvider.isNotConnected,
+          );
         },
       );
     }

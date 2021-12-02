@@ -3,6 +3,7 @@ import 'package:montana_mobile/models/catalogue.dart';
 import 'package:montana_mobile/pages/catalogue/partials/empty_message.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/pages/catalogue/partials/product_item.dart';
+import 'package:montana_mobile/providers/connection_provider.dart';
 import 'package:montana_mobile/widgets/search_box.dart';
 import 'package:montana_mobile/providers/products_provider.dart';
 import 'package:montana_mobile/widgets/cart_icon.dart';
@@ -30,11 +31,13 @@ class _CatalogueProductsPageState extends State<CatalogueProductsPage> {
     final args =
         ModalRoute.of(context).settings.arguments as ProductsScreenArguments;
     final catalogue = args.catalogue;
-    final productsProvider = Provider.of<ProductsProvider>(
-      context,
-      listen: false,
-    );
-    productsProvider.loadProducts(catalogue.id);
+    final productsProvider =
+        Provider.of<ProductsProvider>(context, listen: false);
+    final connectionProvider =
+        Provider.of<ConnectionProvider>(context, listen: false);
+
+    productsProvider.loadProducts(catalogue.id,
+        local: connectionProvider.isNotConnected);
   }
 
   @override
@@ -43,6 +46,7 @@ class _CatalogueProductsPageState extends State<CatalogueProductsPage> {
         ModalRoute.of(context).settings.arguments as ProductsScreenArguments;
     final catalogue = args.catalogue;
     final productsProvider = Provider.of<ProductsProvider>(context);
+    final connectionProvider = Provider.of<ConnectionProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -56,11 +60,17 @@ class _CatalogueProductsPageState extends State<CatalogueProductsPage> {
           ? const LoadingContainer()
           : productsProvider.products.length == 0
               ? EmptyMessage(
-                  onPressed: () => productsProvider.loadProducts(catalogue.id),
+                  onPressed: () => productsProvider.loadProducts(
+                    catalogue.id,
+                    local: connectionProvider.isNotConnected,
+                  ),
                   message: 'No hay productos disponibles en este catálogo.',
                 )
               : RefreshIndicator(
-                  onRefresh: () => productsProvider.loadProducts(catalogue.id),
+                  onRefresh: () => productsProvider.loadProducts(
+                    catalogue.id,
+                    local: connectionProvider.isNotConnected,
+                  ),
                   color: Theme.of(context).primaryColor,
                   child: Column(
                     children: [

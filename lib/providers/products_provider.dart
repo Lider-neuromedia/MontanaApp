@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 import 'package:montana_mobile/models/product.dart';
+import 'package:montana_mobile/providers/database_provider.dart';
 import 'package:montana_mobile/utils/preferences.dart';
 
 class ProductsProvider with ChangeNotifier {
@@ -54,30 +57,55 @@ class ProductsProvider with ChangeNotifier {
     }).toList();
   }
 
-  Future<void> loadProducts(int catalogId) async {
+  Future<void> loadProducts(int catalogId, {@required bool local}) async {
     _products = [];
     _isLoadingProducts = true;
     notifyListeners();
-    _products = await getProducts(catalogId);
+
+    _products = local
+        ? await getProductsByCatalogueLocal(catalogId)
+        : await getProductsByCatalogue(catalogId);
+
     _isLoadingProducts = false;
     notifyListeners();
   }
 
-  Future<void> loadProduct(int productId) async {
+  Future<void> loadProduct(int productId, {@required bool local}) async {
     _product = null;
     _isLoadingProduct = true;
     notifyListeners();
-    _product = await getProduct(productId);
+
+    _product =
+        local ? await getProductLocal(productId) : await getProduct(productId);
+
     _isLoadingProduct = false;
     notifyListeners();
   }
 
-  Future<List<Producto>> getProducts(int catalogId) async {
+  Future<List<Producto>> getProductsByCatalogue(int catalogId) async {
     final url = Uri.parse('$_url/productos/$catalogId');
     final response = await http.get(url, headers: _preferences.signedHeaders);
 
     if (response.statusCode != 200) return [];
     return responseProductosFromJson(response.body).productos;
+  }
+
+  Future<List<Producto>> getProductsByCatalogueLocal(int id) async {
+    final db = await DatabaseProvider.db.database;
+    List<Map<String, Object>> list = await db.query(
+      'products',
+      where: 'catalogo = ?',
+      whereArgs: [id],
+    );
+
+    List<Producto> products = List<Producto>.from(list.map((x) {
+      Map<String, Object> row = Map<String, Object>.of(x);
+      row['id_producto'] = row['id'];
+      row['imagenes'] = jsonDecode(row['imagenes']);
+      return Producto.fromJson(row);
+    }));
+
+    return products;
   }
 
   Future<Producto> getProduct(int productoId) async {
@@ -86,5 +114,16 @@ class ProductsProvider with ChangeNotifier {
 
     if (response.statusCode != 200) return null;
     return responseProductoFromJson(response.body).producto;
+  }
+
+  Future<Producto> getProductLocal(int id) async {
+    final record = await DatabaseProvider.db.getRecordById('products', id);
+
+    if (record == null) return null;
+
+    Map<String, Object> recordTemp = Map<String, Object>.of(record);
+    recordTemp['id_producto'] = recordTemp['id'];
+    recordTemp['imagenes'] = jsonDecode(recordTemp['imagenes']);
+    return Producto.fromJson(recordTemp);
   }
 }

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:montana_mobile/models/catalogue.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
+import 'package:http/http.dart' as http;
+import 'package:montana_mobile/models/catalogue.dart';
+import 'package:montana_mobile/providers/database_provider.dart';
 import 'package:montana_mobile/utils/preferences.dart';
 
 class CataloguesProvider with ChangeNotifier {
@@ -14,11 +15,13 @@ class CataloguesProvider with ChangeNotifier {
   List<Catalogo> _catalogues = [];
   List<Catalogo> get catalogues => _catalogues;
 
-  Future<void> loadCatalogues() async {
+  Future<void> loadCatalogues({@required bool local}) async {
     _catalogues = [];
     _isLoading = true;
     notifyListeners();
-    _catalogues = await getCatalogues();
+
+    _catalogues = local ? await getCataloguesLocal() : await getCatalogues();
+
     _isLoading = false;
     notifyListeners();
   }
@@ -29,5 +32,16 @@ class CataloguesProvider with ChangeNotifier {
 
     if (response.statusCode != 200) return [];
     return responseCatalogosFromJson(response.body).catalogos;
+  }
+
+  Future<List<Catalogo>> getCataloguesLocal() async {
+    final db = await DatabaseProvider.db.database;
+    List<Map<String, Object>> list = await db.query('catalogues');
+    var catalogues = List<Catalogo>.from(list.map((x) {
+      Map<String, Object> row = Map<String, Object>.of(x);
+      row['id_catalogo'] = row['id'];
+      return Catalogo.fromJson(row);
+    }));
+    return catalogues;
   }
 }

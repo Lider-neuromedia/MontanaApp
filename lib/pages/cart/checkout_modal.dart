@@ -5,6 +5,7 @@ import 'package:montana_mobile/pages/cart/partials/sign_box.dart';
 import 'package:montana_mobile/pages/catalogue/partials/action_button.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/providers/cart_provider.dart';
+import 'package:montana_mobile/providers/connection_provider.dart';
 import 'package:montana_mobile/providers/navigation_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:montana_mobile/utils/preferences.dart';
@@ -16,6 +17,7 @@ class CheckoutModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cartProvider = Provider.of<CartProvider>(context);
+    final connectionProvider = Provider.of<ConnectionProvider>(context);
     final size = MediaQuery.of(context).size;
 
     return Container(
@@ -37,7 +39,11 @@ class CheckoutModal extends StatelessWidget {
                 )
               : _CheckoutActions(
                   onFinish: cartProvider.canSend
-                      ? () => finishOrder(context, cartProvider)
+                      ? () => finishOrder(
+                            context,
+                            cartProvider,
+                            connectionProvider,
+                          )
                       : null,
                 ),
         ],
@@ -46,9 +52,16 @@ class CheckoutModal extends StatelessWidget {
   }
 
   Future<void> finishOrder(
-      BuildContext context, CartProvider cartProvider) async {
+    BuildContext context,
+    CartProvider cartProvider,
+    ConnectionProvider connectionProvider,
+  ) async {
     cartProvider.isLoading = true;
-    final success = await cartProvider.createOrder();
+
+    final success = connectionProvider.isNotConnected
+        ? await cartProvider.createOrderLocal(cartProvider.cart)
+        : await cartProvider.createOrder(cartProvider.cart);
+
     cartProvider.isLoading = false;
 
     if (success) {
@@ -61,12 +74,13 @@ class CheckoutModal extends StatelessWidget {
       showMessageDialog(
         context,
         'Listo',
-        'Pedido creado correctamente.',
+        connectionProvider.isNotConnected
+            ? 'Pedido guardado localmente y se sincronizará cuando haya conexión.'
+            : 'Pedido creado correctamente.',
         onAccept: () {
           final navigationProvider =
               Provider.of<NavigationProvider>(context, listen: false);
           navigationProvider.currentPage = 0;
-
           Navigator.pop(context);
           Navigator.pop(context);
           Navigator.pop(context);

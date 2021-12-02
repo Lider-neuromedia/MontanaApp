@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:montana_mobile/pages/cart/partials/current_sign.dart';
 import 'package:montana_mobile/pages/cart/partials/payment_methods_field.dart';
 import 'package:montana_mobile/pages/cart/partials/sign_box.dart';
@@ -11,7 +12,6 @@ import 'package:montana_mobile/theme/theme.dart';
 import 'package:montana_mobile/utils/preferences.dart';
 import 'package:montana_mobile/utils/utils.dart';
 import 'package:montana_mobile/widgets/DropdownList.dart';
-import 'package:provider/provider.dart';
 
 class CheckoutModal extends StatelessWidget {
   @override

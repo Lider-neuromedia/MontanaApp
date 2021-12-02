@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:montana_mobile/models/client.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/pages/client/partials/store_card.dart';
@@ -7,7 +8,6 @@ import 'package:montana_mobile/pages/dashboard/partials/card_data.dart';
 import 'package:montana_mobile/providers/clients_provider.dart';
 import 'package:montana_mobile/providers/connection_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
-import 'package:provider/provider.dart';
 
 class ClientPage extends StatelessWidget {
   static final String route = 'client-detail';

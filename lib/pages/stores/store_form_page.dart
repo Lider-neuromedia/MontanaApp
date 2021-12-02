@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:montana_mobile/models/store.dart';
 import 'package:montana_mobile/pages/catalogue/partials/action_button.dart';
 import 'package:montana_mobile/pages/stores/partials/form_input.dart';
 import 'package:montana_mobile/pages/stores/partials/store_item.dart';
 import 'package:montana_mobile/providers/connection_provider.dart';
-import 'package:montana_mobile/providers/database_provider.dart';
 import 'package:montana_mobile/providers/store_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:montana_mobile/utils/utils.dart';
-import 'package:provider/provider.dart';
 
 class StoreFormPage extends StatefulWidget {
   static final String route = '/store-form';

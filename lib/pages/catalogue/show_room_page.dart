@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:montana_mobile/pages/catalogue/partials/empty_message.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/pages/catalogue/partials/product_item.dart';
@@ -6,7 +7,6 @@ import 'package:montana_mobile/providers/connection_provider.dart';
 import 'package:montana_mobile/providers/show_room_provider.dart';
 import 'package:montana_mobile/widgets/cart_icon.dart';
 import 'package:montana_mobile/widgets/scaffold_logo.dart';
-import 'package:provider/provider.dart';
 
 class ShowRoomPage extends StatefulWidget {
   @override

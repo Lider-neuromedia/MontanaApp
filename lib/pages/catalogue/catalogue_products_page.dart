@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:montana_mobile/models/catalogue.dart';
 import 'package:montana_mobile/pages/catalogue/partials/empty_message.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
@@ -7,7 +8,6 @@ import 'package:montana_mobile/providers/connection_provider.dart';
 import 'package:montana_mobile/widgets/search_box.dart';
 import 'package:montana_mobile/providers/products_provider.dart';
 import 'package:montana_mobile/widgets/cart_icon.dart';
-import 'package:provider/provider.dart';
 
 class CatalogueProductsPage extends StatefulWidget {
   static final String route = 'catalogue-products';

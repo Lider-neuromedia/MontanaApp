@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:montana_mobile/models/order_product.dart';
 import 'package:montana_mobile/providers/orders_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
-import 'package:provider/provider.dart';
 
 class ProductsTable extends StatefulWidget {
   ProductsTable({

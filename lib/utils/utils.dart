@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:montana_mobile/models/product.dart';
 import 'package:montana_mobile/pages/catalogue/add_product_modal.dart';
 import 'package:montana_mobile/pages/catalogue/start_order_modal.dart';
 import 'package:montana_mobile/providers/cart_provider.dart';
 import 'package:montana_mobile/utils/preferences.dart';
-import 'package:provider/provider.dart';
 
 bool isEmailValid(email) {
   return RegExp(

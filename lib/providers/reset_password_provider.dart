@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
-import 'package:montana_mobile/providers/validation_field.dart';
 import 'package:http/http.dart' as http;
+import 'package:montana_mobile/providers/validation_field.dart';
 import 'package:montana_mobile/utils/preferences.dart';
 
 class ResetPasswordProvider with ChangeNotifier {

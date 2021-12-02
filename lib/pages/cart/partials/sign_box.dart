@@ -1,10 +1,10 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
-import 'package:montana_mobile/providers/cart_provider.dart';
-import 'package:montana_mobile/theme/theme.dart';
 import 'package:provider/provider.dart';
 import 'package:signature/signature.dart';
+import 'package:montana_mobile/providers/cart_provider.dart';
+import 'package:montana_mobile/theme/theme.dart';
 
 class SignBox extends StatefulWidget {
   @override

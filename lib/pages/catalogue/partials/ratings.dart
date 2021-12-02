@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:montana_mobile/pages/catalogue/partials/section_card.dart';
 import 'package:montana_mobile/providers/rating_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
-import 'package:provider/provider.dart';
 
 class Ratings extends StatelessWidget {
   const Ratings({Key key}) : super(key: key);

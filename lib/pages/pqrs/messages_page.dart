@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:montana_mobile/pages/catalogue/partials/empty_message.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/pages/pqrs/partials/message_card.dart';
@@ -6,7 +7,6 @@ import 'package:montana_mobile/pages/pqrs/partials/message_form.dart';
 import 'package:montana_mobile/providers/connection_provider.dart';
 import 'package:montana_mobile/providers/pqrs_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
-import 'package:provider/provider.dart';
 
 class MessagesPage extends StatefulWidget {
   static final String route = '/pqrs-messages';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:montana_mobile/pages/cart/cart_page.dart';
 import 'package:montana_mobile/providers/cart_provider.dart';
-import 'package:provider/provider.dart';
 
 class CartIcon extends StatelessWidget {
   const CartIcon({Key key}) : super(key: key);

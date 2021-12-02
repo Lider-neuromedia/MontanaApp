@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:montana_mobile/pages/dashboard/partials/circular_statistic.dart';
 import 'package:montana_mobile/providers/dashboard_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
-import 'package:provider/provider.dart';
 
 class ConsolidatedOrders extends StatelessWidget {
   const ConsolidatedOrders({Key key}) : super(key: key);

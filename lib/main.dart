@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 import 'package:provider/provider.dart';
 import 'package:navigation_history_observer/navigation_history_observer.dart';
-import 'package:montana_mobile/providers/database_provider.dart';
+// import 'package:montana_mobile/providers/database_provider.dart';
 import 'package:montana_mobile/providers/connection_provider.dart';
 import 'package:montana_mobile/providers/dashboard_provider.dart';
 import 'package:montana_mobile/providers/store_provider.dart';

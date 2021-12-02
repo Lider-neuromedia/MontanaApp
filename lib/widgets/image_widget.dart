@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:montana_mobile/providers/connection_provider.dart';
 import 'package:montana_mobile/providers/database_provider.dart';
-import 'package:provider/provider.dart';
 
 class ImageWidget extends StatelessWidget {
   const ImageWidget({

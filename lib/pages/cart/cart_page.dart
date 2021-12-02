@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:fluttericon/maki_icons.dart';
 import 'package:montana_mobile/models/client.dart';
 import 'package:montana_mobile/pages/cart/checkout_modal.dart';
 import 'package:montana_mobile/pages/catalogue/partials/action_button.dart';
 import 'package:montana_mobile/providers/cart_provider.dart';
 import 'package:montana_mobile/providers/clients_provider.dart';
 import 'package:montana_mobile/providers/connection_provider.dart';
-import 'package:montana_mobile/providers/database_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:montana_mobile/utils/utils.dart';
 import 'package:montana_mobile/widgets/image_widget.dart';
-import 'package:provider/provider.dart';
-import 'package:fluttericon/maki_icons.dart';
 
 class CartPage extends StatelessWidget {
   static final String route = 'cart';

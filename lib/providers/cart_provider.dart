@@ -223,8 +223,9 @@ class CartProvider with ChangeNotifier {
       final cart = Cart.fromJson(jsonDecode(record['content']));
       final isSuccessResponse = await createOrder(cart);
 
-      if (isSuccessResponse) {}
-      await DatabaseProvider.db.deleteRecord('offline_orders', cartId);
+      if (isSuccessResponse) {
+        await DatabaseProvider.db.deleteRecord('offline_orders', cartId);
+      }
     }
   }
 

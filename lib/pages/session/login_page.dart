@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:montana_mobile/pages/home/home_page.dart';
 import 'package:montana_mobile/pages/session/password_page.dart';
 import 'package:montana_mobile/providers/login_provider.dart';
 import 'package:montana_mobile/providers/navigation_provider.dart';
 import 'package:montana_mobile/utils/preferences.dart';
 import 'package:montana_mobile/utils/utils.dart';
-import 'package:provider/provider.dart';
 
 class LoginPage extends StatelessWidget {
   static final String route = 'login';

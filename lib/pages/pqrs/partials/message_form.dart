@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttericon/linecons_icons.dart';
+import 'package:provider/provider.dart';
 import 'package:montana_mobile/models/message.dart';
 import 'package:montana_mobile/models/ticket.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
@@ -8,7 +9,6 @@ import 'package:montana_mobile/providers/pqrs_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:montana_mobile/utils/preferences.dart';
 import 'package:montana_mobile/utils/utils.dart';
-import 'package:provider/provider.dart';
 
 class MessageForm extends StatefulWidget {
   MessageForm({

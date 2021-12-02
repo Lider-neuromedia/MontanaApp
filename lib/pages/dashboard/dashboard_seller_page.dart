@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:montana_mobile/pages/catalogue/partials/empty_message.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/pages/dashboard/partials/card_data.dart';
@@ -10,7 +11,6 @@ import 'package:montana_mobile/providers/dashboard_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:montana_mobile/widgets/cart_icon.dart';
 import 'package:montana_mobile/widgets/scaffold_logo.dart';
-import 'package:provider/provider.dart';
 
 class DashboardSellerPage extends StatefulWidget {
   @override

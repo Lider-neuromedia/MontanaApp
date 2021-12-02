@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:montana_mobile/pages/session/reset_password_page.dart';
 import 'package:montana_mobile/providers/password_provider.dart';
 import 'package:montana_mobile/utils/utils.dart';
-import 'package:provider/provider.dart';
 
 class PasswordPage extends StatelessWidget {
   static final String route = 'password';

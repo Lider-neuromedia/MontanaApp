@@ -1,9 +1,9 @@
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:montana_mobile/models/client.dart';
 import 'package:montana_mobile/models/session.dart';
 import 'package:montana_mobile/pages/home/home_page.dart';
 import 'package:montana_mobile/pages/session/login_page.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
 
 class Preferences {
   static final Preferences _instance = Preferences._();

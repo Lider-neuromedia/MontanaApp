@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttericon/octicons_icons.dart';
-import 'package:montana_mobile/providers/navigation_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:montana_mobile/providers/navigation_provider.dart';
 
 class NavigationBar extends StatelessWidget {
   const NavigationBar({Key key}) : super(key: key);

@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:montana_mobile/pages/cart/cart_page.dart';
+import 'package:provider/provider.dart';
 import 'package:montana_mobile/pages/catalogue/partials/empty_message.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/pages/orders/partials/order_item.dart';
 import 'package:montana_mobile/providers/connection_provider.dart';
 import 'package:montana_mobile/providers/orders_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
-import 'package:montana_mobile/utils/utils.dart';
 import 'package:montana_mobile/widgets/cart_icon.dart';
-import 'package:provider/provider.dart';
 
 class OrdersPage extends StatefulWidget {
   @override
@@ -93,21 +91,22 @@ class _ListOrders extends StatelessWidget {
   }
 }
 
-class _CreateOrderButton extends StatelessWidget {
-  const _CreateOrderButton({Key key}) : super(key: key);
+// TODO: Botón de crear orden oculto.
+// class _CreateOrderButton extends StatelessWidget {
+//   const _CreateOrderButton({Key key}) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return FloatingActionButton(
-      backgroundColor: Theme.of(context).primaryColor,
-      child: const Icon(Icons.add),
-      onPressed: () => openStartOrderModal(
-        context,
-        onContinue: () => Navigator.of(context).pushNamed(CartPage.route),
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return FloatingActionButton(
+//       backgroundColor: Theme.of(context).primaryColor,
+//       child: const Icon(Icons.add),
+//       onPressed: () => openStartOrderModal(
+//         context,
+//         onContinue: () => Navigator.of(context).pushNamed(CartPage.route),
+//       ),
+//     );
+//   }
+// }
 
 class _OrdersFilter extends StatefulWidget {
   _OrdersFilter({Key key}) : super(key: key);

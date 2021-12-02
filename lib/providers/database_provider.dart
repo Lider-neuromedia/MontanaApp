@@ -1,7 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart';
 import 'package:montana_mobile/models/catalogue.dart';
 import 'package:montana_mobile/models/client.dart';
 import 'package:montana_mobile/models/dashboard_resume.dart';
@@ -11,9 +14,6 @@ import 'package:montana_mobile/models/question.dart';
 import 'package:montana_mobile/models/rating.dart';
 import 'package:montana_mobile/models/status.dart';
 import 'package:montana_mobile/models/store.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart';
 
 class DatabaseProvider {
   static Database _database;

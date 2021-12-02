@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:montana_mobile/providers/connection_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:montana_mobile/pages/session/login_page.dart';
 import 'package:montana_mobile/providers/reset_password_provider.dart';
@@ -50,7 +51,9 @@ class ResetPasswordPage extends StatelessWidget {
   }
 
   Future<void> _resetPassword(
-      BuildContext context, ResetPasswordProvider provider) async {
+    BuildContext context,
+    ResetPasswordProvider provider,
+  ) async {
     provider.isLoading = true;
     bool success = await provider.resetPassword();
     provider.isLoading = false;
@@ -74,6 +77,8 @@ class ResetPasswordPage extends StatelessWidget {
           Navigator.of(context).pushReplacementNamed(LoginPage.route);
         },
       );
+
+      ConnectionProvider.syncDataNow(context);
     } else {
       showMessageDialog(context, 'Aviso', 'Datos de reinicio incorrectos.');
     }

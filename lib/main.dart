@@ -88,7 +88,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final _scaffoldKey = GlobalKey<ScaffoldMessengerState>();
-  final _preferences = Preferences();
   final historyObserver = NavigationHistoryObserver();
   StreamSubscription<ConnectivityResult> _subscription;
 
@@ -101,7 +100,7 @@ class _MyAppState extends State<MyApp> {
       final isConnected = connectivityResult != ConnectivityResult.none;
       _updateConnectionProvider(connectivityResult != ConnectivityResult.none);
 
-      if (isConnected) _syncDataNow();
+      if (isConnected) ConnectionProvider.syncDataNow(context);
 
       await Future.delayed(Duration.zero);
       initPushNotifications(context);
@@ -112,7 +111,7 @@ class _MyAppState extends State<MyApp> {
         final isConnected = connectivity != ConnectivityResult.none;
         _updateConnectionProvider(isConnected);
 
-        if (isConnected) _syncDataNow();
+        if (isConnected) ConnectionProvider.syncDataNow(context);
       },
     );
   }
@@ -167,28 +166,6 @@ class _MyAppState extends State<MyApp> {
     final connectionProvider =
         Provider.of<ConnectionProvider>(context, listen: false);
     connectionProvider.isConnected = isConnected;
-  }
-
-  Future<void> _syncDataNow() async {
-    final connectionProvider =
-        Provider.of<ConnectionProvider>(context, listen: false);
-
-    if (connectionProvider.isSyncing) return;
-    if (_preferences.token == null) return;
-    // if (!_preferences.canSync) return;
-
-    await connectionProvider.syncData(
-      dashboardProvider: Provider.of<DashboardProvider>(context, listen: false),
-      showRoomProvider: Provider.of<ShowRoomProvider>(context, listen: false),
-      productsProvider: Provider.of<ProductsProvider>(context, listen: false),
-      clientsProvider: Provider.of<ClientsProvider>(context, listen: false),
-      ratingProvider: Provider.of<RatingProvider>(context, listen: false),
-      storesProvider: Provider.of<StoresProvider>(context, listen: false),
-      ordersProvider: Provider.of<OrdersProvider>(context, listen: false),
-      cartProvider: Provider.of<CartProvider>(context, listen: false),
-      cataloguesProvider:
-          Provider.of<CataloguesProvider>(context, listen: false),
-    );
   }
 
   @override

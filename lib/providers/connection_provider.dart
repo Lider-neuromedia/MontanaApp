@@ -16,9 +16,33 @@ import 'package:montana_mobile/providers/rating_provider.dart';
 import 'package:montana_mobile/providers/show_room_provider.dart';
 import 'package:montana_mobile/providers/stores_provider.dart';
 import 'package:montana_mobile/utils/preferences.dart';
+import 'package:provider/provider.dart';
 
 class ConnectionProvider with ChangeNotifier {
   final _preferences = Preferences();
+
+  static Future<void> syncDataNow(BuildContext context) async {
+    final preferences = Preferences();
+    final connectionProvider =
+        Provider.of<ConnectionProvider>(context, listen: false);
+
+    if (connectionProvider.isSyncing) return;
+    if (preferences.token == null) return;
+    if (!preferences.canSync) return;
+
+    await connectionProvider.syncData(
+      dashboardProvider: Provider.of<DashboardProvider>(context, listen: false),
+      showRoomProvider: Provider.of<ShowRoomProvider>(context, listen: false),
+      productsProvider: Provider.of<ProductsProvider>(context, listen: false),
+      clientsProvider: Provider.of<ClientsProvider>(context, listen: false),
+      ratingProvider: Provider.of<RatingProvider>(context, listen: false),
+      storesProvider: Provider.of<StoresProvider>(context, listen: false),
+      ordersProvider: Provider.of<OrdersProvider>(context, listen: false),
+      cartProvider: Provider.of<CartProvider>(context, listen: false),
+      cataloguesProvider:
+          Provider.of<CataloguesProvider>(context, listen: false),
+    );
+  }
 
   bool _isConnected = true;
   bool get isConnected => _isConnected;
@@ -58,32 +82,38 @@ class ConnectionProvider with ChangeNotifier {
     @required OrdersProvider ordersProvider,
   }) async {
     isSyncing = true;
-    final startAt = DateTime.now();
-    // _preferences.lastSync = startAt;
+    // final startAt = DateTime.now();
 
-    await _uploadData(
-      storesProvider: storesProvider,
-      cartProvider: cartProvider,
-    );
+    try {
+      await _uploadData(
+        storesProvider: storesProvider,
+        cartProvider: cartProvider,
+      );
 
-    await _downloadData(
-      dashboardProvider: dashboardProvider,
-      cataloguesProvider: cataloguesProvider,
-      productsProvider: productsProvider,
-      clientsProvider: clientsProvider,
-      ratingProvider: ratingProvider,
-      showRoomProvider: showRoomProvider,
-      storesProvider: storesProvider,
-      cartProvider: cartProvider,
-      ordersProvider: ordersProvider,
-    );
+      await _downloadData(
+        dashboardProvider: dashboardProvider,
+        cataloguesProvider: cataloguesProvider,
+        productsProvider: productsProvider,
+        clientsProvider: clientsProvider,
+        ratingProvider: ratingProvider,
+        showRoomProvider: showRoomProvider,
+        storesProvider: storesProvider,
+        cartProvider: cartProvider,
+        ordersProvider: ordersProvider,
+      );
+    } catch (ex) {
+      print(ex);
+      message = "Limpiando base de datos.";
+      await DatabaseProvider.db.cleanTables();
+    }
 
-    isSyncing = false;
     final endAt = DateTime.now();
     _preferences.lastSync = endAt;
 
     message = "";
-    print("Sincronización: ${endAt.difference(startAt).inSeconds} Segundos");
+    // print("Sincronización: ${endAt.difference(startAt).inSeconds} Segundos");
+
+    isSyncing = false;
   }
 
   Future<void> _uploadData({

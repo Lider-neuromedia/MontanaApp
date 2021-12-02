@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:montana_mobile/providers/connection_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:montana_mobile/pages/home/home_page.dart';
 import 'package:montana_mobile/pages/session/password_page.dart';
@@ -137,20 +138,22 @@ class _LoginCardState extends State<LoginCard> {
     await _loginProvider.login();
     _loginProvider.isLoading = false;
 
-    if (preferences.token != null) {
-      _emailController.clear();
-      _passwordController.clear();
-      _loginProvider.email = '';
-      _loginProvider.password = '';
-
-      final navigationProvider =
-          Provider.of<NavigationProvider>(context, listen: false);
-      navigationProvider.currentPage = 0;
-
-      Navigator.of(context).pushReplacementNamed(HomePage.route);
-    } else {
+    if (preferences.token == null) {
       showMessageDialog(context, 'Aviso', 'Usuario y contraseña incorrectos.');
+      return;
     }
+
+    _emailController.clear();
+    _passwordController.clear();
+    _loginProvider.email = '';
+    _loginProvider.password = '';
+
+    final navigationProvider =
+        Provider.of<NavigationProvider>(context, listen: false);
+    navigationProvider.currentPage = 0;
+    Navigator.of(context).pushReplacementNamed(HomePage.route);
+
+    ConnectionProvider.syncDataNow(context);
   }
 }
 

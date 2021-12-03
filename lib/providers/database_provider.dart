@@ -56,7 +56,6 @@ class DatabaseProvider {
     await db.rawDelete("DELETE FROM ratings;");
     await db.rawDelete("DELETE FROM questions;");
     await db.rawDelete("DELETE FROM orders;");
-    await db.rawDelete("DELETE FROM offline_orders;");
     await db.rawDelete("DELETE FROM images;");
   }
 

@@ -11,18 +11,19 @@ class PushNotificationService {
   static String token;
 
   static Future<void> initializeApp() async {
-    await Firebase.initializeApp();
-    token = await FirebaseMessaging.instance.getToken();
+    // TODO: Inicialización de Firebase deshabilitada.
+    // await Firebase.initializeApp();
+    // token = await FirebaseMessaging.instance.getToken();
 
-    FirebaseMessaging.onBackgroundMessage(_onBackgroundHandler);
-    FirebaseMessaging.onMessage.listen(_onMessageHandler);
-    FirebaseMessaging.onMessageOpenedApp.listen(_onMessageOpenApp);
+    // FirebaseMessaging.onBackgroundMessage(_onBackgroundHandler);
+    // FirebaseMessaging.onMessage.listen(_onMessageHandler);
+    // FirebaseMessaging.onMessageOpenedApp.listen(_onMessageOpenApp);
 
-    final preferences = Preferences();
+    // final preferences = Preferences();
 
-    if (preferences.token != null) {
-      await PushNotificationService.saveDeviceToken();
-    }
+    // if (preferences.token != null) {
+    //   await PushNotificationService.saveDeviceToken();
+    // }
   }
 
   static Future<void> _onBackgroundHandler(RemoteMessage message) async {

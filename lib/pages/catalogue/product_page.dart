@@ -149,8 +149,9 @@ class _ProductContent extends StatelessWidget {
                 ],
               ),
             ),
-            _bigSeparator,
-            _RatingsContent(product: product),
+            // Ocultar valoraciones
+            // _bigSeparator,
+            // _RatingsContent(product: product),
             const SizedBox(height: 120.0),
           ],
         ),

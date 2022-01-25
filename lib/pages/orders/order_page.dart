@@ -135,13 +135,13 @@ class _OrderDetailContent extends StatelessWidget {
                 value: order.estadoFormatted,
               ),
             ),
-            const SizedBox(width: 10.0),
-            Expanded(
-              child: OrderDetailCard(
-                title: 'Descuento',
-                value: "${order.descuento}%",
-              ),
-            ),
+            // const SizedBox(width: 10.0),
+            // Expanded(
+            //   child: OrderDetailCard(
+            //     title: 'Descuento',
+            //     value: "${order.descuento}%",
+            //   ),
+            // ),
           ],
         ),
         const SizedBox(height: 20.0),

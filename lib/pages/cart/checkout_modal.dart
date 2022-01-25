@@ -117,8 +117,8 @@ class __CheckoutFormState extends State<_CheckoutForm> {
 
   @override
   Widget build(BuildContext context) {
-    final discountList = Iterable<int>.generate(100).toList();
-    final preferences = Preferences();
+    // final discountList = Iterable<int>.generate(100).toList();
+    // final preferences = Preferences();
     final cartProvider = Provider.of<CartProvider>(context);
     final counterTheme = Theme.of(context).textTheme.bodyText1.copyWith(
           color: CustomTheme.mainColor,
@@ -126,7 +126,7 @@ class __CheckoutFormState extends State<_CheckoutForm> {
 
     const minSpace = const SizedBox(height: 10.0);
     const maxSpace = const SizedBox(height: 15.0);
-    const canSelectDiscount = false;
+    // final canSelectDiscount = !preferences.session.isCliente;
 
     return Expanded(
       child: ListView(
@@ -138,32 +138,30 @@ class __CheckoutFormState extends State<_CheckoutForm> {
           minSpace,
           PaymentMethodsField(),
           maxSpace,
-          preferences.session.isCliente
-              ? Container()
-              : !canSelectDiscount
-                  ? Container()
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        const _LabelField(label: 'Descuento asignado'),
-                        minSpace,
-                        DropdownList(
-                          onChanged: (dynamic value) {
-                            cartProvider.discount = value as int;
-                          },
-                          value: cartProvider.discount,
-                          items: discountList
-                              .map<Map<String, dynamic>>(
-                                (int discount) => {
-                                  'id': discount,
-                                  'value': "$discount%",
-                                },
-                              )
-                              .toList(),
-                        ),
-                        maxSpace,
-                      ],
-                    ),
+          // !canSelectDiscount
+          //     ? Container()
+          //     : Column(
+          //         crossAxisAlignment: CrossAxisAlignment.stretch,
+          //         children: [
+          //           const _LabelField(label: 'Descuento asignado'),
+          //           minSpace,
+          //           DropdownList(
+          //             onChanged: (dynamic value) {
+          //               cartProvider.discount = value as int;
+          //             },
+          //             value: cartProvider.discount,
+          //             items: discountList
+          //                 .map<Map<String, dynamic>>(
+          //                   (int discount) => {
+          //                     'id': discount,
+          //                     'value': "$discount%",
+          //                   },
+          //                 )
+          //                 .toList(),
+          //           ),
+          //           maxSpace,
+          //         ],
+          //       ),
           const _LabelField(label: 'Notas adicionales'),
           minSpace,
           TextField(

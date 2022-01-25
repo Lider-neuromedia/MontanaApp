@@ -74,7 +74,7 @@ class _StoreFormPageState extends State<StoreFormPage> {
               children: [
                 const _ListAddedStores(),
                 FormInput(
-                  label: 'Nombre de la tienda',
+                  label: 'Sucursal número',
                   controller: _nombreController,
                   error: storeProvider.nombreError,
                   onChanged: (String value) => storeProvider.nombre = value,

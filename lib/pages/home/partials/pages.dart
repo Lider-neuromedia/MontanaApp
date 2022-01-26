@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:montana_mobile/pages/sync/sync_page.dart';
 import 'package:provider/provider.dart';
 import 'package:montana_mobile/pages/catalogue/catalogue_page.dart';
 import 'package:montana_mobile/pages/catalogue/show_room_page.dart';
@@ -30,6 +31,7 @@ class Pages extends StatelessWidget {
       preferences.session.isVendedor ? ClientsPage() : StoresPage(),
       PqrsPage(),
       QuotaExpansionPage(),
+      SyncPage(),
     ];
 
     return _pages[navigationProvider.currentPage];

@@ -35,7 +35,10 @@ class BottomDrawer extends StatelessWidget {
       left: 0,
       bottom: navigationProvider.showMore ? 0 : (boxHeight * -1),
       child: Container(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.symmetric(
+          vertical: 20.0,
+          horizontal: 15.0,
+        ),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: navigationProvider.showMore
@@ -64,7 +67,7 @@ class BottomDrawer extends StatelessWidget {
                   ? null
                   : () => navigationProvider.currentPage = 4,
             ),
-            const SizedBox(width: 20.0),
+            const SizedBox(width: 15.0),
             // TODO: Botón de PQRS ocultado.
             // DrawerItem(
             //   title: 'PQRS',
@@ -72,14 +75,21 @@ class BottomDrawer extends StatelessWidget {
             //   active: navigationProvider.currentPage == 5,
             //   onTap: () => navigationProvider.currentPage = 5,
             // ),
-            // const SizedBox(width: 20.0),
+            // const SizedBox(width: 15.0),
             DrawerItem(
               title: 'Ampliación\nde Cupo',
               iconData: Icons.tab_unselected,
               active: navigationProvider.currentPage == 6,
               onTap: () => navigationProvider.currentPage = 6,
             ),
-            const SizedBox(width: 20.0),
+            const SizedBox(width: 15.0),
+            DrawerItem(
+              title: 'Sincronizar',
+              iconData: Icons.sync,
+              active: navigationProvider.currentPage == 7,
+              onTap: () => navigationProvider.currentPage = 7,
+            ),
+            const SizedBox(width: 15.0),
             DrawerItem(
               title: 'Cerrar Sesión',
               iconData: WebSymbols.logout,

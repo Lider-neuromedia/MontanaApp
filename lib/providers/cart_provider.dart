@@ -212,6 +212,34 @@ class CartProvider with ChangeNotifier {
     return response != 0;
   }
 
+  Future<List<Cart>> getOfflineOrders() async {
+    final db = await DatabaseProvider.db.database;
+    final records = await db.query('offline_orders');
+    List<Cart> carts = [];
+
+    if (records.isEmpty) return carts;
+
+    for (final record in records) {
+      carts.add(Cart.fromJson(jsonDecode(record['content'])));
+    }
+
+    return carts;
+  }
+
+  Future<void> deleteLocalOrder(int index) async {
+    final db = await DatabaseProvider.db.database;
+    final records = await db.query('offline_orders');
+
+    for (int i = 0; i < records.length; i++) {
+      if (i == index) {
+        final cartId = records[i]['id'];
+        await DatabaseProvider.db.deleteRecord('offline_orders', cartId);
+        notifyListeners();
+        break;
+      }
+    }
+  }
+
   Future<void> syncOfflineOrdersInLocal() async {
     final db = await DatabaseProvider.db.database;
     final records = await db.query('offline_orders');

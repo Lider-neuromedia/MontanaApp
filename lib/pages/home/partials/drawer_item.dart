@@ -22,7 +22,7 @@ class DrawerItem extends StatelessWidget {
         InkWell(
           onTap: onTap,
           child: Container(
-            padding: const EdgeInsets.all(18.0),
+            padding: const EdgeInsets.all(12.0),
             decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(

@@ -73,6 +73,7 @@ class Pedido {
     this.total,
     this.descuento,
     this.notas,
+    this.notasFacturacion,
     this.idEstado,
     this.clienteId,
     this.vendedorId,
@@ -98,6 +99,7 @@ class Pedido {
   double total;
   int descuento;
   String notas;
+  String notasFacturacion;
   int idEstado;
   int vendedorId;
   String nameVendedor;
@@ -137,6 +139,7 @@ class Pedido {
           : null,
       descuento: json["descuento"] ?? null,
       notas: json["notas"] ?? null,
+      notasFacturacion: json["notas_facturacion"] ?? null,
       vendedorId: json["vendedor"] ?? null,
       clienteId: json["cliente"] ?? null,
       idEstado: temporalEstadoId,
@@ -176,6 +179,7 @@ class Pedido {
         "sub_total": subTotal,
         "descuento": descuento,
         "notas": notas ?? null,
+        "notas_facturacion": notasFacturacion ?? null,
         "vendedor": vendedorId,
         "cliente": clienteId ?? null,
         "id_estado": idEstado,

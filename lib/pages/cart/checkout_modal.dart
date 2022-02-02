@@ -68,6 +68,7 @@ class CheckoutModal extends StatelessWidget {
       cartProvider.clientId = null;
       cartProvider.catalogueId = null;
       cartProvider.notes = '';
+      cartProvider.billingNotes = '';
       cartProvider.signData = null;
       cartProvider.cart.clean();
 
@@ -101,17 +102,21 @@ class _CheckoutForm extends StatefulWidget {
 
 class __CheckoutFormState extends State<_CheckoutForm> {
   TextEditingController _notesController;
+  TextEditingController _billingNotesController;
 
   @override
   void initState() {
     final cartProvider = Provider.of<CartProvider>(context, listen: false);
     super.initState();
     _notesController = TextEditingController(text: cartProvider.notes);
+    _billingNotesController =
+        TextEditingController(text: cartProvider.billingNotes);
   }
 
   @override
   void dispose() {
     _notesController.dispose();
+    _billingNotesController.dispose();
     super.dispose();
   }
 
@@ -162,7 +167,7 @@ class __CheckoutFormState extends State<_CheckoutForm> {
           //           maxSpace,
           //         ],
           //       ),
-          const _LabelField(label: 'Notas adicionales'),
+          const _LabelField(label: 'Notas de descuento'),
           minSpace,
           TextField(
             controller: _notesController,
@@ -182,6 +187,35 @@ class __CheckoutFormState extends State<_CheckoutForm> {
               isCollapsed: true,
               contentPadding: const EdgeInsets.all(10.0),
               errorText: cartProvider.notesError,
+              border: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: CustomTheme.greyColor,
+                  width: 1.0,
+                ),
+              ),
+            ),
+          ),
+          maxSpace,
+          const _LabelField(label: 'Notas de facturación'),
+          minSpace,
+          TextField(
+            controller: _billingNotesController,
+            maxLines: 4,
+            maxLength: 120,
+            buildCounter: (_,
+                {int currentLength, int maxLength, bool isFocused}) {
+              return Text(
+                "$currentLength/$maxLength",
+                style: counterTheme,
+              );
+            },
+            onChanged: (String value) {
+              cartProvider.billingNotes = value;
+            },
+            decoration: InputDecoration(
+              isCollapsed: true,
+              contentPadding: const EdgeInsets.all(10.0),
+              errorText: cartProvider.billingNotesError,
               border: OutlineInputBorder(
                 borderSide: BorderSide(
                   color: CustomTheme.greyColor,

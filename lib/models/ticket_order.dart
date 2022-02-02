@@ -8,6 +8,7 @@ class TicketPedido {
     this.total,
     this.descuento,
     this.notas,
+    this.notasFacturacion,
     this.firma,
     this.vendedor,
     this.cliente,
@@ -28,6 +29,7 @@ class TicketPedido {
   int total;
   int descuento;
   String notas;
+  String notasFacturacion;
   String firma;
   int vendedor;
   int cliente;
@@ -48,6 +50,9 @@ class TicketPedido {
         total: json["total"],
         descuento: json["descuento"],
         notas: json["notas"] == null ? null : json["notas"],
+        notasFacturacion: json["notas_facturacion"] == null
+            ? null
+            : json["notas_facturacion"],
         firma: json["firma"],
         vendedor: json["vendedor"],
         cliente: json["cliente"],
@@ -70,6 +75,7 @@ class TicketPedido {
         "total": total,
         "descuento": descuento,
         "notas": notas == null ? null : notas,
+        "notas_facturacion": notasFacturacion == null ? null : notasFacturacion,
         "firma": firma,
         "vendedor": vendedor,
         "cliente": cliente,

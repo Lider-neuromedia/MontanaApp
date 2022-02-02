@@ -37,6 +37,28 @@ class CartProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  ValidationField _billingNotes = ValidationField();
+  String get billingNotes => _billingNotes.value;
+  String get billingNotesError => _billingNotes.error;
+
+  set billingNotes(String value) {
+    final errorLength = ValidationField.validateLength(value, max: 120);
+
+    if (errorLength != null) {
+      _billingNotes = ValidationField(error: errorLength);
+    } else {
+      _billingNotes = ValidationField(value: value);
+    }
+
+    if (_billingNotes.value != null && _billingNotes.value.isNotEmpty) {
+      _cart.billingNotes = "${_billingNotes.value}";
+    } else {
+      _cart.billingNotes = null;
+    }
+
+    notifyListeners();
+  }
+
   Cart _cart = Cart();
   Cart get cart => _cart;
   List<CartProduct> get products => _cart.products;
@@ -189,6 +211,10 @@ class CartProvider with ChangeNotifier {
     if (cartCompleted.notes != null && cartCompleted.notes.isNotEmpty) {
       request.fields['notas'] = cartCompleted.notes;
     }
+    if (cartCompleted.billingNotes != null &&
+        cartCompleted.billingNotes.isNotEmpty) {
+      request.fields['notas_facturacion'] = cartCompleted.billingNotes;
+    }
 
     cartCompleted.products.asMap().forEach((int i, CartProduct product) {
       request.fields['productos[$i][id_producto]'] = "${product.productId}";
@@ -276,6 +302,7 @@ class Cart {
   Uint8List signData;
   int catalogueId;
   String notes;
+  String billingNotes;
 
   Cart() {
     paymentMethod = 'contado';
@@ -291,6 +318,7 @@ class Cart {
     this.signData,
     this.catalogueId,
     this.notes,
+    this.billingNotes,
   });
 
   factory Cart.fromJson(Map<String, dynamic> json) => Cart.format(
@@ -301,6 +329,7 @@ class Cart {
         // signData: utf8.encode(json['sign_data']),
         signData: base64Decode(json['sign_data']),
         notes: json['notes'] ?? '',
+        billingNotes: json['billing_notes'] ?? '',
         products: List<CartProduct>.from(
             json["products"].map((x) => CartProduct.fromJson(x))),
       );
@@ -313,6 +342,7 @@ class Cart {
         // 'sign_data': utf8.decode(signData.toList(), allowMalformed: true),
         'sign_data': base64Encode(signData),
         'notes': notes,
+        'billing_notes': billingNotes,
         'products': List<dynamic>.from(products.map((x) => x.toJson())),
       };
 
@@ -322,6 +352,7 @@ class Cart {
     discount = 0;
     products = [];
     notes = null;
+    billingNotes = null;
     signData = null;
   }
 
@@ -330,6 +361,7 @@ class Cart {
     discount = 0;
     products = [];
     notes = null;
+    billingNotes = null;
   }
 
   bool get isValid {

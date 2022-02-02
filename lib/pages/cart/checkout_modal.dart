@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:montana_mobile/pages/quota_expansion/partials/file_button.dart';
 import 'package:provider/provider.dart';
 import 'package:montana_mobile/pages/cart/partials/current_sign.dart';
 import 'package:montana_mobile/pages/cart/partials/payment_methods_field.dart';
@@ -9,9 +12,7 @@ import 'package:montana_mobile/providers/cart_provider.dart';
 import 'package:montana_mobile/providers/connection_provider.dart';
 import 'package:montana_mobile/providers/navigation_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
-import 'package:montana_mobile/utils/preferences.dart';
 import 'package:montana_mobile/utils/utils.dart';
-import 'package:montana_mobile/widgets/DropdownList.dart';
 
 class CheckoutModal extends StatelessWidget {
   @override
@@ -133,6 +134,10 @@ class __CheckoutFormState extends State<_CheckoutForm> {
     const maxSpace = const SizedBox(height: 15.0);
     // final canSelectDiscount = !preferences.session.isCliente;
 
+    final signLabel = cartProvider.signMethods
+        .firstWhere((x) => x.id == cartProvider.signMethod)
+        .value;
+
     return Expanded(
       child: ListView(
         padding: const EdgeInsets.all(20.0),
@@ -141,7 +146,14 @@ class __CheckoutFormState extends State<_CheckoutForm> {
           const SizedBox(height: 20.0),
           const _LabelField(label: 'Forma de pago'),
           minSpace,
-          PaymentMethodsField(),
+          SwitchMethodsField<PaymentMethod>(
+            cartProvider: cartProvider,
+            list: cartProvider.paymentMethods,
+            currentValue: cartProvider.paymentMethod,
+            onTap: (String value) {
+              cartProvider.paymentMethod = value;
+            },
+          ),
           maxSpace,
           // !canSelectDiscount
           //     ? Container()
@@ -195,7 +207,7 @@ class __CheckoutFormState extends State<_CheckoutForm> {
               ),
             ),
           ),
-          maxSpace,
+          minSpace,
           const _LabelField(label: 'Notas de facturación'),
           minSpace,
           TextField(
@@ -225,10 +237,30 @@ class __CheckoutFormState extends State<_CheckoutForm> {
             ),
           ),
           maxSpace,
-          const _LabelField(label: 'Firma'),
+          const _LabelField(label: '¿Como quiere firmar?'),
           minSpace,
-          cartProvider.signData != null ? CurrentSign() : SignBox(),
+          SwitchMethodsField<SignMethod>(
+            cartProvider: cartProvider,
+            list: cartProvider.signMethods,
+            currentValue: cartProvider.signMethod,
+            onTap: (String value) {
+              cartProvider.signMethod = value;
+            },
+          ),
           maxSpace,
+          _LabelField(label: signLabel),
+          minSpace,
+          cartProvider.signMethod == SignMethod.FIRMA
+              ? cartProvider.signData != null
+                  ? CurrentSign()
+                  : SignBox()
+              : FileButton(
+                  value: cartProvider.descriptionSignPhoto,
+                  onSelected: (File file) {
+                    cartProvider.signPhoto = file;
+                  },
+                ),
+          const SizedBox(height: 100.0),
         ],
       ),
     );

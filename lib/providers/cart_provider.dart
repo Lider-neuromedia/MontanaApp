@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 import 'package:http_parser/http_parser.dart';
+import 'package:mime_type/mime_type.dart';
 import 'package:montana_mobile/models/product.dart';
 import 'package:montana_mobile/models/store.dart';
 import 'package:montana_mobile/providers/database_provider.dart';
@@ -13,6 +15,7 @@ import 'package:montana_mobile/utils/preferences.dart';
 class CartProvider with ChangeNotifier {
   final String _url = dotenv.env['API_URL'];
   final List<PaymentMethod> paymentMethods = _paymentMethods;
+  final List<SignMethod> signMethods = _signMethods;
   final _preferences = Preferences();
 
   ValidationField _notes = ValidationField();
@@ -77,6 +80,13 @@ class CartProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  String get signMethod => _cart.signMethod;
+
+  set signMethod(String value) {
+    _cart.signMethod = value;
+    notifyListeners();
+  }
+
   int get discount => _cart.discount;
 
   set discount(int value) {
@@ -89,6 +99,20 @@ class CartProvider with ChangeNotifier {
   set clientId(int value) {
     _cart.clientId = value;
     _cart.clean();
+    notifyListeners();
+  }
+
+  String _getFileName(File file) {
+    if (file == null) return null;
+    List list = List.from(file.path.split('/').reversed);
+    return list[0];
+  }
+
+  File get signPhoto => _cart.signPhoto;
+  String get descriptionSignPhoto => _getFileName(_cart.signPhoto);
+
+  set signPhoto(File value) {
+    _cart.signPhoto = value;
     notifyListeners();
   }
 
@@ -179,17 +203,31 @@ class CartProvider with ChangeNotifier {
 
     if (orderCode.isEmpty) return false;
 
-    final fileFirma = http.MultipartFile.fromBytes(
-      'firma',
-      cartCompleted.signData,
-      filename: 'firma.png',
-      contentType: MediaType('image', 'image/png'),
-    );
-
     final url = Uri.parse('$_url/pedidos');
     final request = http.MultipartRequest('POST', url);
     request.headers.addAll(_preferences.signedHeaders);
-    request.files.add(fileFirma);
+
+    if (cartCompleted.signMethod == SignMethod.FIRMA) {
+      final fileFirma = http.MultipartFile.fromBytes(
+        'firma',
+        cartCompleted.signData,
+        filename: 'firma.png',
+        contentType: MediaType('image', 'image/png'),
+      );
+      request.files.add(fileFirma);
+    }
+
+    if (cartCompleted.signMethod == SignMethod.FOTO) {
+      final fileSignPhoto = await http.MultipartFile.fromPath(
+        'firma',
+        cartCompleted.signPhoto.path,
+        contentType: MediaType(
+          mime(cartCompleted.signPhoto.path).split('/')[0],
+          mime(cartCompleted.signPhoto.path).split('/')[1],
+        ),
+      );
+      request.files.add(fileSignPhoto);
+    }
 
     if (user.isVendedor) {
       request.fields['cliente'] = "${cartCompleted.clientId}";
@@ -207,6 +245,7 @@ class CartProvider with ChangeNotifier {
     request.fields['codigo_pedido'] = "$orderCode";
     request.fields['total_pedido'] = "${cartCompleted.total}";
     request.fields['forma_pago'] = "${cartCompleted.paymentMethod}";
+    request.fields['forma_firma'] = "${cartCompleted.signMethod}";
 
     if (cartCompleted.notes != null && cartCompleted.notes.isNotEmpty) {
       request.fields['notas'] = cartCompleted.notes;
@@ -297,15 +336,18 @@ class CartProvider with ChangeNotifier {
 class Cart {
   int clientId;
   String paymentMethod;
+  String signMethod;
   int discount;
   List<CartProduct> products;
   Uint8List signData;
+  File signPhoto;
   int catalogueId;
   String notes;
   String billingNotes;
 
   Cart() {
     paymentMethod = 'contado';
+    signMethod = 'sign';
     discount = 0;
     products = [];
   }
@@ -313,9 +355,11 @@ class Cart {
   Cart.format({
     this.clientId,
     this.paymentMethod,
+    this.signMethod,
     this.discount,
     this.products,
     this.signData,
+    this.signPhoto,
     this.catalogueId,
     this.notes,
     this.billingNotes,
@@ -324,10 +368,14 @@ class Cart {
   factory Cart.fromJson(Map<String, dynamic> json) => Cart.format(
         clientId: json['client_id'],
         paymentMethod: json['payment_method'],
+        signMethod: json['sign_method'],
         discount: json['discount'],
         catalogueId: json['catalogue_id'],
-        // signData: utf8.encode(json['sign_data']),
-        signData: base64Decode(json['sign_data']),
+        signData:
+            json['sign_data'] != null ? base64Decode(json['sign_data']) : null,
+        signPhoto: json['sign_photo'] != null
+            ? File.fromRawPath(base64Decode(json['sign_photo']))
+            : null,
         notes: json['notes'] ?? '',
         billingNotes: json['billing_notes'] ?? '',
         products: List<CartProduct>.from(
@@ -337,10 +385,13 @@ class Cart {
   Map<String, dynamic> toJson() => {
         'client_id': clientId,
         'payment_method': paymentMethod,
+        'sign_method': signMethod,
         'discount': discount,
         'catalogue_id': catalogueId,
-        // 'sign_data': utf8.decode(signData.toList(), allowMalformed: true),
-        'sign_data': base64Encode(signData),
+        'sign_data': signData != null ? base64Encode(signData) : null,
+        'sign_photo': signPhoto != null
+            ? base64Encode(signPhoto.readAsBytesSync())
+            : null,
         'notes': notes,
         'billing_notes': billingNotes,
         'products': List<dynamic>.from(products.map((x) => x.toJson())),
@@ -349,15 +400,18 @@ class Cart {
   void cleanAll() {
     clientId = null;
     paymentMethod = 'contado';
+    signMethod = 'firma';
     discount = 0;
     products = [];
     notes = null;
     billingNotes = null;
     signData = null;
+    signPhoto = null;
   }
 
   void clean() {
     paymentMethod = 'contado';
+    signMethod = 'firma';
     discount = 0;
     products = [];
     notes = null;
@@ -371,11 +425,13 @@ class Cart {
     if (total == null) return false;
     if (discount == null) return false;
     if (paymentMethod == null) return false;
+    if (paymentMethod.isEmpty) return false;
+    if (signMethod == null) return false;
+    if (signMethod.isEmpty == null) return false;
     if (total < 0) return false;
     if (discount < 0 || discount > 100) return false;
-    if (paymentMethod.isEmpty) return false;
     if (products.length == 0) return false;
-    if (signData == null) return false;
+    if (signData == null && signPhoto == null) return false;
     return true;
   }
 
@@ -556,17 +612,39 @@ class CartStore {
       };
 }
 
-class PaymentMethod {
+abstract class SwitchMethod {
+  String id;
+  String value;
+
+  SwitchMethod(this.id, this.value);
+}
+
+class PaymentMethod extends SwitchMethod {
   static const CONTADO = "contado";
   static const CREDITO = "credito";
 
   String id;
   String value;
 
-  PaymentMethod(this.id, this.value);
+  PaymentMethod(this.id, this.value) : super(id, value);
 }
 
 final List<PaymentMethod> _paymentMethods = [
   PaymentMethod(PaymentMethod.CONTADO, 'Contado'),
   PaymentMethod(PaymentMethod.CREDITO, 'Crédito 45 días'),
+];
+
+class SignMethod extends SwitchMethod {
+  static const FIRMA = "firma";
+  static const FOTO = "foto";
+
+  String id;
+  String value;
+
+  SignMethod(this.id, this.value) : super(id, value);
+}
+
+final List<SignMethod> _signMethods = [
+  SignMethod(SignMethod.FIRMA, 'Firma'),
+  SignMethod(SignMethod.FOTO, 'Foto'),
 ];

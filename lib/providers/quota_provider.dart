@@ -23,23 +23,23 @@ class QuotaProvider with ChangeNotifier {
   File get docIdentidad => _docIdentidad;
   String get descriptionIdentidad => _getFileName(_docIdentidad);
 
-  File _docRut;
-  File get docRut => _docRut;
-  String get descriptionRut => _getFileName(_docRut);
-
-  File _docCamaraCom;
-  File get docCamaraCom => _docCamaraCom;
-  String get descriptionCamaraCom => _getFileName(_docCamaraCom);
-
   set docIdentidad(File value) {
     _docIdentidad = value;
     notifyListeners();
   }
 
+  File _docRut;
+  File get docRut => _docRut;
+  String get descriptionRut => _getFileName(_docRut);
+
   set docRut(File value) {
     _docRut = value;
     notifyListeners();
   }
+
+  File _docCamaraCom;
+  File get docCamaraCom => _docCamaraCom;
+  String get descriptionCamaraCom => _getFileName(_docCamaraCom);
 
   set docCamaraCom(File value) {
     _docCamaraCom = value;

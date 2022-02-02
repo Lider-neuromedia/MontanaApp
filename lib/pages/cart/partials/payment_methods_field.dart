@@ -1,27 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:montana_mobile/providers/cart_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
 
-class PaymentMethodsField extends StatelessWidget {
+class SwitchMethodsField<T> extends StatelessWidget {
+  const SwitchMethodsField({
+    Key key,
+    @required this.cartProvider,
+    @required this.list,
+    @required this.currentValue,
+    @required this.onTap,
+  }) : super(key: key);
+
+  final CartProvider cartProvider;
+  final List<SwitchMethod> list;
+  final String currentValue;
+  final Function onTap;
+
   @override
   Widget build(BuildContext context) {
-    final cartProvider = Provider.of<CartProvider>(context);
     final countMethods = cartProvider.paymentMethods.length;
     int index = -1;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       crossAxisAlignment: CrossAxisAlignment.center,
-      children: cartProvider.paymentMethods
-          .map<_MethodOption>((PaymentMethod method) {
+      children: list.map<_MethodOption>((SwitchMethod method) {
         index++;
-        final bool isSelected = cartProvider.paymentMethod == method.id;
-
         return _MethodOption(
-          onTap: () => cartProvider.paymentMethod = method.id,
-          method: method,
-          selected: isSelected,
+          onTap: () => onTap(method.id),
+          label: method.value,
+          selected: currentValue == method.id,
           hasBorderRight: index == countMethods - 1,
           hasBorderLeft: index == 0,
         );
@@ -33,14 +41,14 @@ class PaymentMethodsField extends StatelessWidget {
 class _MethodOption extends StatelessWidget {
   _MethodOption({
     Key key,
-    @required this.method,
+    @required this.label,
     @required this.selected,
     @required this.hasBorderLeft,
     @required this.hasBorderRight,
     @required this.onTap,
   }) : super(key: key);
 
-  final PaymentMethod method;
+  final String label;
   final bool selected;
   final bool hasBorderLeft;
   final bool hasBorderRight;
@@ -101,7 +109,7 @@ class _MethodOption extends StatelessWidget {
                 color: normalColor,
               ),
               child: Text(
-                method.value,
+                label,
                 style: textStyle,
                 textAlign: TextAlign.center,
               ),

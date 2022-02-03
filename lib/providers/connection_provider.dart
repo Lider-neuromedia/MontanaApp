@@ -82,14 +82,18 @@ class ConnectionProvider with ChangeNotifier {
     @required OrdersProvider ordersProvider,
   }) async {
     isSyncing = true;
-    // final startAt = DateTime.now();
 
     try {
       await _uploadData(
         storesProvider: storesProvider,
         cartProvider: cartProvider,
       );
+    } catch (ex, stacktrace) {
+      print(ex);
+      print(stacktrace);
+    }
 
+    try {
       await _downloadData(
         dashboardProvider: dashboardProvider,
         cataloguesProvider: cataloguesProvider,
@@ -101,19 +105,18 @@ class ConnectionProvider with ChangeNotifier {
         cartProvider: cartProvider,
         ordersProvider: ordersProvider,
       );
-    } catch (ex) {
+
+      _preferences.lastSync = DateTime.now();
+    } catch (ex, stacktrace) {
       print(ex);
-      message = "Limpiando base de datos.";
+      print(stacktrace);
+
+      message = "Sync Error. Limpiando DB.";
       await DatabaseProvider.db.cleanTables();
     }
 
-    final endAt = DateTime.now();
-    _preferences.lastSync = endAt;
-
-    message = "";
-    // print("Sincronización: ${endAt.difference(startAt).inSeconds} Segundos");
-
     isSyncing = false;
+    message = "";
   }
 
   Future<void> _uploadData({

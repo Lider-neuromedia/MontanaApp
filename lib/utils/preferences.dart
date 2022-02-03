@@ -32,7 +32,7 @@ class Preferences {
 
   int get lastSyncInMinutes => DateTime.now().difference(lastSync).inMinutes;
 
-  bool get canSync => DateTime.now().difference(lastSync).inMinutes >= 3;
+  bool get canSync => DateTime.now().difference(lastSync).inSeconds >= 60;
 
   set lastSync(DateTime value) {
     if (value == null) {

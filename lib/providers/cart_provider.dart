@@ -197,7 +197,8 @@ class CartProvider with ChangeNotifier {
     return decodedResponse['code'];
   }
 
-  Future<bool> createOrder(Cart cartCompleted) async {
+  Future<bool> createOrder(Cart cartCompleted,
+      [bool isFromOffline = false]) async {
     final orderCode = await getOrderCode();
     final user = _preferences.session;
 
@@ -208,6 +209,7 @@ class CartProvider with ChangeNotifier {
     request.headers.addAll(_preferences.signedHeaders);
 
     if (cartCompleted.signMethod == SignMethod.FIRMA) {
+      // Cargar firma.
       final fileFirma = http.MultipartFile.fromBytes(
         'firma',
         cartCompleted.signData,
@@ -218,13 +220,12 @@ class CartProvider with ChangeNotifier {
     }
 
     if (cartCompleted.signMethod == SignMethod.FOTO) {
+      // Cargar foto.
+      final mimeData = mime(cartCompleted.signPhoto.path).split('/');
       final fileSignPhoto = await http.MultipartFile.fromPath(
         'firma',
         cartCompleted.signPhoto.path,
-        contentType: MediaType(
-          mime(cartCompleted.signPhoto.path).split('/')[0],
-          mime(cartCompleted.signPhoto.path).split('/')[1],
-        ),
+        contentType: MediaType(mimeData[0], mimeData[1]),
       );
       request.files.add(fileSignPhoto);
     }
@@ -314,7 +315,7 @@ class CartProvider with ChangeNotifier {
     for (final record in records) {
       final cartId = record['id'];
       final cart = Cart.fromJson(jsonDecode(record['content']));
-      final isSuccessResponse = await createOrder(cart);
+      final isSuccessResponse = await createOrder(cart, true);
 
       if (isSuccessResponse) {
         await DatabaseProvider.db.deleteRecord('offline_orders', cartId);
@@ -341,6 +342,7 @@ class Cart {
   List<CartProduct> products;
   Uint8List signData;
   File signPhoto;
+  String signPhotoFilename;
   int catalogueId;
   String notes;
   String billingNotes;
@@ -360,27 +362,37 @@ class Cart {
     this.products,
     this.signData,
     this.signPhoto,
+    this.signPhotoFilename,
     this.catalogueId,
     this.notes,
     this.billingNotes,
   });
 
-  factory Cart.fromJson(Map<String, dynamic> json) => Cart.format(
-        clientId: json['client_id'],
-        paymentMethod: json['payment_method'],
-        signMethod: json['sign_method'],
-        discount: json['discount'],
-        catalogueId: json['catalogue_id'],
-        signData:
-            json['sign_data'] != null ? base64Decode(json['sign_data']) : null,
-        signPhoto: json['sign_photo'] != null
-            ? File.fromRawPath(base64Decode(json['sign_photo']))
-            : null,
-        notes: json['notes'] ?? '',
-        billingNotes: json['billing_notes'] ?? '',
-        products: List<CartProduct>.from(
-            json["products"].map((x) => CartProduct.fromJson(x))),
-      );
+  factory Cart.fromJson(Map<String, dynamic> json) {
+    File signPhotoFile;
+
+    if (json['sign_photo'] != null) {
+      final decodedBytes = base64Decode(json['sign_photo']);
+      signPhotoFile = File(json['sign_photo_filename']);
+      signPhotoFile.writeAsBytesSync(decodedBytes);
+    }
+
+    return Cart.format(
+      clientId: json['client_id'],
+      paymentMethod: json['payment_method'],
+      signMethod: json['sign_method'],
+      discount: json['discount'],
+      catalogueId: json['catalogue_id'],
+      signData:
+          json['sign_data'] != null ? base64Decode(json['sign_data']) : null,
+      signPhoto: signPhotoFile,
+      signPhotoFilename: json['sign_photo_filename'],
+      notes: json['notes'] ?? '',
+      billingNotes: json['billing_notes'] ?? '',
+      products: List<CartProduct>.from(
+          json["products"].map((x) => CartProduct.fromJson(x))),
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         'client_id': clientId,
@@ -392,6 +404,7 @@ class Cart {
         'sign_photo': signPhoto != null
             ? base64Encode(signPhoto.readAsBytesSync())
             : null,
+        'sign_photo_filename': signPhoto != null ? signPhoto.path : null,
         'notes': notes,
         'billing_notes': billingNotes,
         'products': List<dynamic>.from(products.map((x) => x.toJson())),

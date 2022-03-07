@@ -6,7 +6,7 @@ import 'package:montana_mobile/providers/database_provider.dart';
 import 'package:montana_mobile/utils/preferences.dart';
 
 class CataloguesProvider with ChangeNotifier {
-  final String _url = dotenv.env['API_URL'];
+  final String _url = dotenv.env["API_URL"];
   final _preferences = Preferences();
 
   bool _isLoading = false;
@@ -27,7 +27,7 @@ class CataloguesProvider with ChangeNotifier {
   }
 
   Future<List<Catalogo>> getCatalogues() async {
-    final url = Uri.parse('$_url/catalogos');
+    final url = Uri.parse("$_url/consumerCatalogos");
     final response = await http.get(url, headers: _preferences.signedHeaders);
 
     if (response.statusCode != 200) return [];
@@ -36,10 +36,10 @@ class CataloguesProvider with ChangeNotifier {
 
   Future<List<Catalogo>> getCataloguesLocal() async {
     final db = await DatabaseProvider.db.database;
-    List<Map<String, Object>> list = await db.query('catalogues');
+    List<Map<String, Object>> list = await db.query("catalogues");
     var catalogues = List<Catalogo>.from(list.map((x) {
       Map<String, Object> row = Map<String, Object>.of(x);
-      row['id_catalogo'] = row['id'];
+      row["id_catalogo"] = row["id"];
       return Catalogo.fromJson(row);
     }));
     return catalogues;

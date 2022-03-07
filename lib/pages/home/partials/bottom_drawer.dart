@@ -20,11 +20,11 @@ class BottomDrawer extends StatelessWidget {
 
     final preferences = Preferences();
     final user = preferences.session;
-    String homeTitle = 'Home';
+    String homeTitle = "Home";
     IconData homeIcon = Icons.home;
 
     if (user != null) {
-      homeTitle = user.isVendedor ? 'Clientes' : 'Tiendas';
+      homeTitle = user.isVendedor ? "Clientes" : "Tiendas";
       homeIcon =
           user.isVendedor ? Icons.account_circle_outlined : Icons.storefront;
     }
@@ -70,28 +70,28 @@ class BottomDrawer extends StatelessWidget {
             const SizedBox(width: 15.0),
             // TODO: Botón de PQRS ocultado.
             // DrawerItem(
-            //   title: 'PQRS',
+            //   title: "PQRS",
             //   iconData: Octicons.comment_discussion,
             //   active: navigationProvider.currentPage == 5,
             //   onTap: () => navigationProvider.currentPage = 5,
             // ),
             // const SizedBox(width: 15.0),
             DrawerItem(
-              title: 'Ampliación\nde Cupo',
+              title: "Ampliación\nde Cupo",
               iconData: Icons.tab_unselected,
               active: navigationProvider.currentPage == 6,
               onTap: () => navigationProvider.currentPage = 6,
             ),
             const SizedBox(width: 15.0),
             DrawerItem(
-              title: 'Sincronizar',
+              title: "Sincronizar",
               iconData: Icons.sync,
               active: navigationProvider.currentPage == 7,
               onTap: () => navigationProvider.currentPage = 7,
             ),
             const SizedBox(width: 15.0),
             DrawerItem(
-              title: 'Cerrar Sesión',
+              title: "Cerrar Sesión",
               iconData: WebSymbols.logout,
               active: false,
               onTap: () {
@@ -115,7 +115,7 @@ class BottomDrawer extends StatelessWidget {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Confirmación'),
+          title: const Text("Confirmación"),
           content: SingleChildScrollView(
             child: ListBody(
               children: [

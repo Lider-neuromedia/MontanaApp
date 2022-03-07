@@ -9,7 +9,7 @@ import 'package:montana_mobile/utils/preferences.dart';
 import 'package:montana_mobile/models/question_rating.dart' as vp;
 
 class RatingProvider with ChangeNotifier {
-  final String _url = dotenv.env['API_URL'];
+  final String _url = dotenv.env["API_URL"];
   final _preferences = Preferences();
 
   bool _isLoading = false;
@@ -85,7 +85,7 @@ class RatingProvider with ChangeNotifier {
   }
 
   Future<List<Pregunta>> getQuestions(int catalogId) async {
-    final url = Uri.parse('$_url/getPreguntas/$catalogId');
+    final url = Uri.parse("$_url/getPreguntas/$catalogId");
     final response = await http.get(url, headers: _preferences.signedHeaders);
 
     if (response.statusCode != 200) return [];
@@ -95,15 +95,15 @@ class RatingProvider with ChangeNotifier {
   Future<List<Pregunta>> getQuestionsLocal(int catalogueId) async {
     final db = await DatabaseProvider.db.database;
     List<Map<String, Object>> list = await db.query(
-      'questions',
-      where: 'catalogo = ?',
+      "questions",
+      where: "catalogo = ?",
       whereArgs: [catalogueId],
     );
     return List<Pregunta>.from(list.map((x) => Pregunta.fromJson(x)));
   }
 
   Future<Rating> getRatings(int productId) async {
-    final url = Uri.parse('$_url/getProductoValoraciones/$productId');
+    final url = Uri.parse("$_url/getProductoValoraciones/$productId");
     final response = await http.get(url, headers: _preferences.signedHeaders);
 
     if (response.statusCode != 200) return null;
@@ -113,8 +113,8 @@ class RatingProvider with ChangeNotifier {
   Future<Rating> getRatingsLocal(int productId) async {
     final db = await DatabaseProvider.db.database;
     final response = await db.query(
-      'ratings',
-      where: 'producto_id = ?',
+      "ratings",
+      where: "producto_id = ?",
       whereArgs: [productId],
     );
 
@@ -130,11 +130,11 @@ class RatingProvider with ChangeNotifier {
     Map<String, Object> record = response.first;
     Map<String, Object> recordTemp = Map<String, Object>.of(record);
 
-    final usuarios = jsonDecode(recordTemp['usuarios']);
+    final usuarios = jsonDecode(recordTemp["usuarios"]);
     final valoraciones = jsonDecode(recordTemp["valoraciones"]);
 
-    recordTemp['usuarios'] = List<int>.from(usuarios.map((x) => x));
-    recordTemp['valoraciones'] = List<vp.ValoracionPregunta>.from(
+    recordTemp["usuarios"] = List<int>.from(usuarios.map((x) => x));
+    recordTemp["valoraciones"] = List<vp.ValoracionPregunta>.from(
       valoraciones.map((x) => vp.ValoracionPregunta.fromJson(x)),
     );
 
@@ -142,7 +142,7 @@ class RatingProvider with ChangeNotifier {
   }
 
   Future<bool> saveRating() async {
-    final url = Uri.parse('$_url/storeRespuestas');
+    final url = Uri.parse("$_url/storeRespuestas");
     final response = await http.post(
       url,
       headers: _preferences.signedHeaders,

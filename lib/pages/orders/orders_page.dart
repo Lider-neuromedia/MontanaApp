@@ -35,7 +35,7 @@ class _OrdersPageState extends State<OrdersPage> {
     final connectionProvider = Provider.of<ConnectionProvider>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Pedidos'),
+        title: Text("Pedidos"),
         actions: [
           const CartIcon(),
         ],
@@ -48,7 +48,7 @@ class _OrdersPageState extends State<OrdersPage> {
                   onPressed: () => ordersProvider.loadOrders(
                     local: connectionProvider.isNotConnected,
                   ),
-                  message: 'No hay pedidos.',
+                  message: "No hay pedidos.",
                 )
               : RefreshIndicator(
                   onRefresh: () => ordersProvider.loadOrders(
@@ -130,7 +130,7 @@ class __OrdersFilterState extends State<_OrdersFilter> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Text('Ordenar por:', style: textStyle),
+          Text("Ordenar por:", style: textStyle),
           const SizedBox(width: 10.0),
           DropdownButton<String>(
             icon: const Icon(Icons.keyboard_arrow_down),

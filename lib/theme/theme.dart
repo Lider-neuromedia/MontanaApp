@@ -25,9 +25,9 @@ class CustomTheme {
   static const Color blue2Color = const Color.fromRGBO(0, 132, 255, 1.0);
   static const Color blue3Color = const Color.fromRGBO(52, 189, 247, 1.0);
 
-  static const String familySourceSansPro = 'SourceSansPro';
-  static const String familyNunito = 'Nunito';
-  static const String primaryFont = 'Nunito';
+  static const String familySourceSansPro = "SourceSansPro";
+  static const String familyNunito = "Nunito";
+  static const String primaryFont = "Nunito";
 
   ThemeData get theme {
     final original = ThemeData.light();

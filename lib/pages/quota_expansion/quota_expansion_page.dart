@@ -33,7 +33,7 @@ class _QuotaExpansionPageState extends State<QuotaExpansionPage> {
           Provider.of<ConnectionProvider>(context, listen: false);
 
       quotaProvider.clienteId = null;
-      quotaProvider.monto = '0';
+      quotaProvider.monto = "0";
       quotaProvider.docIdentidad = null;
       quotaProvider.docRut = null;
       quotaProvider.docCamaraCom = null;
@@ -58,24 +58,24 @@ class _QuotaExpansionPageState extends State<QuotaExpansionPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Ampliación de cupo'),
+        title: Text("Ampliación de cupo"),
       ),
       body: ListView(
         padding: const EdgeInsets.all(20.0),
         children: [
-          _TitleQuota(title: 'Realiza tu Solicitud', size: 30.0),
+          _TitleQuota(title: "Realiza tu Solicitud", size: 30.0),
           const SizedBox(height: 30.0),
           preferences.session.isCliente
               ? Container()
               : Column(
                   children: [
-                    const _LabelField(label: 'CLIENTE'),
+                    const _LabelField(label: "CLIENTE"),
                     const SizedBox(height: 10.0),
                     _ClientsDropdown(),
                     const SizedBox(height: 20.0),
                   ],
                 ),
-          const _LabelField(label: 'Adjuntar documento de identidad'),
+          const _LabelField(label: "Adjuntar documento de identidad"),
           const SizedBox(height: 10.0),
           FileButton(
             value: quotaProvider.descriptionIdentidad,
@@ -84,7 +84,7 @@ class _QuotaExpansionPageState extends State<QuotaExpansionPage> {
             },
           ),
           const SizedBox(height: 20.0),
-          const _LabelField(label: 'Adjuntar RUT'),
+          const _LabelField(label: "Adjuntar RUT"),
           const SizedBox(height: 10.0),
           FileButton(
             value: quotaProvider.descriptionRut,
@@ -93,7 +93,7 @@ class _QuotaExpansionPageState extends State<QuotaExpansionPage> {
             },
           ),
           const SizedBox(height: 20.0),
-          const _LabelField(label: 'Adjuntar cámara de comercio'),
+          const _LabelField(label: "Adjuntar cámara de comercio"),
           const SizedBox(height: 10.0),
           FileButton(
             value: quotaProvider.descriptionCamaraCom,
@@ -104,11 +104,11 @@ class _QuotaExpansionPageState extends State<QuotaExpansionPage> {
           const SizedBox(height: 30.0),
           _TitleQuota(
             title:
-                'Por favor coloque el monto por el cual desea solicitar ampliación de cupo',
+                "Por favor coloque el monto por el cual desea solicitar ampliación de cupo",
             size: 20.0,
           ),
           const SizedBox(height: 30.0),
-          const _LabelField(label: 'Monto'),
+          const _LabelField(label: "Monto"),
           const SizedBox(height: 10.0),
           TextField(
             keyboardType: TextInputType.number,
@@ -148,7 +148,7 @@ class _SubmitAction extends StatelessWidget {
             child: SizedBox(
               width: 160.0,
               child: ContinueButton(
-                label: 'Enviar',
+                label: "Enviar",
                 icon: Icons.arrow_forward,
                 onPressed: quotaProvider.canSend
                     ? () => _createQuota(
@@ -176,17 +176,17 @@ class _SubmitAction extends StatelessWidget {
     if (!success) {
       showMessageDialog(
         context,
-        'Aviso',
-        'No se pudieron guardar los datos.',
+        "Aviso",
+        "No se pudieron guardar los datos.",
       );
     } else {
       showMessageDialog(
         context,
-        'Listo',
-        'Solicitud guardada correctamente.',
+        "Listo",
+        "Solicitud guardada correctamente.",
         onAccept: () {
-          quotaProvider.montoController.text = '0';
-          quotaProvider.monto = '0';
+          quotaProvider.montoController.text = "0";
+          quotaProvider.monto = "0";
           quotaProvider.docIdentidad = null;
           quotaProvider.docRut = null;
           quotaProvider.docCamaraCom = null;

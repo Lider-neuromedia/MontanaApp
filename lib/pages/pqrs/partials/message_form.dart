@@ -23,7 +23,7 @@ class MessageForm extends StatefulWidget {
 }
 
 class _MessageFormState extends State<MessageForm> {
-  final _messageController = TextEditingController(text: '');
+  final _messageController = TextEditingController(text: "");
 
   @override
   void initState() {
@@ -62,7 +62,7 @@ class _MessageFormState extends State<MessageForm> {
               controller: _messageController,
               decoration: InputDecoration(
                 border: InputBorder.none,
-                hintText: 'Escribe un mensaje',
+                hintText: "Escribe un mensaje",
               ),
               onChanged: (String value) {
                 messageProvider.message = value;
@@ -93,10 +93,10 @@ class _MessageFormState extends State<MessageForm> {
     mp.isLoading = false;
 
     if (mensaje == null) {
-      showMessageDialog(context, 'Aviso', 'El mensaje no se pudo enviar.');
+      showMessageDialog(context, "Aviso", "El mensaje no se pudo enviar.");
     } else {
       _messageController.clear();
-      mp.message = '';
+      mp.message = "";
       pp.addCreatedMessage(mensaje);
     }
   }

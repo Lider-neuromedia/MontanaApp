@@ -7,7 +7,7 @@ import 'package:montana_mobile/providers/database_provider.dart';
 import 'package:montana_mobile/utils/preferences.dart';
 
 class ShowRoomProvider with ChangeNotifier {
-  final String _url = dotenv.env['API_URL'];
+  final String _url = dotenv.env["API_URL"];
   final _preferences = Preferences();
 
   bool _isLoading = false;
@@ -29,25 +29,26 @@ class ShowRoomProvider with ChangeNotifier {
   }
 
   Future<List<Producto>> getShowRoomProducts() async {
-    final url = Uri.parse('$_url/getProductsShowRoom');
+    // TODO: agregar paginación
+    final url = Uri.parse("$_url/getProductsShowRoom");
     final response = await http.get(url, headers: _preferences.signedHeaders);
 
     if (response.statusCode != 200) return [];
-    return responseProductosFromJson(response.body).productos;
+    return responseProductosFromJson(response.body).productos.data;
   }
 
   Future<List<Producto>> getShowRoomProductsLocal() async {
     final db = await DatabaseProvider.db.database;
     List<Map<String, Object>> list = await db.query(
-      'products',
-      where: 'tipo = ?',
-      whereArgs: ['show room'],
+      "products",
+      where: "tipo = ?",
+      whereArgs: ["show room"],
     );
 
     List<Producto> products = List<Producto>.from(list.map((x) {
       Map<String, Object> row = Map<String, Object>.of(x);
-      row['id_producto'] = row['id'];
-      row['imagenes'] = jsonDecode(row['imagenes']);
+      row["id_producto"] = row["id"];
+      row["imagenes"] = jsonDecode(row["imagenes"]);
       return Producto.fromJson(row);
     }));
 

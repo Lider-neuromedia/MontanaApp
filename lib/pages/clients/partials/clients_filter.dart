@@ -7,8 +7,8 @@ class ClientsFilter extends StatefulWidget {
 }
 
 class _ClientsFilterState extends State<ClientsFilter> {
-  String dropdownValue = 'Más recientes';
-  final List<String> values = ['Más recientes'];
+  String dropdownValue = "Más recientes";
+  final List<String> values = ["Más recientes"];
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class _ClientsFilterState extends State<ClientsFilter> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Text('Ordenar por:', style: textStyle),
+          Text("Ordenar por:", style: textStyle),
           const SizedBox(width: 10.0),
           DropdownButton<String>(
             value: dropdownValue,

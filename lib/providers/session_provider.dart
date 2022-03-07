@@ -3,11 +3,11 @@ import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 import 'package:montana_mobile/utils/preferences.dart';
 
 class SessionProvider {
-  final String _url = dotenv.env['API_URL'];
+  final String _url = dotenv.env["API_URL"];
   final _preferences = Preferences();
 
   Future<bool> isUserSessionValid() async {
-    final url = Uri.parse('$_url/auth/getUserSesion');
+    final url = Uri.parse("$_url/auth/getUserSesion");
 
     if (_preferences.token == null || _preferences.session == null) {
       _preferences.token = null;

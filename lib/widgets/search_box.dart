@@ -63,7 +63,7 @@ class _SearchBoxState extends State<SearchBox> {
                 controller: _searchController,
                 decoration: InputDecoration(
                   border: InputBorder.none,
-                  hintText: 'Buscador',
+                  hintText: "Buscador",
                   isCollapsed: true,
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 10.0,

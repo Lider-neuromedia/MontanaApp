@@ -10,7 +10,7 @@ import 'package:montana_mobile/theme/theme.dart';
 import 'package:montana_mobile/utils/utils.dart';
 
 class StoreFormPage extends StatefulWidget {
-  static final String route = '/store-form';
+  static final String route = "/store-form";
 
   const StoreFormPage({Key key}) : super(key: key);
 
@@ -64,7 +64,7 @@ class _StoreFormPageState extends State<StoreFormPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text(_store == null ? 'Agregar Tienda' : 'Editar tienda'),
+        title: Text(_store == null ? "Agregar Tienda" : "Editar tienda"),
       ),
       body: Column(
         children: [
@@ -74,35 +74,35 @@ class _StoreFormPageState extends State<StoreFormPage> {
               children: [
                 const _ListAddedStores(),
                 FormInput(
-                  label: 'Sucursal número',
+                  label: "Sucursal número",
                   controller: _nombreController,
                   error: storeProvider.nombreError,
                   onChanged: (String value) => storeProvider.nombre = value,
                 ),
                 const SizedBox(height: 15.0),
                 FormInput(
-                  label: 'Lugar',
+                  label: "Lugar",
                   controller: _lugarController,
                   error: storeProvider.lugarError,
                   onChanged: (String value) => storeProvider.lugar = value,
                 ),
                 const SizedBox(height: 15.0),
                 FormInput(
-                  label: 'Número del local',
+                  label: "Número del local",
                   controller: _localController,
                   error: storeProvider.localError,
                   onChanged: (String value) => storeProvider.local = value,
                 ),
                 const SizedBox(height: 15.0),
                 FormInput(
-                  label: 'Dirección',
+                  label: "Dirección",
                   controller: _direccionController,
                   error: storeProvider.direccionError,
                   onChanged: (String value) => storeProvider.direccion = value,
                 ),
                 const SizedBox(height: 15.0),
                 FormInput(
-                  label: 'Teléfono',
+                  label: "Teléfono",
                   controller: _telefonoController,
                   error: storeProvider.telefonoError,
                   onChanged: (String value) => storeProvider.telefono = value,
@@ -162,11 +162,11 @@ class _StoreFormPageState extends State<StoreFormPage> {
   ) async {
     final isUpdate = storeProvider.storeUpdate != null;
     final successMessage = isUpdate
-        ? 'Tienda actualizada correctamente.'
-        : 'Tienda(s) creada(s) correctamente.';
+        ? "Tienda actualizada correctamente."
+        : "Tienda(s) creada(s) correctamente.";
     final errorMessage = isUpdate
-        ? 'No se actualizó la tienda.'
-        : 'No se guardó la(s) tienda(s).';
+        ? "No se actualizó la tienda."
+        : "No se guardó la(s) tienda(s).";
 
     storeProvider.isLoading = true;
     bool success = false;
@@ -189,12 +189,12 @@ class _StoreFormPageState extends State<StoreFormPage> {
 
       showMessageDialog(
         context,
-        'Listo',
+        "Listo",
         successMessage,
         onAccept: () => Navigator.pop(context),
       );
     } else {
-      showMessageDialog(context, 'Aviso', errorMessage);
+      showMessageDialog(context, "Aviso", errorMessage);
     }
   }
 }

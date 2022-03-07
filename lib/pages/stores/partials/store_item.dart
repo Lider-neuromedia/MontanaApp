@@ -39,12 +39,12 @@ class StoreItem extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Código: 00${index + 1}', style: titleStyle),
+              Text("Código: 00${index + 1}", style: titleStyle),
               const SizedBox(height: 5.0),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  const Text('Lugar:'),
+                  const Text("Lugar:"),
                   Text(store.lugar),
                 ],
               ),
@@ -54,7 +54,7 @@ class StoreItem extends StatelessWidget {
                   : Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        const Text('Locald:'),
+                        const Text("Local:"),
                         Text(store.local),
                       ],
                     ),

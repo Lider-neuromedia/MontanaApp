@@ -7,7 +7,7 @@ import 'package:montana_mobile/services/push_notification_service.dart';
 import 'package:montana_mobile/utils/preferences.dart';
 
 class LoginProvider with ChangeNotifier {
-  final String _url = dotenv.env['API_URL'];
+  final String _url = dotenv.env["API_URL"];
   final _preferences = Preferences();
 
   ValidationField _email = ValidationField();
@@ -69,10 +69,10 @@ class LoginProvider with ChangeNotifier {
   }
 
   Future<void> login() async {
-    final url = Uri.parse('$_url/auth/login');
+    final url = Uri.parse("$_url/auth/login");
     final Map<String, String> data = {
-      'email': _email.value,
-      'password': _password.value,
+      "email": _email.value,
+      "password": _password.value,
     };
     final response = await http.post(
       url,

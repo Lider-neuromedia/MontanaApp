@@ -6,7 +6,7 @@ import 'package:montana_mobile/pages/home/partials/navigation_bar.dart';
 import 'package:montana_mobile/pages/home/partials/pages.dart';
 
 class HomePage extends StatefulWidget {
-  static final String route = '/';
+  static final String route = "/";
 
   @override
   _HomePageState createState() => _HomePageState();

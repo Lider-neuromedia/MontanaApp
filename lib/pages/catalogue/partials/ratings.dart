@@ -28,12 +28,12 @@ class Ratings extends StatelessWidget {
         children: [
           const SizedBox(height: 10.0),
           Text(
-            'Valoraciones',
+            "Valoraciones",
             textAlign: TextAlign.left,
             style: titleStyle,
           ),
           Text(
-            '${ratingProvider.rating.cantidadValoraciones} valoraciones',
+            "${ratingProvider.rating.cantidadValoraciones} valoraciones",
             textAlign: TextAlign.left,
             style: subtitleStyle,
           ),

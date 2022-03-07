@@ -83,15 +83,15 @@ class _ResumeData extends StatelessWidget {
         _CardDataList(
           children: [
             CardData(
-              title: 'Cupo preaprobado',
-              value: '\$4.300.400',
+              title: "Cupo preaprobado",
+              value: "\$4.300.400",
               icon: Icons.sentiment_neutral_rounded,
               color: CustomTheme.yellowColor,
               isMain: false,
             ),
             CardData(
-              title: 'Cupo disponible',
-              value: '\$3.500.400',
+              title: "Cupo disponible",
+              value: "\$3.500.400",
               icon: Icons.sentiment_very_satisfied,
               color: CustomTheme.greenColor,
               isMain: false,
@@ -101,15 +101,15 @@ class _ResumeData extends StatelessWidget {
         _CardDataList(
           children: [
             CardData(
-              title: 'Saldo total deuda',
-              value: '\$4.300.400',
+              title: "Saldo total deuda",
+              value: "\$4.300.400",
               icon: Icons.error_outline,
               color: CustomTheme.purpleColor,
               isMain: false,
             ),
             CardData(
-              title: 'Saldo en mora',
-              value: '\$3.500.400',
+              title: "Saldo en mora",
+              value: "\$3.500.400",
               icon: Icons.sentiment_dissatisfied_rounded,
               color: CustomTheme.redColor,
               isMain: false,
@@ -122,29 +122,29 @@ class _ResumeData extends StatelessWidget {
                 ? EmptyMessage(
                     onPressed: () =>
                         dashboardProvider.loadDashboardResume(local: local),
-                    message: 'No hay información.',
+                    message: "No hay información.",
                   )
                 : Column(
                     children: [
                       _CardDataList(children: [
                         CardStatistic(
                           isMain: true,
-                          title: 'Tiendas Creadas',
+                          title: "Tiendas Creadas",
                           value: dashboardProvider.resumen.cantidadTiendas,
-                          label: 'Tiendas',
+                          label: "Tiendas",
                           icon: Icons.storefront,
                         ),
                         CardStatistic(
                           isMain: false,
                           icon: Octicons.comment_discussion,
-                          title: 'PQRS Generados',
+                          title: "PQRS Generados",
                           value: dashboardProvider.resumen.cantidadPqrs,
-                          label: 'PQRS',
+                          label: "PQRS",
                         ),
                       ]),
                       const SizedBox(height: 20.0),
                       Text(
-                        'CONSOLIDADO PEDIDOS',
+                        "CONSOLIDADO PEDIDOS",
                         style: titleStyle,
                         textAlign: TextAlign.center,
                       ),

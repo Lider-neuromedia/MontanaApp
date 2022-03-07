@@ -19,30 +19,30 @@ class ValidationField {
 
   static String validateInteger(String value) {
     if (int.tryParse(value) == null) {
-      return 'El campo debe ser un número';
+      return "El campo debe ser un número.";
     }
     return null;
   }
 
   static String validateIntRange(String value, {int min, int max}) {
     if (int.tryParse(value) == null) {
-      return 'El campo debe ser un número';
+      return "El campo debe ser un número.";
     }
     if (min != null && int.parse(value) < min) {
-      return 'El campo debe ser mínimo $min';
+      return "El campo debe ser mínimo $min.";
     }
     if (max != null && int.parse(value) > max) {
-      return 'El campo debe ser máximo $max';
+      return "El campo debe ser máximo $max.";
     }
     return null;
   }
 
   static String validateLength(String value, {int min, int max}) {
     if (min != null && value.length < min) {
-      return 'La longitud del campo debe ser mayor a $min.';
+      return "La longitud del campo debe ser mayor a $min.";
     }
     if (max != null && value.length > max) {
-      return 'La longitud del campo debe ser menor a $max.';
+      return "La longitud del campo debe ser menor a $max.";
     }
     return null;
   }
@@ -50,7 +50,7 @@ class ValidationField {
   static String validateEmail(String value) {
     final regExp = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
     if (!regExp.hasMatch(value)) {
-      return 'Correo inválido.';
+      return "Correo inválido.";
     }
     return null;
   }
@@ -59,7 +59,7 @@ class ValidationField {
     if (value == null || confirmation == null) return null;
     if (value.length == 0 && confirmation.length == 0) return null;
     if (value != confirmation) {
-      return 'Los campos no coinciden.';
+      return "Los campos no coinciden.";
     }
     return null;
   }

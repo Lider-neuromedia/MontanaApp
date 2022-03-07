@@ -10,12 +10,12 @@ import 'package:montana_mobile/providers/validation_field.dart';
 import 'package:montana_mobile/utils/preferences.dart';
 
 class QuotaProvider with ChangeNotifier {
-  final String _url = dotenv.env['API_URL'];
+  final String _url = dotenv.env["API_URL"];
   final _preferences = Preferences();
 
   String _getFileName(File file) {
     if (file == null) return null;
-    List list = List.from(file.path.split('/').reversed);
+    List list = List.from(file.path.split("/").reversed);
     return list[0];
   }
 
@@ -65,7 +65,7 @@ class QuotaProvider with ChangeNotifier {
   ValidationField _monto = ValidationField();
   String get monto => _monto.value;
   String get montoError => _monto.error;
-  TextEditingController _montoController = TextEditingController(text: '0');
+  TextEditingController _montoController = TextEditingController(text: "0");
   TextEditingController get montoController => _montoController;
 
   set monto(String value) {
@@ -103,34 +103,34 @@ class QuotaProvider with ChangeNotifier {
 
   Future<bool> createQuotaExpansion({@required bool local}) async {
     final fileDocIdentidad = await http.MultipartFile.fromPath(
-      'doc_identidad',
+      "doc_identidad",
       docIdentidad.path,
       contentType: MediaType(
-        mime(docIdentidad.path).split('/')[0],
-        mime(docIdentidad.path).split('/')[1],
+        mime(docIdentidad.path).split("/")[0],
+        mime(docIdentidad.path).split("/")[1],
       ),
     );
     final fileDocRut = await http.MultipartFile.fromPath(
-      'doc_rut',
+      "doc_rut",
       docRut.path,
       contentType: MediaType(
-        mime(docRut.path).split('/')[0],
-        mime(docRut.path).split('/')[1],
+        mime(docRut.path).split("/")[0],
+        mime(docRut.path).split("/")[1],
       ),
     );
     final fileDocCamaraCom = await http.MultipartFile.fromPath(
-      'doc_camara_com',
+      "doc_camara_com",
       docCamaraCom.path,
       contentType: MediaType(
-        mime(docCamaraCom.path).split('/')[0],
-        mime(docCamaraCom.path).split('/')[1],
+        mime(docCamaraCom.path).split("/")[0],
+        mime(docCamaraCom.path).split("/")[1],
       ),
     );
 
     final user = _preferences.session;
-    final url = Uri.parse('$_url/ampliacion-cupo');
+    final url = Uri.parse("$_url/ampliacion-cupo");
 
-    final request = http.MultipartRequest('POST', url);
+    final request = http.MultipartRequest("POST", url);
     request.headers.addAll(_preferences.signedHeaders);
 
     if (user.isCliente) {
@@ -138,14 +138,14 @@ class QuotaProvider with ChangeNotifier {
 
       if (sellerId == null) return false;
 
-      request.fields['cliente'] = "${user.id}";
-      request.fields['vendedor'] = "$sellerId";
+      request.fields["cliente"] = "${user.id}";
+      request.fields["vendedor"] = "$sellerId";
     } else {
-      request.fields['vendedor'] = "${user.id}";
-      request.fields['cliente'] = "$clienteId";
+      request.fields["vendedor"] = "${user.id}";
+      request.fields["cliente"] = "$clienteId";
     }
 
-    request.fields['monto'] = _monto.value;
+    request.fields["monto"] = _monto.value;
     request.files.add(fileDocIdentidad);
     request.files.add(fileDocRut);
     request.files.add(fileDocCamaraCom);
@@ -157,13 +157,13 @@ class QuotaProvider with ChangeNotifier {
   }
 
   Future<int> getSellerId() async {
-    final url = Uri.parse('$_url/vendedor-asignado');
+    final url = Uri.parse("$_url/vendedores-asignados");
     final response = await http.get(url, headers: _preferences.signedHeaders);
 
     if (response.statusCode != 200) return null;
 
     final decodedResponse = json.decode(response.body);
-    return decodedResponse['id'];
+    return decodedResponse["id"];
   }
 
   Future<int> getSellerIdLocal() async {

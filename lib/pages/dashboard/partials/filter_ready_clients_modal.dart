@@ -23,7 +23,7 @@ class FilterReadyClientsModal extends StatelessWidget {
       ),
       child: Column(
         children: [
-          const _TitleModal(title: 'Filtrar Clientes Atendidos'),
+          const _TitleModal(title: "Filtrar Clientes Atendidos"),
           const SizedBox(height: 30.0),
           DropdownList(
             onChanged: (dynamic value) {
@@ -32,8 +32,8 @@ class FilterReadyClientsModal extends StatelessWidget {
             value: dashboardProvider.clientsReadyYear,
             items: dashboardProvider.yearsFilter
                 .map<Map<String, dynamic>>((CalendarFilter discount) => {
-                      'id': discount.number,
-                      'value': discount.name,
+                      "id": discount.number,
+                      "value": discount.name,
                     })
                 .toList(),
           ),
@@ -46,15 +46,15 @@ class FilterReadyClientsModal extends StatelessWidget {
             items: dashboardProvider.monthsFilter
                 .map<Map<String, dynamic>>(
                   (CalendarFilter discount) => {
-                    'id': discount.number,
-                    'value': discount.name,
+                    "id": discount.number,
+                    "value": discount.name,
                   },
                 )
                 .toList(),
           ),
           Expanded(child: Container()),
           _ContinueButton(
-            label: 'Filtrar',
+            label: "Filtrar",
             onPressed: () {
               Navigator.pop(context);
               final connectionProvider = Provider.of<ConnectionProvider>(

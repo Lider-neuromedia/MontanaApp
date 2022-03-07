@@ -30,14 +30,14 @@ class _ProductsTableState extends State<ProductsTable> {
         _HeaderField(
           onTap: () {
             referenceDesc = !referenceDesc;
-            ordersProvider.sortOrderProductsBy('reference', referenceDesc);
+            ordersProvider.sortOrderProductsBy("reference", referenceDesc);
           },
           label: "Referencia",
         ),
         _HeaderField(
           onTap: () {
             placeDesc = !placeDesc;
-            ordersProvider.sortOrderProductsBy('place', placeDesc);
+            ordersProvider.sortOrderProductsBy("place", placeDesc);
           },
           label: "Tienda",
         ),

@@ -9,7 +9,7 @@ import 'package:montana_mobile/utils/preferences.dart';
 import 'package:montana_mobile/utils/utils.dart';
 
 class LoginPage extends StatelessWidget {
-  static final String route = 'login';
+  static final String route = "login";
 
   @override
   Widget build(BuildContext context) {
@@ -79,8 +79,8 @@ class LoginCard extends StatefulWidget {
 }
 
 class _LoginCardState extends State<LoginCard> {
-  final _emailController = TextEditingController(text: '');
-  final _passwordController = TextEditingController(text: '');
+  final _emailController = TextEditingController(text: "");
+  final _passwordController = TextEditingController(text: "");
   LoginProvider _loginProvider;
 
   @override
@@ -120,7 +120,7 @@ class _LoginCardState extends State<LoginCard> {
                       ),
                     )
                   : _SubmitLoginButton(
-                      label: 'Iniciar Sesión',
+                      label: "Iniciar Sesión",
                       onPressed: !_loginProvider.canSend
                           ? null
                           : () => _login(context),
@@ -139,14 +139,14 @@ class _LoginCardState extends State<LoginCard> {
     _loginProvider.isLoading = false;
 
     if (preferences.token == null) {
-      showMessageDialog(context, 'Aviso', 'Usuario y contraseña incorrectos.');
+      showMessageDialog(context, "Aviso", "Usuario y contraseña incorrectos.");
       return;
     }
 
     _emailController.clear();
     _passwordController.clear();
-    _loginProvider.email = '';
-    _loginProvider.password = '';
+    _loginProvider.email = "";
+    _loginProvider.password = "";
 
     final navigationProvider =
         Provider.of<NavigationProvider>(context, listen: false);
@@ -196,7 +196,7 @@ class _PasswordInput extends StatelessWidget {
       controller: controller,
       obscureText: true,
       decoration: InputDecoration(
-        labelText: 'Contraseña',
+        labelText: "Contraseña",
         errorText: loginProvider.passwordError,
       ),
       onChanged: (String value) {
@@ -222,8 +222,8 @@ class _EmailInput extends StatelessWidget {
       controller: controller,
       keyboardType: TextInputType.emailAddress,
       decoration: InputDecoration(
-        labelText: 'Usuario',
-        hintText: 'example@mail.com',
+        labelText: "Usuario",
+        hintText: "example@mail.com",
         errorText: loginProvider.emailError,
       ),
       onChanged: (String value) {
@@ -242,7 +242,7 @@ class _ForgetPasswordButton extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           TextButton(
-            child: Text('Olvidé mi contraseña'),
+            child: Text("Olvidé mi contraseña"),
             onPressed: () {
               Navigator.of(context).pushNamed(PasswordPage.route);
             },
@@ -260,7 +260,7 @@ class _LoginTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Text(
-        'Iniciar Sesión',
+        "Iniciar Sesión",
         style: Theme.of(context).textTheme.headline5,
       ),
     );

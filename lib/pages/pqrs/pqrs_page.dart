@@ -51,7 +51,7 @@ class _PqrsPageState extends State<PqrsPage> {
                   onPressed: () => pqrsProvider.loadTickets(
                     local: connectionProvider.isNotConnected,
                   ),
-                  message: 'No hay PQRS.',
+                  message: "No hay PQRS.",
                 )
               : RefreshIndicator(
                   onRefresh: () => pqrsProvider.loadTickets(
@@ -75,7 +75,7 @@ class _PageTitle extends StatelessWidget {
 
     return TextButton(
       onPressed: null,
-      child: Text('Listado de PQRS', style: titleStyle),
+      child: Text("Listado de PQRS", style: titleStyle),
       style: TextButton.styleFrom(
         primary: Colors.white,
       ),
@@ -119,7 +119,7 @@ class _PqrsContent extends StatelessWidget {
             ? const Center(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
-                  child: Text('No hay coincidencias.'),
+                  child: Text("No hay coincidencias."),
                 ),
               )
             : Container(),

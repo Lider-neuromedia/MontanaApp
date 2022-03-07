@@ -7,7 +7,7 @@ import 'package:montana_mobile/providers/validation_field.dart';
 import 'package:montana_mobile/utils/preferences.dart';
 
 class MessageProvider with ChangeNotifier {
-  final String _url = dotenv.env['API_URL'];
+  final String _url = dotenv.env["API_URL"];
   final _preferences = Preferences();
 
   int _userId;
@@ -59,11 +59,11 @@ class MessageProvider with ChangeNotifier {
   }
 
   Future<Mensaje> createMessage() async {
-    final url = Uri.parse('$_url/newMessage');
+    final url = Uri.parse("$_url/newMessage");
     final Map<String, dynamic> data = {
-      'mensaje': _message.value,
-      'usuario': _userId,
-      'pqrs': _pqrsId,
+      "mensaje": _message.value,
+      "usuario": _userId,
+      "pqrs": _pqrsId,
     };
     final response = await http.post(
       url,

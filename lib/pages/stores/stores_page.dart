@@ -51,7 +51,7 @@ class _StoresPageState extends State<StoresPage> {
         actions: [
           TextButton(
             onPressed: null,
-            child: Text('Listado de Tiendas', style: titleStyle),
+            child: Text("Listado de Tiendas", style: titleStyle),
             style: TextButton.styleFrom(primary: Colors.white),
           ),
           const SizedBox(width: 10.0),
@@ -73,7 +73,7 @@ class _StoresPageState extends State<StoresPage> {
                   onPressed: () => storesProvider.loadStores(
                     local: connectionProvider.isNotConnected,
                   ),
-                  message: 'No hay tiendas encontradas.',
+                  message: "No hay tiendas encontradas.",
                 )
               : RefreshIndicator(
                   onRefresh: () => storesProvider.loadStores(
@@ -123,7 +123,7 @@ class _StoresContent extends StatelessWidget {
             ? Center(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
-                  child: Text('No hay coincidencias.'),
+                  child: Text("No hay coincidencias."),
                 ),
               )
             : Container(),
@@ -180,7 +180,7 @@ class _StoresListResults extends StatelessWidget {
 
                   if (!isSuccess) {
                     showMessageDialog(
-                        context, 'Aviso', 'La tienda no pudo ser borrada.');
+                        context, "Aviso", "La tienda no pudo ser borrada.");
                   }
                 },
               ),

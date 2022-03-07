@@ -41,10 +41,11 @@ class _BuyerCardState extends State<BuyerCard> {
         children: [
           ExpansionPanel(
             headerBuilder: (_, bool isOpen) {
+              final nit = widget.client.getData("nit");
               return Container(
                 child: _BuyerField(
                   title: widget.client.nombreCompleto,
-                  description: 'Cliente Nit. ${widget.client.getData('nit')}',
+                  description: "Cliente Nit. $nit",
                   titleBold: true,
                 ),
               );
@@ -63,37 +64,37 @@ class _BuyerCardState extends State<BuyerCard> {
                 children: [
                   _CardDataRow([
                     _BuyerField(
-                      title: 'Teléfono',
-                      description: widget.client.getData('telefono'),
+                      title: "Teléfono",
+                      description: widget.client.getData("telefono"),
                       titleBold: false,
                     ),
                     _BuyerField(
-                      title: 'Correo electrónico',
+                      title: "Correo electrónico",
                       description: widget.client.email,
                       titleBold: false,
                     ),
                   ]),
                   _CardDataRow([
                     _BuyerField(
-                      title: 'Tipo de documento',
+                      title: "Tipo de documento",
                       description: widget.client.tipoIdentificacion,
                       titleBold: false,
                     ),
                     _BuyerField(
-                      title: 'Número de documento',
+                      title: "Número de documento",
                       description: widget.client.dni,
                       titleBold: false,
                     ),
                   ]),
                   _CardDataRow([
                     _BuyerField(
-                      title: 'Dirección',
-                      description: widget.client.getData('direccion'),
+                      title: "Dirección",
+                      description: widget.client.getData("direccion"),
                       titleBold: false,
                     ),
                     _BuyerField(
-                      title: 'Nit',
-                      description: widget.client.getData('nit'),
+                      title: "Nit",
+                      description: widget.client.getData("nit"),
                       titleBold: false,
                     ),
                   ]),

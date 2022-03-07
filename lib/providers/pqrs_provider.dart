@@ -7,7 +7,7 @@ import 'package:montana_mobile/utils/preferences.dart';
 import 'package:montana_mobile/utils/utils.dart';
 
 class PqrsProvider with ChangeNotifier {
-  final String _url = dotenv.env['API_URL'];
+  final String _url = dotenv.env["API_URL"];
   final List<SortValue> sortValues = _sortValues;
   final _preferences = Preferences();
 
@@ -76,7 +76,7 @@ class PqrsProvider with ChangeNotifier {
     });
   }
 
-  String _search = '';
+  String _search = "";
   String get search => _search;
   bool get isSearchActive => _search.isNotEmpty && searchTickets.length == 0;
 
@@ -154,7 +154,7 @@ class PqrsProvider with ChangeNotifier {
   }
 
   Future<List<Ticket>> getTickets() async {
-    final url = Uri.parse('$_url/pqrs');
+    final url = Uri.parse("$_url/pqrs");
     final response = await http.get(url, headers: _preferences.signedHeaders);
 
     if (response.statusCode != 200) return [];
@@ -167,7 +167,7 @@ class PqrsProvider with ChangeNotifier {
   }
 
   Future<Ticket> getTicketWithMessages(int id) async {
-    final url = Uri.parse('$_url/pqrs/$id');
+    final url = Uri.parse("$_url/pqrs/$id");
     final response = await http.get(url, headers: _preferences.signedHeaders);
 
     if (response.statusCode != 200) return null;
@@ -193,8 +193,8 @@ class SortValue {
 }
 
 final List<SortValue> _sortValues = [
-  SortValue(SortValue.RECENT_FIRST, 'Más recientes'),
-  SortValue(SortValue.LAST_FIRST, 'Más antiguos'),
-  SortValue(SortValue.STATUS, 'Abiertos primero'),
-  SortValue(SortValue.STATUS_REVERSE, 'Cerrados primero'),
+  SortValue(SortValue.RECENT_FIRST, "Más recientes"),
+  SortValue(SortValue.LAST_FIRST, "Más antiguos"),
+  SortValue(SortValue.STATUS, "Abiertos primero"),
+  SortValue(SortValue.STATUS_REVERSE, "Cerrados primero"),
 ];

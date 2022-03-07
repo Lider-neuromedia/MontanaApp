@@ -20,7 +20,7 @@ class _PqrsFilterState extends State<PqrsFilter> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Text('Ordenar por:', style: textStyle),
+          Text("Ordenar por:", style: textStyle),
           const SizedBox(width: 10.0),
           DropdownButton<String>(
             value: pqrsProvider.sortBy,

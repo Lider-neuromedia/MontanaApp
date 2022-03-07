@@ -33,7 +33,7 @@ class RatingForm extends StatelessWidget {
         children: [
           const SizedBox(height: 10.0),
           Text(
-            'Valorar Producto',
+            "Valorar Producto",
             style: titleStyle,
             textAlign: TextAlign.start,
           ),
@@ -56,7 +56,7 @@ class RatingForm extends StatelessWidget {
             child: ratingProvider.isLoadingSend
                 ? const LoadingContainer()
                 : ElevatedButton(
-                    child: Text('Calificar'),
+                    child: Text("Calificar"),
                     style: ElevatedButton.styleFrom(
                       primary: Theme.of(context).primaryColor,
                       shape: StadiumBorder(),
@@ -80,12 +80,12 @@ class RatingForm extends StatelessWidget {
     if (isSuccess) {
       showMessageDialog(
         context,
-        'Listo',
-        'Producto calificado',
+        "Listo",
+        "Producto calificado",
         onAccept: onCompleted,
       );
     } else {
-      showMessageDialog(context, 'Aviso', 'Datos de valoración incorrectos.');
+      showMessageDialog(context, "Aviso", "Datos de valoración incorrectos.");
     }
   }
 }

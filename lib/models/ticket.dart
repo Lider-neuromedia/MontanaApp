@@ -105,7 +105,7 @@ class Ticket {
       return "$c1$c2";
     }
 
-    return 'CL';
+    return "CL";
   }
 
   factory Ticket.fromJson(Map<String, dynamic> json) => Ticket(

@@ -7,7 +7,7 @@ import 'package:montana_mobile/providers/validation_field.dart';
 import 'package:montana_mobile/utils/preferences.dart';
 
 class PqrsTicketProvider with ChangeNotifier {
-  final String _url = dotenv.env['API_URL'];
+  final String _url = dotenv.env["API_URL"];
   final List<PqrsType> pqrsTypes = _pqrsTypes;
   final _preferences = Preferences();
 
@@ -49,7 +49,7 @@ class PqrsTicketProvider with ChangeNotifier {
     });
 
     if (!errorValidType) {
-      _pqrsType = ValidationField(error: 'Tipo de pqrs incorrecto.');
+      _pqrsType = ValidationField(error: "Tipo de pqrs incorrecto.");
     } else {
       _pqrsType = ValidationField(value: value);
     }
@@ -82,22 +82,22 @@ class PqrsTicketProvider with ChangeNotifier {
   }
 
   Future<bool> createPqrs({@required bool local}) async {
-    final url = Uri.parse('$_url/pqrs');
+    final url = Uri.parse("$_url/pqrs");
     Map<String, dynamic> data = {
-      'mensaje': _message.value,
-      'tipo': _pqrsType.value,
+      "mensaje": _message.value,
+      "tipo": _pqrsType.value,
     };
 
     if (_preferences.session.isVendedor) {
-      data['vendedor'] = _preferences.session.id;
-      data['cliente'] = clienteId;
+      data["vendedor"] = _preferences.session.id;
+      data["cliente"] = clienteId;
     } else {
       final sellerId = local ? await getSellerIdLocal() : await getSellerId();
 
       if (sellerId == null) return false;
 
-      data['vendedor'] = sellerId;
-      data['cliente'] = _preferences.session.id;
+      data["vendedor"] = sellerId;
+      data["cliente"] = _preferences.session.id;
     }
 
     final response = await http.post(
@@ -110,13 +110,13 @@ class PqrsTicketProvider with ChangeNotifier {
   }
 
   Future<int> getSellerId() async {
-    final url = Uri.parse('$_url/vendedor-asignado');
+    final url = Uri.parse("$_url/vendedores-asignados");
     final response = await http.get(url, headers: _preferences.signedHeaders);
 
     if (response.statusCode != 200) return null;
 
     final decodedResponse = json.decode(response.body);
-    return decodedResponse['id'];
+    return decodedResponse["id"];
   }
 
   Future<int> getSellerIdLocal() async {
@@ -135,5 +135,5 @@ class PqrsType {
 }
 
 final List<PqrsType> _pqrsTypes = [
-  PqrsType(PqrsType.QUEJA_RETRASO, 'Queja por retrasos'),
+  PqrsType(PqrsType.QUEJA_RETRASO, "Queja por retrasos"),
 ];

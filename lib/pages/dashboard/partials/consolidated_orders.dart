@@ -24,17 +24,17 @@ class ConsolidatedOrders extends StatelessWidget {
         controller: pageController,
         children: [
           CircularStatistic(
-            title: 'Realizados',
+            title: "Realizados",
             value: dashboardProvider.resumen.cantidadPedidos.realizados,
             color: CustomTheme.yellowColor,
           ),
           CircularStatistic(
-            title: 'Aprobados',
+            title: "Aprobados",
             value: dashboardProvider.resumen.cantidadPedidos.aprobados,
             color: CustomTheme.greenColor,
           ),
           CircularStatistic(
-            title: 'Rechazados',
+            title: "Rechazados",
             value: dashboardProvider.resumen.cantidadPedidos.rechazados,
             color: CustomTheme.redColor,
           ),

@@ -9,7 +9,7 @@ import 'package:montana_mobile/providers/pqrs_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
 
 class MessagesPage extends StatefulWidget {
-  static final String route = '/pqrs-messages';
+  static final String route = "/pqrs-messages";
 
   @override
   _MessagesPageState createState() => _MessagesPageState();
@@ -39,7 +39,7 @@ class _MessagesPageState extends State<MessagesPage> {
     return Scaffold(
       backgroundColor: CustomTheme.grey3Color,
       appBar: AppBar(
-        title: Text('PQRS'),
+        title: Text("PQRS"),
       ),
       body: Column(
         children: [
@@ -52,7 +52,7 @@ class _MessagesPageState extends State<MessagesPage> {
                           pqrsProvider.ticket.idPqrs,
                           local: connectionProvider.isNotConnected,
                         ),
-                        message: 'No hay información.',
+                        message: "No hay información.",
                       )
                     : RefreshIndicator(
                         onRefresh: () => pqrsProvider.loadTicket(

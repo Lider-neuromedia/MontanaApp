@@ -71,7 +71,7 @@ class ClientCard extends StatelessWidget {
                   children: [
                     Text(client.nombreCompleto, style: boldStyle),
                     Text(
-                      "Nit. ${client.getData('nit')}",
+                      "Nit. ${client.getData("nit")}",
                       style: normalStyle,
                     ),
                   ],

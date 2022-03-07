@@ -5,7 +5,7 @@ import 'package:montana_mobile/providers/validation_field.dart';
 import 'package:montana_mobile/utils/preferences.dart';
 
 class ResetPasswordProvider with ChangeNotifier {
-  final String _url = dotenv.env['API_URL'];
+  final String _url = dotenv.env["API_URL"];
   final _preferences = Preferences();
 
   ValidationField _token = ValidationField();
@@ -109,12 +109,12 @@ class ResetPasswordProvider with ChangeNotifier {
   }
 
   Future<bool> resetPassword() async {
-    final url = Uri.parse('$_url/password/reset');
+    final url = Uri.parse("$_url/password/reset");
     final Map<String, String> data = {
-      'token': _token.value,
-      'email': _email.value,
-      'password': _password.value,
-      'password_confirmation': _passwordConfirmation.value,
+      "token": _token.value,
+      "email": _email.value,
+      "password": _password.value,
+      "password_confirmation": _passwordConfirmation.value,
     };
 
     final response = await http.post(

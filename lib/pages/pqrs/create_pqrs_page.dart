@@ -12,14 +12,14 @@ import 'package:montana_mobile/utils/preferences.dart';
 import 'package:montana_mobile/utils/utils.dart';
 
 class CreatePqrsPage extends StatefulWidget {
-  static final String route = '/create-pqrs';
+  static final String route = "/create-pqrs";
 
   @override
   _CreatePqrsPageState createState() => _CreatePqrsPageState();
 }
 
 class _CreatePqrsPageState extends State<CreatePqrsPage> {
-  final _messageController = TextEditingController(text: '');
+  final _messageController = TextEditingController(text: "");
 
   @override
   void initState() {
@@ -47,7 +47,7 @@ class _CreatePqrsPageState extends State<CreatePqrsPage> {
         });
       }
 
-      pqrsTicketProvider.message = '';
+      pqrsTicketProvider.message = "";
       pqrsTicketProvider.clienteId = null;
       pqrsTicketProvider.pqrsType = null;
     }();
@@ -68,14 +68,14 @@ class _CreatePqrsPageState extends State<CreatePqrsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('PQRS'),
+        title: const Text("PQRS"),
       ),
       body: ListView(
         padding: const EdgeInsets.all(20.0),
         children: [
-          const _TitlePqrs(title: 'Nuevo PQRS'),
+          const _TitlePqrs(title: "Nuevo PQRS"),
           const SizedBox(height: 25.0),
-          const _LabelField(label: 'Tipo de PQRS'),
+          const _LabelField(label: "Tipo de PQRS"),
           const SizedBox(height: 10.0),
           DropdownPqrs(
             onChanged: (dynamic value) {
@@ -100,7 +100,7 @@ class _CreatePqrsPageState extends State<CreatePqrsPage> {
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const _LabelField(label: 'Cliente'),
+                    const _LabelField(label: "Cliente"),
                     const SizedBox(height: 10.0),
                     DropdownPqrs(
                       onChanged: (dynamic value) {
@@ -123,7 +123,7 @@ class _CreatePqrsPageState extends State<CreatePqrsPage> {
                     const SizedBox(height: 20.0),
                   ],
                 ),
-          const _LabelField(label: 'Mensaje'),
+          const _LabelField(label: "Mensaje"),
           const SizedBox(height: 10.0),
           TextField(
             maxLines: 5,
@@ -149,7 +149,7 @@ class _CreatePqrsPageState extends State<CreatePqrsPage> {
                   child: SizedBox(
                     width: 160.0,
                     child: _ContinueButton(
-                      label: 'Enviar',
+                      label: "Enviar",
                       icon: Icons.arrow_forward,
                       onPressed: pqrsTicketProvider.canSend
                           ? () => _createMessage(
@@ -180,17 +180,17 @@ class _CreatePqrsPageState extends State<CreatePqrsPage> {
     if (!success) {
       showMessageDialog(
         context,
-        'Aviso',
-        'No se pudo registrar el PQRS',
+        "Aviso",
+        "No se pudo registrar el PQRS",
       );
     } else {
       showMessageDialog(
         context,
-        'Listo',
-        'PQRS creado correctamente.',
+        "Listo",
+        "PQRS creado correctamente.",
         onAccept: () {
           _messageController.clear();
-          pqrsTicketProvider.message = '';
+          pqrsTicketProvider.message = "";
           Navigator.pop(context);
 
           final pqrsProvider = Provider.of<PqrsProvider>(

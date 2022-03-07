@@ -12,7 +12,7 @@ import 'package:montana_mobile/utils/utils.dart';
 import 'package:montana_mobile/widgets/cart_icon.dart';
 
 class OrderPage extends StatefulWidget {
-  static final String route = 'order';
+  static final String route = "order";
 
   @override
   _OrderPageState createState() => _OrderPageState();
@@ -48,7 +48,7 @@ class _OrderPageState extends State<OrderPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Pedido'),
+        title: Text("Pedido"),
         actions: [
           const CartIcon(),
         ],
@@ -61,7 +61,7 @@ class _OrderPageState extends State<OrderPage> {
                     orderId,
                     local: connectionProvider.isNotConnected,
                   ),
-                  message: 'No hay información.',
+                  message: "No hay información.",
                 )
               : RefreshIndicator(
                   onRefresh: () => ordersProvider.loadOrder(
@@ -93,17 +93,17 @@ class _OrderDetailContent extends StatelessWidget {
         _OrderDataList(
           children: [
             _OrderDetailData(
-              title: 'Fecha de emisión del pedido:',
+              title: "Fecha de emisión del pedido:",
               value: formatDate(order.fecha),
             ),
             const SizedBox(height: 10.0),
             _OrderDetailData(
-              title: 'Nombre comercial:',
+              title: "Nombre comercial:",
               value: order.cliente.nombreCompleto,
             ),
             const SizedBox(height: 10.0),
             _OrderDetailData(
-              title: 'Nit:',
+              title: "Nit:",
               value: order.cliente.nit,
             ),
           ],
@@ -113,14 +113,14 @@ class _OrderDetailContent extends StatelessWidget {
           children: [
             Expanded(
               child: OrderDetailCard(
-                title: 'Valor del pedido',
+                title: "Valor del pedido",
                 value: formatMoney(order.total),
               ),
             ),
             const SizedBox(width: 10.0),
             Expanded(
               child: OrderDetailCard(
-                title: 'Método de pago',
+                title: "Método de pago",
                 value: order.metodoPago,
               ),
             ),
@@ -131,14 +131,14 @@ class _OrderDetailContent extends StatelessWidget {
           children: [
             Expanded(
               child: OrderDetailCard(
-                title: 'Estado del pedido',
+                title: "Estado del pedido",
                 value: order.estadoFormatted,
               ),
             ),
             // const SizedBox(width: 10.0),
             // Expanded(
             //   child: OrderDetailCard(
-            //     title: 'Descuento',
+            //     title: "Descuento",
             //     value: "${order.descuento}%",
             //   ),
             // ),

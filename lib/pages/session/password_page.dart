@@ -5,9 +5,9 @@ import 'package:montana_mobile/providers/password_provider.dart';
 import 'package:montana_mobile/utils/utils.dart';
 
 class PasswordPage extends StatelessWidget {
-  static final String route = 'password';
+  static final String route = "password";
 
-  final _emailController = TextEditingController(text: '');
+  final _emailController = TextEditingController(text: "");
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +15,7 @@ class PasswordPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Restablecer Contraseña'),
+        title: Text("Restablecer Contraseña"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -40,7 +40,7 @@ class PasswordPage extends StatelessWidget {
                   ),
             const SizedBox(height: 70.0),
             Text(
-              'Si ya tiene el token para reiniciar su contraseña puede ir al formulario de reinicio de contraseña.',
+              "Si ya tiene el token para reiniciar su contraseña puede ir al formulario de reinicio de contraseña.",
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 10.0),
@@ -59,18 +59,18 @@ class PasswordPage extends StatelessWidget {
 
     if (success) {
       _emailController.clear();
-      provider.email = '';
+      provider.email = "";
 
       showMessageDialog(
         context,
-        'Listo',
-        'Correo con token de reinicio de contraseña enviado.',
+        "Listo",
+        "Correo con token de reinicio de contraseña enviado.",
         onAccept: () {
           Navigator.of(context).pushNamed(ResetPasswordPage.route);
         },
       );
     } else {
-      showMessageDialog(context, 'Aviso', 'Correo incorrecto.');
+      showMessageDialog(context, "Aviso", "Correo incorrecto.");
     }
   }
 }
@@ -87,7 +87,7 @@ class _SubmitButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: onPressed,
-      child: Text('Enviar Correo de Restauración'),
+      child: Text("Enviar Correo de Restauración"),
       style: ElevatedButton.styleFrom(
         primary: Theme.of(context).primaryColor,
         padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 10.0),
@@ -112,8 +112,8 @@ class _EmailInput extends StatelessWidget {
       keyboardType: TextInputType.emailAddress,
       controller: controller,
       decoration: InputDecoration(
-        labelText: 'E-mail',
-        hintText: 'example@mail.com',
+        labelText: "E-mail",
+        hintText: "example@mail.com",
         errorText: passwordProvider.emailError,
       ),
       onChanged: (String value) {
@@ -129,7 +129,7 @@ class _ResetFormButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      child: Text('Formulario de Reinicio'),
+      child: Text("Formulario de Reinicio"),
       style: ElevatedButton.styleFrom(
         primary: Theme.of(context).textTheme.bodyText1.color,
         padding: const EdgeInsets.symmetric(

@@ -7,7 +7,7 @@ import 'package:montana_mobile/providers/database_provider.dart';
 import 'package:montana_mobile/utils/preferences.dart';
 
 class StoresProvider with ChangeNotifier {
-  final String _url = dotenv.env['API_URL'];
+  final String _url = dotenv.env["API_URL"];
   final _preferences = Preferences();
 
   bool _isLoading = false;
@@ -16,7 +16,7 @@ class StoresProvider with ChangeNotifier {
   List<Tienda> _stores = [];
   List<Tienda> get stores => _stores;
 
-  String _search = '';
+  String _search = "";
   String get search => _search;
   bool get isSearchActive => _search.isNotEmpty && searchStores.length == 0;
 
@@ -55,7 +55,7 @@ class StoresProvider with ChangeNotifier {
 
   Future<void> loadStores({@required bool local}) async {
     _stores = [];
-    _search = '';
+    _search = "";
     _isLoading = true;
     notifyListeners();
 
@@ -77,7 +77,7 @@ class StoresProvider with ChangeNotifier {
   }
 
   Future<List<Tienda>> getStores() async {
-    final url = Uri.parse('$_url/tiendas-cliente/${_preferences.session.id}');
+    final url = Uri.parse("$_url/tiendas-cliente/${_preferences.session.id}");
     final response = await http.get(url, headers: _preferences.signedHeaders);
 
     if (response.statusCode != 200) return [];
@@ -86,13 +86,13 @@ class StoresProvider with ChangeNotifier {
 
   Future<List<Tienda>> getStoresLocal() async {
     final list = await DatabaseProvider.db.getRecords(
-      'stores',
+      "stores",
       withDeleted: false,
     );
 
     List<Tienda> stores = List<Tienda>.from(list.map((x) {
       Map<String, Object> row = Map<String, Object>.of(x);
-      row['id_tiendas'] = row['id'];
+      row["id_tiendas"] = row["id"];
       return Tienda.fromJson(row);
     }));
 
@@ -100,9 +100,9 @@ class StoresProvider with ChangeNotifier {
   }
 
   Future<bool> deleteStore(int id) async {
-    final url = Uri.parse('$_url/delete-tiendas');
+    final url = Uri.parse("$_url/delete-tiendas");
     final Map<String, dynamic> data = {
-      'tiendas': [id],
+      "tiendas": [id],
     };
 
     final response = await http.post(
@@ -115,27 +115,27 @@ class StoresProvider with ChangeNotifier {
   }
 
   Future<bool> deleteStoreLocal(int id) async {
-    await DatabaseProvider.db.checkRecordToDelete('stores', id);
+    await DatabaseProvider.db.checkRecordToDelete("stores", id);
     return true;
   }
 
   Future<void> syncDeletedStoresInLocal() async {
     final db = await DatabaseProvider.db.database;
     final records = await db.query(
-      'stores',
-      columns: ['id', 'check_delete'],
-      where: 'check_delete = ?',
+      "stores",
+      columns: ["id", "check_delete"],
+      where: "check_delete = ?",
       whereArgs: [1],
     );
 
     if (records.isEmpty) return;
 
     for (final record in records) {
-      final storeId = record['id'];
+      final storeId = record["id"];
       final isSuccessResponse = await deleteStore(storeId);
 
       if (isSuccessResponse) {
-        await DatabaseProvider.db.deleteRecord('stores', storeId);
+        await DatabaseProvider.db.deleteRecord("stores", storeId);
       }
     }
   }

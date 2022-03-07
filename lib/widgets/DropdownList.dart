@@ -48,8 +48,8 @@ class _DropdownListState extends State<DropdownList> {
       value: widget.value,
       items: widget.items
           .map((item) => DropdownMenuItem<dynamic>(
-                value: item['id'],
-                child: Text(item['value']),
+                value: item["id"],
+                child: Text(item["value"]),
               ))
           .toList(),
     );

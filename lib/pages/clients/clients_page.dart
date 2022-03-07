@@ -45,7 +45,7 @@ class _ClientsPageState extends State<ClientsPage> {
         actions: [
           TextButton(
             onPressed: null,
-            child: Text('Listado de clientes', style: titleStyle),
+            child: Text("Listado de clientes", style: titleStyle),
             style: TextButton.styleFrom(primary: Colors.white),
           ),
           const SizedBox(width: 10.0),
@@ -58,7 +58,7 @@ class _ClientsPageState extends State<ClientsPage> {
                   onPressed: () => clientsProvider.loadClients(
                     local: connectionProvider.isNotConnected,
                   ),
-                  message: 'No hay clientes encontrados.',
+                  message: "No hay clientes encontrados.",
                 )
               : RefreshIndicator(
                   onRefresh: () => clientsProvider.loadClients(
@@ -90,7 +90,7 @@ class _ClientsContent extends StatelessWidget {
             ? Center(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
-                  child: Text('No hay coincidencias.'),
+                  child: Text("No hay coincidencias."),
                 ),
               )
             : Container(),

@@ -49,11 +49,11 @@ class PushNotificationService {
 
   static Future<bool> saveDeviceToken() async {
     final preferences = Preferences();
-    final backendUrl = dotenv.env['API_URL'];
-    final url = Uri.parse('$backendUrl/devices');
+    final backendUrl = dotenv.env["API_URL"];
+    final url = Uri.parse("$backendUrl/devices");
 
     final Map<String, String> data = {
-      'device_token': token,
+      "device_token": token,
     };
 
     if (token == null) return false;

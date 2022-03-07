@@ -26,6 +26,8 @@ class StoreCard extends StatelessWidget {
           fontWeight: FontWeight.w400,
         );
 
+    final local = store.local == null ? "" : store.local;
+
     return Card(
       elevation: 4.0,
       child: Padding(
@@ -33,8 +35,7 @@ class StoreCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("${store.nombre} - ${store.local == null ? '' : store.local}",
-                style: titleStyle),
+            Text("${store.nombre} - $local", style: titleStyle),
             Text("Tienda No. $index", style: textStyle),
             const SizedBox(height: 10.0),
             Text("${store.lugar}", style: subtitleStyle),

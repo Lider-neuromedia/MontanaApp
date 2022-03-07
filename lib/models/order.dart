@@ -147,10 +147,10 @@ class Pedido {
       cliente: json["info_cliente"] != null
           ? Cliente.fromJson(json["info_cliente"])
           : null,
-      nameVendedor: json["name_vendedor"] ?? '',
-      apellidoVendedor: json["apellido_vendedor"] ?? '',
-      nameCliente: json["name_cliente"] ?? '',
-      apellidoCliente: json["apellido_cliente"] ?? '',
+      nameVendedor: json["name_vendedor"] ?? "",
+      apellidoVendedor: json["apellido_vendedor"] ?? "",
+      nameCliente: json["name_cliente"] ?? "",
+      apellidoCliente: json["apellido_cliente"] ?? "",
       productos: json["productos"] != null
           ? List<PedidoProducto>.from(
               json["productos"].map((x) => PedidoProducto.fromJson(x)))
@@ -214,7 +214,7 @@ class Pedido {
   }
 
   String get estadoFormatted {
-    final temp = estado.toString().split('.')[1].toLowerCase();
+    final temp = estado.toString().split(".")[1].toLowerCase();
     final firstLetter = temp.substring(0, 1).toUpperCase();
     final word = firstLetter + temp.substring(1, temp.length);
     return word;

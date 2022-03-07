@@ -14,13 +14,13 @@ bool isEmailValid(email) {
 }
 
 String formatMoney(double value) {
-  return '\$' + NumberFormat('###,###,##0', 'es').format(value);
+  return "\$" + NumberFormat("###,###,##0", "es").format(value);
 }
 
 String formatDate(DateTime date) {
   final String year = date.year.toString();
-  final String month = date.month.toString().padLeft(2, '0');
-  final String day = date.day.toString().padLeft(2, '0');
+  final String month = date.month.toString().padLeft(2, "0");
+  final String day = date.day.toString().padLeft(2, "0");
   return "$day / $month / $year";
 }
 
@@ -32,7 +32,7 @@ Future<void> showMessageDialog(
     barrierDismissible: false,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Text('$title'),
+        title: Text("$title"),
         content: SingleChildScrollView(
           child: ListBody(
             children: [

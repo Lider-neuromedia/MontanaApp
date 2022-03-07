@@ -91,7 +91,7 @@ class _IconPqrsCard extends StatelessWidget {
             left: 0.0,
             top: 0.0,
             child: _CircleStatus(
-              color: ticket.estado == 'cerrado'
+              color: ticket.estado == "cerrado"
                   ? CustomTheme.redColor
                   : CustomTheme.green3Color,
             ),

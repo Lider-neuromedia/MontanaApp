@@ -8,7 +8,7 @@ import 'package:montana_mobile/providers/database_provider.dart';
 import 'package:montana_mobile/utils/preferences.dart';
 
 class OrdersProvider with ChangeNotifier {
-  final String _url = dotenv.env['API_URL'];
+  final String _url = dotenv.env["API_URL"];
   final List<SortValue> sortValues = _sortValues;
   final _preferences = Preferences();
 
@@ -58,7 +58,7 @@ class OrdersProvider with ChangeNotifier {
   }
 
   Future<List<Pedido>> getOrders() async {
-    final url = Uri.parse('$_url/pedidos');
+    final url = Uri.parse("$_url/pedidos");
     final response = await http.get(url, headers: _preferences.signedHeaders);
 
     if (response.statusCode != 200) return [];
@@ -66,20 +66,20 @@ class OrdersProvider with ChangeNotifier {
   }
 
   Future<List<Pedido>> getOrdersLocal() async {
-    final list = await DatabaseProvider.db.getRecords('orders');
+    final list = await DatabaseProvider.db.getRecords("orders");
     final orders = List<Pedido>.from(list.map((x) {
       Map<String, Object> row = Map<String, Object>.of(x);
-      row['id_pedido'] = row['id'];
-      row['info_cliente'] = jsonDecode(row['info_cliente']);
-      row['productos'] = jsonDecode(row['productos']);
-      row['novedades'] = jsonDecode(row['novedades']);
+      row["id_pedido"] = row["id"];
+      row["info_cliente"] = jsonDecode(row["info_cliente"]);
+      row["productos"] = jsonDecode(row["productos"]);
+      row["novedades"] = jsonDecode(row["novedades"]);
       return Pedido.fromJson(row);
     }));
     return orders;
   }
 
   Future<Pedido> getOrder(int orderId) async {
-    final url = Uri.parse('$_url/pedidos/$orderId');
+    final url = Uri.parse("$_url/pedidos/$orderId");
     final response = await http.get(url, headers: _preferences.signedHeaders);
 
     if (response.statusCode != 200) return null;
@@ -87,15 +87,15 @@ class OrdersProvider with ChangeNotifier {
   }
 
   Future<Pedido> getOrderLocal(orderId) async {
-    final record = await DatabaseProvider.db.getRecordById('orders', orderId);
+    final record = await DatabaseProvider.db.getRecordById("orders", orderId);
 
     if (record == null) return null;
 
     Map<String, Object> row = Map<String, Object>.of(record);
-    row['id_pedido'] = row['id'];
-    row['info_cliente'] = jsonDecode(row['info_cliente']);
-    row['productos'] = jsonDecode(row['productos']);
-    row['novedades'] = jsonDecode(row['novedades']);
+    row["id_pedido"] = row["id"];
+    row["info_cliente"] = jsonDecode(row["info_cliente"]);
+    row["productos"] = jsonDecode(row["productos"]);
+    row["novedades"] = jsonDecode(row["novedades"]);
     return Pedido.fromJson(row);
   }
 
@@ -121,10 +121,10 @@ class OrdersProvider with ChangeNotifier {
     _order.productos.sort((PedidoProducto product, PedidoProducto previus) {
       int compare = 0;
 
-      if (value == 'reference') {
+      if (value == "reference") {
         compare = product.referencia.compareTo(previus.referencia);
       }
-      if (value == 'place') {
+      if (value == "place") {
         compare = product.lugar.compareTo(previus.lugar);
       }
 

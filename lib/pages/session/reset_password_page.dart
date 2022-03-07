@@ -6,12 +6,12 @@ import 'package:montana_mobile/providers/reset_password_provider.dart';
 import 'package:montana_mobile/utils/utils.dart';
 
 class ResetPasswordPage extends StatelessWidget {
-  static final String route = 'reset_password';
+  static final String route = "reset_password";
 
-  final _tokenController = TextEditingController(text: '');
-  final _emailController = TextEditingController(text: '');
-  final _passwordController = TextEditingController(text: '');
-  final _passwordConfirmationController = TextEditingController(text: '');
+  final _tokenController = TextEditingController(text: "");
+  final _emailController = TextEditingController(text: "");
+  final _passwordController = TextEditingController(text: "");
+  final _passwordConfirmationController = TextEditingController(text: "");
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +19,7 @@ class ResetPasswordPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Reiniciar Contraseña'),
+        title: Text("Reiniciar Contraseña"),
       ),
       body: ListView(
         padding: const EdgeInsets.all(20.0),
@@ -64,15 +64,15 @@ class ResetPasswordPage extends StatelessWidget {
       _passwordController.clear();
       _passwordConfirmationController.clear();
 
-      provider.token = '';
-      provider.email = '';
-      provider.password = '';
-      provider.passwordConfirmation = '';
+      provider.token = "";
+      provider.email = "";
+      provider.password = "";
+      provider.passwordConfirmation = "";
 
       showMessageDialog(
         context,
-        'Listo',
-        'Contraseña actualizada correctamente, ahora puede iniciar sesión.',
+        "Listo",
+        "Contraseña actualizada correctamente, ahora puede iniciar sesión.",
         onAccept: () {
           Navigator.of(context).pushReplacementNamed(LoginPage.route);
         },
@@ -80,7 +80,7 @@ class ResetPasswordPage extends StatelessWidget {
 
       ConnectionProvider.syncDataNow(context);
     } else {
-      showMessageDialog(context, 'Aviso', 'Datos de reinicio incorrectos.');
+      showMessageDialog(context, "Aviso", "Datos de reinicio incorrectos.");
     }
   }
 }
@@ -96,7 +96,7 @@ class _SubmitButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      child: Text('Reiniciar Contraseña'),
+      child: Text("Reiniciar Contraseña"),
       style: ElevatedButton.styleFrom(
         primary: Theme.of(context).primaryColor,
         padding: const EdgeInsets.symmetric(
@@ -125,7 +125,7 @@ class _PasswordInput extends StatelessWidget {
       controller: controller,
       obscureText: true,
       decoration: InputDecoration(
-        labelText: 'Contraseña',
+        labelText: "Contraseña",
         errorText: resetPasswordProvider.passwordError,
       ),
       onChanged: (String value) {
@@ -151,7 +151,7 @@ class _PasswordConfirmationInput extends StatelessWidget {
       controller: controller,
       obscureText: true,
       decoration: InputDecoration(
-        labelText: 'Confirmar Contraseña',
+        labelText: "Confirmar Contraseña",
         errorText: resetPasswordProvider.passwordConfirmationError,
       ),
       onChanged: (String value) {
@@ -177,8 +177,8 @@ class _EmailInput extends StatelessWidget {
       controller: controller,
       keyboardType: TextInputType.emailAddress,
       decoration: InputDecoration(
-        labelText: 'E-mail',
-        hintText: 'example@mail.com',
+        labelText: "E-mail",
+        hintText: "example@mail.com",
         errorText: resetPasswordProvider.emailError,
       ),
       onChanged: (String value) {
@@ -203,8 +203,8 @@ class _TokenInput extends StatelessWidget {
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(
-        labelText: 'Token de Reinicio',
-        hintText: '3x4mp13',
+        labelText: "Token de Reinicio",
+        hintText: "3x4mp13",
         errorText: resetPasswordProvider.tokenError,
       ),
       onChanged: (String value) {

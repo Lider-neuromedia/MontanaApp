@@ -73,13 +73,13 @@ class _ResumeData extends StatelessWidget {
       children: [
         const SizedBox(height: 30.0),
         const Center(
-          child: const _SectionTitle('CONSOLIDADO COMISIONES'),
+          child: const _SectionTitle("CONSOLIDADO COMISIONES"),
         ),
         const SizedBox(height: 20.0),
         Center(
           child: CardData(
-            title: 'Comisiones perdidas',
-            value: '\$3.300.400',
+            title: "Comisiones perdidas",
+            value: "\$3.300.400",
             icon: Icons.sentiment_dissatisfied_rounded,
             color: CustomTheme.yellowColor,
             isMain: true,
@@ -88,15 +88,15 @@ class _ResumeData extends StatelessWidget {
         _CommisionsList(
           children: [
             CardData(
-              title: 'Próximas a perder',
-              value: '\$4.300.400',
+              title: "Próximas a perder",
+              value: "\$4.300.400",
               icon: Icons.sentiment_neutral_rounded,
               color: CustomTheme.yellowColor,
               isMain: false,
             ),
             CardData(
-              title: 'Comisiones ganadas',
-              value: '\$3.500.400',
+              title: "Comisiones ganadas",
+              value: "\$3.500.400",
               icon: Icons.sentiment_very_satisfied,
               color: CustomTheme.greenColor,
               isMain: false,
@@ -111,15 +111,15 @@ class _ResumeData extends StatelessWidget {
                     onPressed: () => dashboardProvider.loadDashboardResume(
                       local: local,
                     ),
-                    message: 'No hay información.',
+                    message: "No hay información.",
                   )
                 : Column(
                     children: [
-                      const _SectionTitle('CONSOLIDADO CLIENTES'),
+                      const _SectionTitle("CONSOLIDADO CLIENTES"),
                       const SizedBox(height: 20.0),
                       _ConsolidatedClients(),
                       const SizedBox(height: 40.0),
-                      const _SectionTitle('CONSOLIDADO PEDIDOS'),
+                      const _SectionTitle("CONSOLIDADO PEDIDOS"),
                       const SizedBox(height: 20.0),
                       ConsolidatedOrders(),
                       const SizedBox(height: 50.0),
@@ -162,18 +162,18 @@ class _ConsolidatedClients extends StatelessWidget {
       children: [
         CardStatistic(
           isMain: false,
-          title: 'Clientes Generados',
+          title: "Clientes Generados",
           value: dashboardProvider.resumen.cantidadClientes,
-          label: 'Clientes',
+          label: "Clientes",
         ),
         CardStatistic(
           isMain: false,
-          title: 'Clientes Atendidos',
+          title: "Clientes Atendidos",
           subtitle: dashboardProvider.currentClientsReadyDate != null
               ? dashboardProvider.currentClientsReadyDate
-              : 'Último mes',
+              : "Último mes",
           value: dashboardProvider.resumen.cantidadClientesAtendidos,
-          label: 'Clientes',
+          label: "Clientes",
           onTap: () => openFilterReadyClientsModal(context),
         ),
       ],

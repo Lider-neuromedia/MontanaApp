@@ -7,7 +7,7 @@ import 'package:montana_mobile/providers/validation_field.dart';
 import 'package:montana_mobile/utils/preferences.dart';
 
 class StoreProvider with ChangeNotifier {
-  final String _url = dotenv.env['API_URL'];
+  final String _url = dotenv.env["API_URL"];
   final _preferences = Preferences();
 
   void initialize({Tienda store}) {
@@ -189,10 +189,10 @@ class StoreProvider with ChangeNotifier {
   }
 
   Future<bool> saveStores() async {
-    final url = Uri.parse('$_url/tiendas');
+    final url = Uri.parse("$_url/tiendas");
     final Map<String, dynamic> data = {
-      'cliente': _preferences.session.id,
-      'tiendas': _stores
+      "cliente": _preferences.session.id,
+      "tiendas": _stores
           .map<Map<String, dynamic>>((store) => store.toStoreFormJson())
           .toList(),
     };
@@ -212,7 +212,7 @@ class StoreProvider with ChangeNotifier {
   }
 
   Future<bool> updateStore() async {
-    final url = Uri.parse('$_url/tiendas/${_storeUpdate.idTiendas}');
+    final url = Uri.parse("$_url/tiendas/${_storeUpdate.idTiendas}");
 
     final store = Tienda(
       nombre: _nombre.value,

@@ -7,7 +7,7 @@ import 'package:montana_mobile/providers/database_provider.dart';
 import 'package:montana_mobile/utils/preferences.dart';
 
 class DashboardProvider with ChangeNotifier {
-  final String _url = dotenv.env['API_URL'];
+  final String _url = dotenv.env["API_URL"];
   final _preferences = Preferences();
 
   final List<CalendarFilter> monthsFilter = _monthsFilter;
@@ -16,7 +16,7 @@ class DashboardProvider with ChangeNotifier {
   String _currentClientsReadyDate;
   String get currentClientsReadyDate => _currentClientsReadyDate;
 
-  String _clientsReadyYear = '';
+  String _clientsReadyYear = "";
   String get clientsReadyYear => _clientsReadyYear;
 
   set clientsReadyYear(String value) {
@@ -37,7 +37,7 @@ class DashboardProvider with ChangeNotifier {
     return null;
   }
 
-  String _clientsReadyMonth = '';
+  String _clientsReadyMonth = "";
   String get clientsReadyMonth => _clientsReadyMonth;
 
   bool _isLoading = false;
@@ -60,13 +60,11 @@ class DashboardProvider with ChangeNotifier {
   }
 
   Future<DashboardResumen> getDashboardResume() async {
-    Uri url;
+    Uri url = Uri.parse("$_url/dashboard-resumen");
 
     if (clientsReadyDate != null) {
       url = Uri.parse(
-          '$_url/dashboard-resumen?fecha_atendidos=$clientsReadyDate');
-    } else {
-      url = Uri.parse('$_url/dashboard-resumen');
+          "$_url/dashboard-resumen?fecha_atendidos=$clientsReadyDate");
     }
 
     final response = await http.get(url, headers: _preferences.signedHeaders);
@@ -77,7 +75,7 @@ class DashboardProvider with ChangeNotifier {
 
   Future<DashboardResumen> getDashboardResumeLocal() async {
     final resume =
-        await DatabaseProvider.db.getRecordById('dashboard_resume', 1);
+        await DatabaseProvider.db.getRecordById("dashboard_resume", 1);
 
     if (resume == null) {
       return DashboardResumen(
@@ -95,7 +93,7 @@ class DashboardProvider with ChangeNotifier {
     }
 
     Map<String, Object> resumeTemp = Map<String, Object>.of(resume);
-    resumeTemp['cantidad_pedidos'] = jsonDecode(resumeTemp['cantidad_pedidos']);
+    resumeTemp["cantidad_pedidos"] = jsonDecode(resumeTemp["cantidad_pedidos"]);
 
     return DashboardResumen.fromJson(resumeTemp);
   }

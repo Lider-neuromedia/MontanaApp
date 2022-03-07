@@ -12,17 +12,16 @@ class UserData {
   String valueKey;
 
   factory UserData.fromJson(Map<String, dynamic> json) => UserData(
-        id: json.containsKey("id_field") ? json["id_field"] : json["id"],
-        userId: json["user_id"] != null ? json["user_id"] : null,
+        id: json["id"],
+        userId: json["user_id"],
         fieldKey: json["field_key"],
-        valueKey: json["value_key"] != null ? json["value_key"] : null,
+        valueKey: json["value_key"] ?? "",
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
-        "id_field": id,
         "user_id": userId,
         "field_key": fieldKey,
-        "value_key": valueKey ?? '',
+        "value_key": valueKey,
       };
 }

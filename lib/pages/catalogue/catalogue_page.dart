@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:montana_mobile/models/catalogue.dart';
+import 'package:montana_mobile/providers/catalogues_provider.dart';
+import 'package:montana_mobile/providers/connection_provider.dart';
 import 'package:montana_mobile/pages/catalogue/partials/catalogue_item.dart';
 import 'package:montana_mobile/pages/catalogue/partials/empty_message.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
-import 'package:montana_mobile/providers/catalogues_provider.dart';
-import 'package:montana_mobile/providers/connection_provider.dart';
 import 'package:montana_mobile/widgets/cart_icon.dart';
 
 class CataloguePage extends StatefulWidget {
@@ -36,7 +37,7 @@ class _CataloguePageState extends State<CataloguePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Catálogo'),
+        title: Text("Catálogo"),
         actions: [
           const CartIcon(),
         ],
@@ -48,34 +49,39 @@ class _CataloguePageState extends State<CataloguePage> {
                   onPressed: () => cataloguesProvider.loadCatalogues(
                     local: connectionProvider.isNotConnected,
                   ),
-                  message: 'No hay catálogos disponibles.',
+                  message: "No hay catálogos disponibles.",
                 )
               : RefreshIndicator(
                   onRefresh: () => cataloguesProvider.loadCatalogues(
                     local: connectionProvider.isNotConnected,
                   ),
                   color: Theme.of(context).primaryColor,
-                  child: const _CataloguesList(),
+                  child: _CataloguesList(
+                    catalogues: cataloguesProvider.catalogues,
+                  ),
                 ),
     );
   }
 }
 
 class _CataloguesList extends StatelessWidget {
-  const _CataloguesList({Key key}) : super(key: key);
+  const _CataloguesList({
+    Key key,
+    @required this.catalogues,
+  }) : super(key: key);
+
+  final List<Catalogo> catalogues;
 
   @override
   Widget build(BuildContext context) {
-    final cataloguesProvider = Provider.of<CataloguesProvider>(context);
-
     return ListView.separated(
       padding: const EdgeInsets.all(20.0),
-      itemCount: cataloguesProvider.catalogues.length,
+      itemCount: catalogues.length,
       separatorBuilder: (_, i) => const SizedBox(height: 30.0),
-      itemBuilder: (_, index) {
+      itemBuilder: (_, i) {
         return CatalogueItem(
           key: UniqueKey(),
-          catalogue: cataloguesProvider.catalogues[index],
+          catalogue: catalogues[i],
         );
       },
     );

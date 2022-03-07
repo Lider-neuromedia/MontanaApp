@@ -33,7 +33,7 @@ class _AddProductModalState extends State<AddProductModal> {
 
   int get availableStock {
     int productStock = _cartProvider != null
-        ? _cartProvider.cart.getProductStock(widget.product.idProducto)
+        ? _cartProvider.cart.getProductStock(widget.product.id)
         : 0;
     return widget.product.stock - (totalAddStock + productStock);
   }
@@ -70,19 +70,19 @@ class _AddProductModalState extends State<AddProductModal> {
     final size = MediaQuery.of(context).size;
 
     List<Widget> storesList = [
-      const _LabelField(label: 'REFERENCIA'),
+      const _LabelField(label: "REFERENCIA"),
       const SizedBox(height: 5.0),
       _BoxField(
         child: _ValueField(value: widget.product.referencia),
       ),
       const SizedBox(height: 15.0),
-      const _LabelField(label: 'STOCK DISPONIBLE'),
+      const _LabelField(label: "STOCK DISPONIBLE"),
       const SizedBox(height: 5.0),
       _BoxField(
         child: _ValueField(value: "$availableStock"),
       ),
       const SizedBox(height: 15.0),
-      const _LabelField(label: 'TIENDAS'),
+      const _LabelField(label: "TIENDAS"),
     ];
 
     _stores.asMap().forEach((int index, store) {

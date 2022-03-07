@@ -13,7 +13,7 @@ import 'package:montana_mobile/providers/validation_field.dart';
 import 'package:montana_mobile/utils/preferences.dart';
 
 class CartProvider with ChangeNotifier {
-  final String _url = dotenv.env['API_URL'];
+  final String _url = dotenv.env["API_URL"];
   final List<PaymentMethod> paymentMethods = _paymentMethods;
   final List<SignMethod> signMethods = _signMethods;
   final _preferences = Preferences();
@@ -104,7 +104,7 @@ class CartProvider with ChangeNotifier {
 
   String _getFileName(File file) {
     if (file == null) return null;
-    List list = List.from(file.path.split('/').reversed);
+    List list = List.from(file.path.split("/").reversed);
     return list[0];
   }
 
@@ -164,7 +164,7 @@ class CartProvider with ChangeNotifier {
   }
 
   Future<List<Tienda>> getClientStores(int clientId) async {
-    final url = Uri.parse('$_url/tiendas-cliente/$clientId');
+    final url = Uri.parse("$_url/tiendas-cliente/$clientId");
     final response = await http.get(url, headers: _preferences.signedHeaders);
 
     if (response.statusCode != 200) return [];
@@ -174,14 +174,14 @@ class CartProvider with ChangeNotifier {
   Future<List<Tienda>> getClientStoresLocal(int clientId) async {
     final db = await DatabaseProvider.db.database;
     List<Map<String, Object>> list = await db.query(
-      'stores',
-      where: 'cliente = ?',
+      "stores",
+      where: "cliente = ?",
       whereArgs: [clientId],
     );
 
     List<Tienda> stores = List<Tienda>.from(list.map((x) {
       Map<String, Object> row = Map<String, Object>.of(x);
-      row['id_tiendas'] = row['id'];
+      row["id_tiendas"] = row["id"];
       return Tienda.fromJson(row);
     }));
 
@@ -189,12 +189,12 @@ class CartProvider with ChangeNotifier {
   }
 
   Future<String> getOrderCode() async {
-    final url = Uri.parse('$_url/generate-code');
+    final url = Uri.parse("$_url/generate-code");
     final response = await http.get(url, headers: _preferences.signedHeaders);
     final decodedResponse = json.decode(response.body);
 
-    if (response.statusCode != 200) return '';
-    return decodedResponse['code'];
+    if (response.statusCode != 200) return "";
+    return decodedResponse["code"];
   }
 
   Future<bool> createOrder(Cart cartCompleted,
@@ -204,26 +204,26 @@ class CartProvider with ChangeNotifier {
 
     if (orderCode.isEmpty) return false;
 
-    final url = Uri.parse('$_url/pedidos');
-    final request = http.MultipartRequest('POST', url);
+    final url = Uri.parse("$_url/pedidos");
+    final request = http.MultipartRequest("POST", url);
     request.headers.addAll(_preferences.signedHeaders);
 
     if (cartCompleted.signMethod == SignMethod.FIRMA) {
       // Cargar firma.
       final fileFirma = http.MultipartFile.fromBytes(
-        'firma',
+        "firma",
         cartCompleted.signData,
-        filename: 'firma.png',
-        contentType: MediaType('image', 'image/png'),
+        filename: "firma.png",
+        contentType: MediaType("image", "image/png"),
       );
       request.files.add(fileFirma);
     }
 
     if (cartCompleted.signMethod == SignMethod.FOTO) {
       // Cargar foto.
-      final mimeData = mime(cartCompleted.signPhoto.path).split('/');
+      final mimeData = mime(cartCompleted.signPhoto.path).split("/");
       final fileSignPhoto = await http.MultipartFile.fromPath(
-        'firma',
+        "firma",
         cartCompleted.signPhoto.path,
         contentType: MediaType(mimeData[0], mimeData[1]),
       );
@@ -231,37 +231,37 @@ class CartProvider with ChangeNotifier {
     }
 
     if (user.isVendedor) {
-      request.fields['cliente'] = "${cartCompleted.clientId}";
-      request.fields['vendedor'] = "${user.id}";
-      request.fields['descuento'] = "${cartCompleted.discount}";
+      request.fields["cliente"] = "${cartCompleted.clientId}";
+      request.fields["vendedor"] = "${user.id}";
+      request.fields["descuento"] = "${cartCompleted.discount}";
     }
     if (user.isCliente) {
       final sellerId = await getSellerId();
       if (sellerId == null) return false;
-      request.fields['cliente'] = "${user.id}";
-      request.fields['vendedor'] = "$sellerId";
-      request.fields['descuento'] = "0";
+      request.fields["cliente"] = "${user.id}";
+      request.fields["vendedor"] = "$sellerId";
+      request.fields["descuento"] = "0";
     }
 
-    request.fields['codigo_pedido'] = "$orderCode";
-    request.fields['total_pedido'] = "${cartCompleted.total}";
-    request.fields['forma_pago'] = "${cartCompleted.paymentMethod}";
-    request.fields['forma_firma'] = "${cartCompleted.signMethod}";
+    request.fields["codigo_pedido"] = "$orderCode";
+    request.fields["total_pedido"] = "${cartCompleted.total}";
+    request.fields["metodo_pago"] = "${cartCompleted.paymentMethod}";
+    request.fields["forma_firma"] = "${cartCompleted.signMethod}";
 
     if (cartCompleted.notes != null && cartCompleted.notes.isNotEmpty) {
-      request.fields['notas'] = cartCompleted.notes;
+      request.fields["notas"] = cartCompleted.notes;
     }
     if (cartCompleted.billingNotes != null &&
         cartCompleted.billingNotes.isNotEmpty) {
-      request.fields['notas_facturacion'] = cartCompleted.billingNotes;
+      request.fields["notas_facturacion"] = cartCompleted.billingNotes;
     }
 
     cartCompleted.products.asMap().forEach((int i, CartProduct product) {
-      request.fields['productos[$i][id_producto]'] = "${product.productId}";
+      request.fields["productos[$i][id_producto]"] = "${product.productId}";
       product.stores.asMap().forEach((int j, CartStore store) {
-        request.fields['productos[$i][tiendas][$j][id_tienda]'] =
+        request.fields["productos[$i][tiendas][$j][id_tienda]"] =
             "${store.storeId}";
-        request.fields['productos[$i][tiendas][$j][cantidad]'] =
+        request.fields["productos[$i][tiendas][$j][cantidad_producto]"] =
             "${store.quantity}";
       });
     });
@@ -272,21 +272,21 @@ class CartProvider with ChangeNotifier {
   }
 
   Future<bool> createOrderLocal(Cart cartCompleted) async {
-    final response = await DatabaseProvider.db.saveRecord('offline_orders', {
-      'content': jsonEncode(cartCompleted.toJson()),
+    final response = await DatabaseProvider.db.saveRecord("offline_orders", {
+      "content": jsonEncode(cartCompleted.toJson()),
     });
     return response != 0;
   }
 
   Future<List<Cart>> getOfflineOrders() async {
     final db = await DatabaseProvider.db.database;
-    final records = await db.query('offline_orders');
+    final records = await db.query("offline_orders");
     List<Cart> carts = [];
 
     if (records.isEmpty) return carts;
 
     for (final record in records) {
-      carts.add(Cart.fromJson(jsonDecode(record['content'])));
+      carts.add(Cart.fromJson(jsonDecode(record["content"])));
     }
 
     return carts;
@@ -294,12 +294,12 @@ class CartProvider with ChangeNotifier {
 
   Future<void> deleteLocalOrder(int index) async {
     final db = await DatabaseProvider.db.database;
-    final records = await db.query('offline_orders');
+    final records = await db.query("offline_orders");
 
     for (int i = 0; i < records.length; i++) {
       if (i == index) {
-        final cartId = records[i]['id'];
-        await DatabaseProvider.db.deleteRecord('offline_orders', cartId);
+        final cartId = records[i]["id"];
+        await DatabaseProvider.db.deleteRecord("offline_orders", cartId);
         notifyListeners();
         break;
       }
@@ -308,29 +308,29 @@ class CartProvider with ChangeNotifier {
 
   Future<void> syncOfflineOrdersInLocal() async {
     final db = await DatabaseProvider.db.database;
-    final records = await db.query('offline_orders');
+    final records = await db.query("offline_orders");
 
     if (records.isEmpty) return;
 
     for (final record in records) {
-      final cartId = record['id'];
-      final cart = Cart.fromJson(jsonDecode(record['content']));
+      final cartId = record["id"];
+      final cart = Cart.fromJson(jsonDecode(record["content"]));
       final isSuccessResponse = await createOrder(cart, true);
 
       if (isSuccessResponse) {
-        await DatabaseProvider.db.deleteRecord('offline_orders', cartId);
+        await DatabaseProvider.db.deleteRecord("offline_orders", cartId);
       }
     }
   }
 
   Future<int> getSellerId() async {
-    final url = Uri.parse('$_url/vendedor-asignado');
+    final url = Uri.parse("$_url/vendedores-asignados");
     final response = await http.get(url, headers: _preferences.signedHeaders);
 
     if (response.statusCode != 200) return null;
 
     final decodedResponse = json.decode(response.body);
-    return decodedResponse['id'];
+    return decodedResponse["id"];
   }
 }
 
@@ -348,8 +348,8 @@ class Cart {
   String billingNotes;
 
   Cart() {
-    paymentMethod = 'contado';
-    signMethod = 'sign';
+    paymentMethod = "contado";
+    signMethod = "sign";
     discount = 0;
     products = [];
   }
@@ -371,49 +371,49 @@ class Cart {
   factory Cart.fromJson(Map<String, dynamic> json) {
     File signPhotoFile;
 
-    if (json['sign_photo'] != null) {
-      final decodedBytes = base64Decode(json['sign_photo']);
-      signPhotoFile = File(json['sign_photo_filename']);
+    if (json["sign_photo"] != null) {
+      final decodedBytes = base64Decode(json["sign_photo"]);
+      signPhotoFile = File(json["sign_photo_filename"]);
       signPhotoFile.writeAsBytesSync(decodedBytes);
     }
 
     return Cart.format(
-      clientId: json['client_id'],
-      paymentMethod: json['payment_method'],
-      signMethod: json['sign_method'],
-      discount: json['discount'],
-      catalogueId: json['catalogue_id'],
+      clientId: json["client_id"],
+      paymentMethod: json["payment_method"],
+      signMethod: json["sign_method"],
+      discount: json["discount"],
+      catalogueId: json["catalogue_id"],
       signData:
-          json['sign_data'] != null ? base64Decode(json['sign_data']) : null,
+          json["sign_data"] != null ? base64Decode(json["sign_data"]) : null,
       signPhoto: signPhotoFile,
-      signPhotoFilename: json['sign_photo_filename'],
-      notes: json['notes'] ?? '',
-      billingNotes: json['billing_notes'] ?? '',
+      signPhotoFilename: json["sign_photo_filename"],
+      notes: json["notes"] ?? "",
+      billingNotes: json["billing_notes"] ?? "",
       products: List<CartProduct>.from(
           json["products"].map((x) => CartProduct.fromJson(x))),
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'client_id': clientId,
-        'payment_method': paymentMethod,
-        'sign_method': signMethod,
-        'discount': discount,
-        'catalogue_id': catalogueId,
-        'sign_data': signData != null ? base64Encode(signData) : null,
-        'sign_photo': signPhoto != null
+        "client_id": clientId,
+        "payment_method": paymentMethod,
+        "sign_method": signMethod,
+        "discount": discount,
+        "catalogue_id": catalogueId,
+        "sign_data": signData != null ? base64Encode(signData) : null,
+        "sign_photo": signPhoto != null
             ? base64Encode(signPhoto.readAsBytesSync())
             : null,
-        'sign_photo_filename': signPhoto != null ? signPhoto.path : null,
-        'notes': notes,
-        'billing_notes': billingNotes,
-        'products': List<dynamic>.from(products.map((x) => x.toJson())),
+        "sign_photo_filename": signPhoto != null ? signPhoto.path : null,
+        "notes": notes,
+        "billing_notes": billingNotes,
+        "products": List<dynamic>.from(products.map((x) => x.toJson())),
       };
 
   void cleanAll() {
     clientId = null;
-    paymentMethod = 'contado';
-    signMethod = 'firma';
+    paymentMethod = "contado";
+    signMethod = "firma";
     discount = 0;
     products = [];
     notes = null;
@@ -423,8 +423,8 @@ class Cart {
   }
 
   void clean() {
-    paymentMethod = 'contado';
-    signMethod = 'firma';
+    paymentMethod = "contado";
+    signMethod = "firma";
     discount = 0;
     products = [];
     notes = null;
@@ -491,7 +491,7 @@ class Cart {
 
   void removeProduct(Producto product, Tienda store) {
     int pIndex = products.indexWhere((CartProduct item) {
-      return item.productId == product.idProducto;
+      return item.productId == product.id;
     });
 
     // Si el producto no existe no se hace nada.
@@ -520,14 +520,14 @@ class Cart {
 
   void addProduct(Producto product, Tienda store, int stock) {
     int pIndex = products.indexWhere((CartProduct item) {
-      return item.productId == product.idProducto;
+      return item.productId == product.id;
     });
 
     if (pIndex == -1) {
       // Si el producto es nuevo.
       products.add(
         CartProduct(
-          productId: product.idProducto,
+          productId: product.id,
           product: product,
           stores: [
             CartStore(
@@ -576,16 +576,16 @@ class CartProduct {
   });
 
   factory CartProduct.fromJson(Map<String, dynamic> json) => CartProduct(
-        productId: json['product_id'],
-        product: Producto.fromJson(json['product']),
+        productId: json["product_id"],
+        product: Producto.fromJson(json["product"]),
         stores: List<CartStore>.from(
-            json['stores'].map((x) => CartStore.fromJson(x))),
+            json["stores"].map((x) => CartStore.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
-        'product_id': productId,
-        'product': product.toJson(),
-        'stores': List<dynamic>.from(stores.map((x) => x.toJson())),
+        "product_id": productId,
+        "product": product.toJson(),
+        "stores": List<dynamic>.from(stores.map((x) => x.toJson())),
       };
 
   double get subtotal {
@@ -613,15 +613,15 @@ class CartStore {
   });
 
   factory CartStore.fromJson(Map<String, dynamic> json) => CartStore(
-        storeId: json['store_id'],
-        quantity: json['quantity'],
-        store: Tienda.fromJson(json['store']),
+        storeId: json["store_id"],
+        quantity: json["quantity"],
+        store: Tienda.fromJson(json["store"]),
       );
 
   Map<String, dynamic> toJson() => {
-        'store_id': storeId,
-        'quantity': quantity,
-        'store': store.toJson(),
+        "store_id": storeId,
+        "quantity": quantity,
+        "store": store.toJson(),
       };
 }
 
@@ -643,8 +643,8 @@ class PaymentMethod extends SwitchMethod {
 }
 
 final List<PaymentMethod> _paymentMethods = [
-  PaymentMethod(PaymentMethod.CONTADO, 'Contado'),
-  PaymentMethod(PaymentMethod.CREDITO, 'Crédito 45 días'),
+  PaymentMethod(PaymentMethod.CONTADO, "Contado"),
+  PaymentMethod(PaymentMethod.CREDITO, "Crédito 45 días"),
 ];
 
 class SignMethod extends SwitchMethod {
@@ -658,6 +658,6 @@ class SignMethod extends SwitchMethod {
 }
 
 final List<SignMethod> _signMethods = [
-  SignMethod(SignMethod.FIRMA, 'Firma'),
-  SignMethod(SignMethod.FOTO, 'Foto'),
+  SignMethod(SignMethod.FIRMA, "Firma"),
+  SignMethod(SignMethod.FOTO, "Foto"),
 ];

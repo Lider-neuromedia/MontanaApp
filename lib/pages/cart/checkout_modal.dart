@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:montana_mobile/pages/quota_expansion/partials/file_button.dart';
 import 'package:provider/provider.dart';
@@ -68,17 +67,17 @@ class CheckoutModal extends StatelessWidget {
     if (success) {
       cartProvider.clientId = null;
       cartProvider.catalogueId = null;
-      cartProvider.notes = '';
-      cartProvider.billingNotes = '';
+      cartProvider.notes = "";
+      cartProvider.billingNotes = "";
       cartProvider.signData = null;
       cartProvider.cart.clean();
 
       showMessageDialog(
         context,
-        'Listo',
+        "Listo",
         connectionProvider.isNotConnected
-            ? 'Pedido guardado localmente y se sincronizará cuando haya conexión.'
-            : 'Pedido creado correctamente.',
+            ? "Pedido guardado localmente y se sincronizará cuando haya conexión."
+            : "Pedido creado correctamente.",
         onAccept: () {
           final navigationProvider =
               Provider.of<NavigationProvider>(context, listen: false);
@@ -89,7 +88,7 @@ class CheckoutModal extends StatelessWidget {
         },
       );
     } else {
-      showMessageDialog(context, 'Aviso', 'Datos de pedido incorrectos.');
+      showMessageDialog(context, "Aviso", "Datos de pedido incorrectos.");
     }
   }
 }
@@ -142,9 +141,9 @@ class __CheckoutFormState extends State<_CheckoutForm> {
       child: ListView(
         padding: const EdgeInsets.all(20.0),
         children: [
-          _TitleCheckout(label: 'Método de Pago'),
+          _TitleCheckout(label: "Método de Pago"),
           const SizedBox(height: 20.0),
-          const _LabelField(label: 'Forma de pago'),
+          const _LabelField(label: "Forma de pago"),
           minSpace,
           SwitchMethodsField<PaymentMethod>(
             cartProvider: cartProvider,
@@ -160,7 +159,7 @@ class __CheckoutFormState extends State<_CheckoutForm> {
           //     : Column(
           //         crossAxisAlignment: CrossAxisAlignment.stretch,
           //         children: [
-          //           const _LabelField(label: 'Descuento asignado'),
+          //           const _LabelField(label: "Descuento asignado"),
           //           minSpace,
           //           DropdownList(
           //             onChanged: (dynamic value) {
@@ -170,8 +169,8 @@ class __CheckoutFormState extends State<_CheckoutForm> {
           //             items: discountList
           //                 .map<Map<String, dynamic>>(
           //                   (int discount) => {
-          //                     'id': discount,
-          //                     'value': "$discount%",
+          //                     "id": discount,
+          //                     "value": "$discount%",
           //                   },
           //                 )
           //                 .toList(),
@@ -179,7 +178,7 @@ class __CheckoutFormState extends State<_CheckoutForm> {
           //           maxSpace,
           //         ],
           //       ),
-          const _LabelField(label: 'Notas de descuento'),
+          const _LabelField(label: "Notas de descuento"),
           minSpace,
           TextField(
             controller: _notesController,
@@ -208,7 +207,7 @@ class __CheckoutFormState extends State<_CheckoutForm> {
             ),
           ),
           minSpace,
-          const _LabelField(label: 'Notas de facturación'),
+          const _LabelField(label: "Notas de facturación"),
           minSpace,
           TextField(
             controller: _billingNotesController,
@@ -237,7 +236,7 @@ class __CheckoutFormState extends State<_CheckoutForm> {
             ),
           ),
           maxSpace,
-          const _LabelField(label: '¿Como quiere firmar?'),
+          const _LabelField(label: "¿Como quiere firmar?"),
           minSpace,
           SwitchMethodsField<SignMethod>(
             cartProvider: cartProvider,
@@ -252,7 +251,10 @@ class __CheckoutFormState extends State<_CheckoutForm> {
           minSpace,
           cartProvider.signMethod == SignMethod.FIRMA
               ? cartProvider.signData != null
-                  ? CurrentSign()
+                  ? CurrentSign(
+                      signData: cartProvider.signData,
+                      onDeleteSign: () => cartProvider.signData = null,
+                    )
                   : SignBox()
               : FileButton(
                   value: cartProvider.descriptionSignPhoto,

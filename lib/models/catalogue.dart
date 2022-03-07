@@ -9,20 +9,17 @@ String responseCatalogosToJson(ResponseCatalogos data) =>
 class ResponseCatalogos {
   ResponseCatalogos({
     this.response,
-    this.message,
     this.status,
     this.catalogos,
   });
 
   String response;
-  String message;
   int status;
   List<Catalogo> catalogos;
 
   factory ResponseCatalogos.fromJson(Map<String, dynamic> json) =>
       ResponseCatalogos(
         response: json["response"],
-        message: json["message"],
         status: json["status"],
         catalogos: List<Catalogo>.from(
             json["catalogos"].map((x) => Catalogo.fromJson(x))),
@@ -30,7 +27,6 @@ class ResponseCatalogos {
 
   Map<String, dynamic> toJson() => {
         "response": response,
-        "message": message,
         "status": status,
         "catalogos": List<dynamic>.from(catalogos.map((x) => x.toJson())),
       };
@@ -68,11 +64,9 @@ class Catalogo {
         imagen: json["imagen"],
         titulo: json["titulo"],
         cantidad: json["cantidad"],
-        descuento: json["descuento"] == null ? null : json["descuento"],
+        descuento: json["descuento"] ?? 0,
         etiqueta: json["etiqueta"],
-        createdAt: json["created_at"] == null
-            ? null
-            : DateTime.parse(json["created_at"]),
+        createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
       );
 
@@ -83,9 +77,9 @@ class Catalogo {
         "imagen": imagen,
         "titulo": titulo,
         "cantidad": cantidad,
-        "descuento": descuento == null ? null : descuento,
+        "descuento": descuento,
         "etiqueta": etiqueta,
-        "created_at": createdAt == null ? null : createdAt.toIso8601String(),
+        "created_at": createdAt.toIso8601String(),
         "updated_at": updatedAt.toIso8601String(),
       };
 

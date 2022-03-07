@@ -21,6 +21,7 @@ import 'package:montana_mobile/providers/password_provider.dart';
 import 'package:montana_mobile/providers/pqrs_provider.dart';
 import 'package:montana_mobile/providers/pqrs_ticket_provider.dart';
 import 'package:montana_mobile/providers/products_provider.dart';
+import 'package:montana_mobile/providers/product_provider.dart';
 import 'package:montana_mobile/providers/quota_provider.dart';
 import 'package:montana_mobile/providers/rating_provider.dart';
 import 'package:montana_mobile/providers/reset_password_provider.dart';
@@ -63,6 +64,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => ResetPasswordProvider()),
         ChangeNotifierProvider(create: (_) => CataloguesProvider()),
         ChangeNotifierProvider(create: (_) => ProductsProvider()),
+        ChangeNotifierProvider(create: (_) => ProductProvider()),
         ChangeNotifierProvider(create: (_) => ShowRoomProvider()),
         ChangeNotifierProvider(create: (_) => OrdersProvider()),
         ChangeNotifierProvider(create: (_) => ClientsProvider()),
@@ -131,9 +133,9 @@ class _MyAppState extends State<MyApp> {
     PushNotificationService.messageStream.listen((message) {
       final currentRoute = historyObserver.top.settings.name;
 
-      if (message.data['type'] == 'pqrs-message') {
+      if (message.data["type"] == "pqrs-message") {
         final idPqrs = pqrsProvider.ticket?.idPqrs;
-        final messageIdPqrs = int.parse(message.data['id_pqrs']);
+        final messageIdPqrs = int.parse(message.data["id_pqrs"]);
 
         // Mostrar snackbar.
         if (currentRoute != MessagesPage.route ||
@@ -141,7 +143,7 @@ class _MyAppState extends State<MyApp> {
           _scaffoldKey.currentState.showSnackBar(snackbar(
             message.notification.title,
             message.notification.body,
-            label: 'Aceptar',
+            label: "Aceptar",
             action: () {},
           ));
         }
@@ -178,7 +180,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       scaffoldMessengerKey: _scaffoldKey,
       navigatorObservers: [NavigationHistoryObserver()],
-      title: 'Montana Group',
+      title: "Montana Group",
       debugShowCheckedModeBanner: false,
       theme: (CustomTheme()).theme,
       initialRoute: preferences.initialPage,

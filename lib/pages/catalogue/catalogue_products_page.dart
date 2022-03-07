@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:montana_mobile/models/product.dart';
 import 'package:provider/provider.dart';
 import 'package:montana_mobile/models/catalogue.dart';
 import 'package:montana_mobile/pages/catalogue/partials/empty_message.dart';
@@ -10,13 +11,16 @@ import 'package:montana_mobile/providers/products_provider.dart';
 import 'package:montana_mobile/widgets/cart_icon.dart';
 
 class CatalogueProductsPage extends StatefulWidget {
-  static final String route = 'catalogue-products';
+  static final String route = "catalogue-products";
 
   @override
   _CatalogueProductsPageState createState() => _CatalogueProductsPageState();
 }
 
 class _CatalogueProductsPageState extends State<CatalogueProductsPage> {
+  ScrollController _scrollController = ScrollController();
+  bool _showScrollButton = false;
+
   @override
   void initState() {
     super.initState();
@@ -36,8 +40,11 @@ class _CatalogueProductsPageState extends State<CatalogueProductsPage> {
     final connectionProvider =
         Provider.of<ConnectionProvider>(context, listen: false);
 
-    productsProvider.loadProducts(catalogue.id,
-        local: connectionProvider.isNotConnected);
+    productsProvider.loadProducts(
+      catalogue.id,
+      local: connectionProvider.isNotConnected,
+      refresh: true,
+    );
   }
 
   @override
@@ -48,30 +55,64 @@ class _CatalogueProductsPageState extends State<CatalogueProductsPage> {
     final productsProvider = Provider.of<ProductsProvider>(context);
     final connectionProvider = Provider.of<ConnectionProvider>(context);
 
+    final products = productsProvider.search.isEmpty
+        ? productsProvider.products
+        : productsProvider.searchProducts;
+
+    final loadFromLocal = connectionProvider.isNotConnected;
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.maxScrollExtent ==
+          _scrollController.position.pixels) {
+        if (!productsProvider.isLoading &&
+            productsProvider.pagination.isEndNotReached()) {
+          productsProvider.loadProducts(catalogue.id, local: loadFromLocal);
+        }
+      }
+
+      if (_scrollController.position.pixels > 1000) {
+        setState(() => _showScrollButton = true);
+      } else {
+        setState(() => _showScrollButton = false);
+      }
+    });
+
     return Scaffold(
       appBar: AppBar(
         title: Text(catalogue.titulo),
         elevation: 0.0,
-        actions: [
-          const CartIcon(),
-        ],
+        actions: [const CartIcon()],
       ),
-      body: productsProvider.isLoadingProducts
+      floatingActionButton: _showScrollButton
+          ? FloatingActionButton(
+              backgroundColor: Theme.of(context).primaryColor,
+              child: const Icon(Icons.arrow_upward),
+              mini: true,
+              onPressed: () => _scrollController.animateTo(
+                _scrollController.position.minScrollExtent,
+                duration: Duration(milliseconds: 300),
+                curve: Curves.fastOutSlowIn,
+              ),
+            )
+          : null,
+      body: productsProvider.isLoading && productsProvider.products.isEmpty
           ? const LoadingContainer()
-          : productsProvider.products.length == 0
+          : productsProvider.products.isEmpty
               ? EmptyMessage(
+                  message: "No hay productos disponibles en este catálogo.",
                   onPressed: () => productsProvider.loadProducts(
                     catalogue.id,
-                    local: connectionProvider.isNotConnected,
+                    refresh: true,
+                    local: loadFromLocal,
                   ),
-                  message: 'No hay productos disponibles en este catálogo.',
                 )
               : RefreshIndicator(
+                  color: Theme.of(context).primaryColor,
                   onRefresh: () => productsProvider.loadProducts(
                     catalogue.id,
-                    local: connectionProvider.isNotConnected,
+                    refresh: true,
+                    local: loadFromLocal,
                   ),
-                  color: Theme.of(context).primaryColor,
                   child: Column(
                     children: [
                       SearchBox(
@@ -81,15 +122,25 @@ class _CatalogueProductsPageState extends State<CatalogueProductsPage> {
                         },
                       ),
                       productsProvider.isSearchActive
-                          ? Center(
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 10.0),
-                                child: Text('No hay coincidencias.'),
-                              ),
-                            )
+                          ? _EmptySearchMessage()
                           : Container(),
-                      Expanded(child: _ProductsList()),
+                      Expanded(
+                        child: ListView.separated(
+                          controller: _scrollController,
+                          padding: const EdgeInsets.all(20.0),
+                          itemCount: products.length,
+                          separatorBuilder: (_, i) => const SizedBox(
+                            height: 30.0,
+                          ),
+                          itemBuilder: (_, i) => ProductItem(
+                            product: products[i],
+                            isShowRoom: false,
+                          ),
+                        ),
+                      ),
+                      productsProvider.isLoading
+                          ? _BottomLoading()
+                          : Container()
                     ],
                   ),
                 ),
@@ -97,26 +148,40 @@ class _CatalogueProductsPageState extends State<CatalogueProductsPage> {
   }
 }
 
-class _ProductsList extends StatelessWidget {
+class _EmptySearchMessage extends StatelessWidget {
+  const _EmptySearchMessage({
+    Key key,
+  }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    final productsProvider = Provider.of<ProductsProvider>(context);
-    final products = productsProvider.search.isEmpty
-        ? productsProvider.products
-        : productsProvider.searchProducts;
+    return const Center(
+      child: Padding(
+        child: Text("No hay coincidencias."),
+        padding: EdgeInsets.symmetric(vertical: 10.0),
+      ),
+    );
+  }
+}
 
-    return ListView.separated(
-      padding: const EdgeInsets.all(20.0),
-      itemCount: products.length,
-      itemBuilder: (_, index) {
-        return ProductItem(
-          product: products[index],
-          isShowRoom: false,
-        );
-      },
-      separatorBuilder: (_, index) {
-        return const SizedBox(height: 30.0);
-      },
+class _BottomLoading extends StatelessWidget {
+  const _BottomLoading({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(color: Colors.grey, blurRadius: 6.0),
+        ],
+      ),
+      child: const Center(
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 10.0),
+          child: LoadingContainer(),
+        ),
+      ),
     );
   }
 }

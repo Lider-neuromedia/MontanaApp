@@ -10,7 +10,7 @@ class Vendedor {
     this.name,
     this.apellidos,
     this.email,
-    this.userData,
+    this.datos,
     this.tipoIdentificacion,
     this.dni,
   });
@@ -23,7 +23,7 @@ class Vendedor {
   String name;
   String apellidos;
   String email;
-  List<UserData> userData;
+  List<UserData> datos;
   String tipoIdentificacion;
   String dni;
 
@@ -41,9 +41,9 @@ class Vendedor {
         email: json["email"],
         tipoIdentificacion: json["tipo_identificacion"] ?? null,
         dni: json["dni"] ?? null,
-        userData: json["user_data"] != null
+        datos: json["datos"] != null
             ? List<UserData>.from(
-                json["user_data"].map((x) => UserData.fromJson(x)))
+                json["datos"].map((x) => UserData.fromJson(x)))
             : [],
       );
 
@@ -60,8 +60,8 @@ class Vendedor {
         "dni": dni,
         "id_vendedor": idVendedor,
         "id_cliente": idCliente,
-        "user_data": userData != null
-            ? List<dynamic>.from(userData.map((x) => x.toJson()))
+        "datos": datos != null
+            ? List<dynamic>.from(datos.map((x) => x.toJson()))
             : [],
       };
 }

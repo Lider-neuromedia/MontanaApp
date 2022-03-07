@@ -10,7 +10,7 @@ import 'package:montana_mobile/providers/connection_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
 
 class ClientPage extends StatelessWidget {
-  static final String route = 'client-detail';
+  static final String route = "client-detail";
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class ClientPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Cliente'),
+        title: Text("Cliente"),
       ),
       body: FutureBuilder(
         future: connectionProvider.isNotConnected
@@ -33,7 +33,7 @@ class ClientPage extends StatelessWidget {
 
           if (!snapshot.hasData) {
             return Center(
-              child: Text('No hay información de cliente.'),
+              child: Text("No hay información de cliente."),
             );
           }
 
@@ -70,7 +70,7 @@ class _ClientContent extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const SizedBox(height: 30.0),
-                  _StoresTitle(),
+                  const _StoresTitle(title: "Tiendas"),
                   const SizedBox(height: 20.0),
                   StoreCard(
                     store: client.tiendas[index],
@@ -101,13 +101,18 @@ class _ClientContent extends StatelessWidget {
 }
 
 class _StoresTitle extends StatelessWidget {
-  const _StoresTitle({Key key}) : super(key: key);
+  const _StoresTitle({
+    Key key,
+    @required this.title,
+  }) : super(key: key);
+
+  final String title;
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Text(
-        'Tiendas',
+        title,
         style: Theme.of(context).textTheme.headline6.copyWith(
               color: Theme.of(context).textTheme.bodyText1.color,
               fontWeight: FontWeight.w700,
@@ -137,15 +142,15 @@ class _ClientData extends StatelessWidget {
         _CardDataList(
           children: [
             CardData(
-              title: 'Cupo preaprobado',
-              value: '\$4.300.400',
+              title: "Cupo preaprobado",
+              value: "\$4.300.400",
               icon: Icons.sentiment_neutral_rounded,
               color: CustomTheme.yellowColor,
               isMain: false,
             ),
             CardData(
-              title: 'Cupo disponible',
-              value: '\$3.500.400',
+              title: "Cupo disponible",
+              value: "\$3.500.400",
               icon: Icons.sentiment_very_satisfied,
               color: CustomTheme.greenColor,
               isMain: false,
@@ -155,15 +160,15 @@ class _ClientData extends StatelessWidget {
         _CardDataList(
           children: [
             CardData(
-              title: 'Saldo total deuda',
-              value: '\$4.300.400',
+              title: "Saldo total deuda",
+              value: "\$4.300.400",
               icon: Icons.error_outline,
               color: CustomTheme.purpleColor,
               isMain: false,
             ),
             CardData(
-              title: 'Saldo en mora',
-              value: '\$3.500.400',
+              title: "Saldo en mora",
+              value: "\$3.500.400",
               icon: Icons.sentiment_dissatisfied_rounded,
               color: CustomTheme.redColor,
               isMain: false,

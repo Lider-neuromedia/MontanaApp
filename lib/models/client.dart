@@ -53,7 +53,7 @@ class Cliente {
     this.tipoIdentificacion,
     this.dni,
     this.nit,
-    this.userData,
+    this.datos,
     this.vendedorId,
     this.vendedor,
     this.tiendas,
@@ -68,7 +68,7 @@ class Cliente {
   String tipoIdentificacion;
   String dni;
   String nit;
-  List<UserData> userData;
+  List<UserData> datos;
   int vendedorId;
   Vendedor vendedor;
   List<Tienda> tiendas;
@@ -77,11 +77,11 @@ class Cliente {
   String get nombreCompleto => "$name $apellidos";
 
   String getData(String key) {
-    String value = '';
+    String value = "";
 
-    userData.forEach((data) {
+    datos.forEach((data) {
       if (data.fieldKey == key) {
-        value = data.valueKey != null ? data.valueKey : '';
+        value = data.valueKey;
       }
     });
 
@@ -99,33 +99,28 @@ class Cliente {
       return "$c1$c2";
     }
 
-    return 'CL';
+    return "CL";
   }
 
   factory Cliente.fromJson(Map<String, dynamic> json) {
-    List<UserData> userData = [];
+    List<UserData> datos = [];
 
-    if (json.containsKey("user_data")) {
-      userData = List<UserData>.from(
-          json["user_data"].map((x) => UserData.fromJson(x)));
-    } else if (json.containsKey("data_user")) {
-      userData = List<UserData>.from(
-          json["data_user"].map((x) => UserData.fromJson(x)));
-    } else if (json.containsKey("data")) {
-      userData =
-          List<UserData>.from(json["data"].map((x) => UserData.fromJson(x)));
+    if (json.containsKey("datos")) {
+      datos = List<UserData>.from(
+        json["datos"].map((x) => UserData.fromJson(x)),
+      );
     }
 
     return Cliente(
-      id: json.containsKey("id_cliente") ? json["id_cliente"] : json["id"],
+      id: json["id"],
       rolId: json["rol_id"],
       name: json["name"],
       apellidos: json["apellidos"],
       email: json["email"],
-      tipoIdentificacion: json["tipo_identificacion"] ?? '',
-      dni: json["dni"] ?? '',
-      nit: json["nit"] ?? '',
-      userData: userData,
+      tipoIdentificacion: json["tipo_identificacion"] ?? "",
+      dni: json["dni"] ?? "",
+      nit: json["nit"] ?? "",
+      datos: datos,
       vendedorId: json["id_vendedor_cliente"] ?? null,
       vendedor:
           json["vendedor"] != null ? Vendedor.fromJson(json["vendedor"]) : null,
@@ -147,10 +142,9 @@ class Cliente {
         "tipo_identificacion": tipoIdentificacion,
         "dni": dni,
         "nit": nit,
-        "user_data": List<dynamic>.from(userData.map((x) => x.toJson())),
         "vendedor": vendedor != null ? vendedor.toJson() : null,
-        "data_user": userData != null
-            ? List<dynamic>.from(userData.map((x) => x.toJson()))
+        "datos": datos != null
+            ? List<dynamic>.from(datos.map((x) => x.toJson()))
             : [],
         "tiendas": tiendas != null
             ? List<dynamic>.from(tiendas.map((x) => x.toJson()))

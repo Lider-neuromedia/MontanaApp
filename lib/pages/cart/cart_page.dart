@@ -12,7 +12,7 @@ import 'package:montana_mobile/utils/utils.dart';
 import 'package:montana_mobile/widgets/image_widget.dart';
 
 class CartPage extends StatelessWidget {
-  static final String route = 'cart';
+  static final String route = "cart";
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class CartPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Bolsa de Compras'),
+        title: Text("Bolsa de Compras"),
       ),
       body: Column(
         children: [
@@ -53,7 +53,7 @@ class _EmptyCartMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Center(
-      child: const Text('Bolsa de compras vacía.'),
+      child: const Text("Bolsa de compras vacía."),
     );
   }
 }
@@ -87,8 +87,8 @@ class ClientDescription extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text('Cliente', style: regularStyle),
-            Text('${snapshot.data.name}', style: mainStyle),
+            Text("Cliente", style: regularStyle),
+            Text("${snapshot.data.name}", style: mainStyle),
           ],
         );
       },
@@ -129,7 +129,7 @@ class _CartTotals extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text('Total', style: regularStyle),
+              Text("Total", style: regularStyle),
               Text(formatMoney(cart.total), style: mainStyle),
             ],
           ),
@@ -277,23 +277,21 @@ class _CartItemHeader extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        cartProduct.product.image == null
-            ? Container()
-            : Container(
+        cartProduct.product.image.isNotEmpty
+            ? Container(
+                child: ImageWidget(
+                  imageUrl: cartProduct.product.image,
+                  fit: BoxFit.cover,
+                ),
                 height: 60,
                 width: 60,
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.all(
-                    const Radius.circular(10.0),
-                  ),
-                  child: ImageWidget(
-                    imageUrl: cartProduct.product.image,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
+              )
+            : Container(),
         const SizedBox(width: 25.0),
-        Text("Ref: ${cartProduct.product.referencia}", style: titleStyle),
+        Text(
+          "Ref: ${cartProduct.product.referencia}",
+          style: titleStyle,
+        ),
       ],
     );
   }
@@ -317,7 +315,7 @@ class _CartItemStock extends StatelessWidget {
           color: Theme.of(context).primaryColor,
           fontWeight: FontWeight.bold,
         );
-    final local = cartStore.store.local != null ? cartStore.store.local : '';
+    final local = cartStore.store.local != null ? cartStore.store.local : "";
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 12.0),

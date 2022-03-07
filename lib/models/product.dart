@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:montana_mobile/models/brand.dart';
 import 'package:montana_mobile/models/image.dart';
 
 ResponseProductos responseProductosFromJson(String str) =>
@@ -16,65 +17,117 @@ String responseProductoToJson(ResponseProducto data) =>
 class ResponseProductos {
   ResponseProductos({
     this.response,
-    this.message,
     this.status,
     this.productos,
-    this.showRoom,
   });
 
   String response;
-  String message;
   int status;
-  List<Producto> productos;
-  bool showRoom;
+  Productos productos;
 
   factory ResponseProductos.fromJson(Map<String, dynamic> json) =>
       ResponseProductos(
         response: json["response"],
-        message: json["message"],
         status: json["status"],
-        productos: List<Producto>.from(
-            json["productos"].map((x) => Producto.fromJson(x))),
-        showRoom: json["show_room"],
+        productos: Productos.fromJson(json["productos"]),
       );
 
   Map<String, dynamic> toJson() => {
         "response": response,
-        "message": message,
         "status": status,
-        "productos": List<dynamic>.from(productos.map((x) => x.toJson())),
-        "show_room": showRoom,
+        "productos": productos.toJson(),
       };
 }
 
 class ResponseProducto {
   ResponseProducto({
+    this.producto,
     this.response,
     this.status,
-    this.producto,
   });
 
+  Producto producto;
   String response;
   int status;
-  Producto producto;
 
   factory ResponseProducto.fromJson(Map<String, dynamic> json) =>
       ResponseProducto(
+        producto: Producto.fromJson(json["producto"]),
         response: json["response"],
         status: json["status"],
-        producto: Producto.fromJson(json["producto"]),
       );
 
   Map<String, dynamic> toJson() => {
+        "producto": producto.toJson(),
         "response": response,
         "status": status,
-        "producto": producto.toJson(),
+      };
+}
+
+class Productos {
+  Productos({
+    this.currentPage,
+    this.data,
+    this.firstPageUrl,
+    this.from,
+    this.lastPage,
+    this.lastPageUrl,
+    this.nextPageUrl,
+    this.path,
+    this.perPage,
+    this.prevPageUrl,
+    this.to,
+    this.total,
+  });
+
+  int currentPage;
+  List<Producto> data;
+  String firstPageUrl;
+  int from;
+  int lastPage;
+  String lastPageUrl;
+  String nextPageUrl;
+  String path;
+  int perPage;
+  String prevPageUrl;
+  int to;
+  int total;
+
+  factory Productos.fromJson(Map<String, dynamic> json) => Productos(
+        currentPage: json["current_page"],
+        data:
+            List<Producto>.from(json["data"].map((x) => Producto.fromJson(x))),
+        firstPageUrl: json["first_page_url"],
+        from: json["from"],
+        lastPage: json["last_page"],
+        lastPageUrl: json["last_page_url"],
+        nextPageUrl: json["next_page_url"],
+        path: json["path"],
+        perPage: json["per_page"],
+        prevPageUrl: json["prev_page_url"],
+        to: json["to"],
+        total: json["total"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "current_page": currentPage,
+        "data": List<dynamic>.from(data.map((x) => x.toJson())),
+        "first_page_url": firstPageUrl,
+        "from": from,
+        "last_page": lastPage,
+        "last_page_url": lastPageUrl,
+        "next_page_url": nextPageUrl,
+        "path": path,
+        "per_page": perPage,
+        "prev_page_url": prevPageUrl,
+        "to": to,
+        "total": total,
       };
 }
 
 class Producto {
   Producto({
-    this.idProducto,
+    this.id,
     this.nombre,
     this.codigo,
     this.referencia,
@@ -85,16 +138,16 @@ class Producto {
     this.total,
     this.descuento,
     this.iva,
-    this.catalogo,
+    this.catalogoId,
+    this.image,
+    this.imagenes,
     this.marcaId,
+    this.marca,
     this.createdAt,
     this.updatedAt,
-    this.image,
-    this.nombreMarca,
-    this.imagenes,
   });
 
-  int idProducto;
+  int id;
   String nombre;
   String codigo;
   String referencia;
@@ -105,39 +158,39 @@ class Producto {
   double total;
   int descuento;
   int iva;
-  int catalogo;
+  int catalogoId;
+  String image;
+  List<Imagen> imagenes;
   int marcaId;
+  Marca marca;
   DateTime createdAt;
   DateTime updatedAt;
-  String image;
-  String nombreMarca;
-  List<Imagen> imagenes;
 
   factory Producto.fromJson(Map<String, dynamic> json) => Producto(
-        idProducto: json["id_producto"],
+        id: json["id_producto"],
         nombre: json["nombre"],
         codigo: json["codigo"],
         referencia: json["referencia"],
         stock: json["stock"],
         precio: double.parse(json["precio"].toString()),
         descripcion: json["descripcion"],
-        sku: json["sku"],
+        sku: json["sku"] ?? '',
         total: double.parse(json["total"].toString()),
         descuento: json["descuento"],
         iva: json["iva"],
-        catalogo: json["catalogo"],
-        marcaId: json["marca"],
-        createdAt: DateTime.parse(json["created_at"]),
-        updatedAt: DateTime.parse(json["updated_at"]),
-        nombreMarca: json["nombre_marca"],
-        image: json.containsKey("image") ? json["image"] : json["destacada"],
+        catalogoId: json["catalogo"],
+        image: json["image"] ?? '',
         imagenes: json["imagenes"] != null
             ? List<Imagen>.from(json["imagenes"].map((x) => Imagen.fromJson(x)))
             : [],
+        marcaId: json["marca_id"],
+        marca: Marca.fromJson(json["marca"]),
+        createdAt: DateTime.parse(json["created_at"]),
+        updatedAt: DateTime.parse(json["updated_at"]),
       );
 
   Map<String, dynamic> toJson() => {
-        "id_producto": idProducto,
+        "id_producto": id,
         "nombre": nombre,
         "codigo": codigo,
         "referencia": referencia,
@@ -148,15 +201,37 @@ class Producto {
         "total": total,
         "descuento": descuento,
         "iva": iva,
-        "catalogo": catalogo,
-        "marca": marcaId,
+        "catalogo": catalogoId,
+        "image": image,
+        "imagenes": List<dynamic>.from(imagenes.map((x) => x.toJson())),
+        "marca_id": marcaId,
+        "marca": marca.toJson(),
         "created_at": createdAt.toIso8601String(),
         "updated_at": updatedAt.toIso8601String(),
-        "image": image,
-        "destacada": image,
-        "nombre_marca": nombreMarca,
-        "imagenes": imagenes != null
-            ? List<dynamic>.from(imagenes.map((x) => x.toJson()))
-            : [],
       };
+
+  bool hasMatch(search) {
+    bool match = false;
+    String codigo = "${this.codigo.toLowerCase()}";
+    String descripcion = "${this.descripcion.toLowerCase()}";
+    String nombre = "${this.nombre.toLowerCase()}";
+    String marca = "${this.marca.nombreMarca.toLowerCase()}";
+    String sku = "${this.sku.toString().toLowerCase()}";
+    String referencia = "${this.referencia.toLowerCase()}";
+    String precio = "${this.precio.toString().toLowerCase()}";
+    String total = "${this.total.toString().toLowerCase()}";
+
+    if (codigo.indexOf(search) != -1 ||
+        descripcion.indexOf(search) != -1 ||
+        nombre.indexOf(search) != -1 ||
+        marca.indexOf(search) != -1 ||
+        sku.indexOf(search) != -1 ||
+        referencia.indexOf(search) != -1 ||
+        precio.indexOf(search) != -1 ||
+        total.indexOf(search) != -1) {
+      match = true;
+    }
+
+    return match;
+  }
 }

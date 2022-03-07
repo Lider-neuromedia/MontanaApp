@@ -82,10 +82,10 @@ class _StartOrderModalState extends State<StartOrderModal> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              _TitleModal(title: 'Comienza tu pedido'),
+              _TitleModal(title: "Comienza tu pedido"),
               _FieldBox(
                 children: [
-                  _LabelField(label: 'CLIENTE'),
+                  _LabelField(label: "CLIENTE"),
                   const SizedBox(height: 10.0),
                   _loading
                       ? LoadingContainer()
@@ -96,8 +96,8 @@ class _StartOrderModalState extends State<StartOrderModal> {
                           value: cartProvider.clientId,
                           items: _clients
                               .map<Map<String, dynamic>>((Cliente cliente) => {
-                                    'id': cliente.id,
-                                    'value': cliente.nombreCompleto,
+                                    "id": cliente.id,
+                                    "value": cliente.nombreCompleto,
                                   })
                               .toList(),
                         ),
@@ -107,7 +107,7 @@ class _StartOrderModalState extends State<StartOrderModal> {
                   ? Container()
                   : _FieldBox(
                       children: [
-                        _LabelField(label: 'CATALOGO'),
+                        _LabelField(label: "CATALOGO"),
                         const SizedBox(height: 10.0),
                         _loading
                             ? LoadingContainer()
@@ -119,8 +119,8 @@ class _StartOrderModalState extends State<StartOrderModal> {
                                 items: _catalogues
                                     .map<Map<String, dynamic>>(
                                       (Catalogo cliente) => {
-                                        'id': cliente.id,
-                                        'value': cliente.titulo,
+                                        "id": cliente.id,
+                                        "value": cliente.titulo,
                                       },
                                     )
                                     .toList(),
@@ -129,7 +129,7 @@ class _StartOrderModalState extends State<StartOrderModal> {
                     ),
               _ContinueButton(
                 icon: Icons.add,
-                label: 'Continuar',
+                label: "Continuar",
                 onPressed:
                     cartProvider.clientId == null ? null : widget.onPressed,
               ),
@@ -213,49 +213,45 @@ class _ContinueButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cartProvider = Provider.of<CartProvider>(context);
     final isBlocked = onPressed == null;
 
     return ElevatedButton(
-      onPressed: cartProvider.clientId == null ? null : onPressed,
+      onPressed: onPressed,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
+            padding: const EdgeInsets.all(15.0),
+            child: Icon(icon, color: Colors.white),
             decoration: BoxDecoration(
               color: isBlocked ? Colors.grey : Theme.of(context).primaryColor,
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  blurRadius: 3.0,
                   color: CustomTheme.greyColor,
                   offset: Offset(2.0, 0.0),
+                  blurRadius: 3.0,
                 ),
               ],
             ),
-            padding: const EdgeInsets.all(15.0),
-            child: Icon(icon, color: Colors.white),
           ),
           Text(label),
           Container(
-            padding: const EdgeInsets.all(15.0),
             child: Icon(icon, color: Colors.transparent),
+            padding: const EdgeInsets.all(15.0),
           ),
         ],
       ),
       style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.only(
-          right: 10.0,
-          left: 0.0,
-        ),
+        primary: Theme.of(context).primaryColor,
+        padding: const EdgeInsets.only(right: 10.0, left: 0.0),
         side: BorderSide(
           color: isBlocked ? Colors.grey : Theme.of(context).primaryColor,
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30.0),
         ),
-        primary: Theme.of(context).primaryColor,
       ),
     );
   }

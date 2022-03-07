@@ -17,7 +17,7 @@ import 'package:montana_mobile/models/store.dart';
 
 class DatabaseProvider {
   static Database _database;
-  static final String _databaseName = 'montana.db';
+  static final String _databaseName = "montana.db";
   static final int _databaseVersion = 2;
 
   static final DatabaseProvider db = DatabaseProvider._();
@@ -68,54 +68,54 @@ class DatabaseProvider {
 
   Future<void> saveOrUpdateProduct(Producto product, bool isShowRoom) async {
     Map<String, dynamic> data = {
-      'id': product.idProducto,
-      'nombre': product.nombre,
-      'codigo': product.codigo,
-      'referencia': product.referencia,
-      'stock': product.stock,
-      'descripcion': product.descripcion,
-      'sku': product.sku,
-      'precio': product.precio,
-      'total': product.total,
-      'descuento': product.descuento,
-      'iva': product.iva,
-      'catalogo': product.catalogo,
-      'marca': product.marcaId,
-      'created_at': product.createdAt.toIso8601String(),
-      'updated_at': product.updatedAt.toIso8601String(),
-      'image': product.image,
-      'nombre_marca': product.nombreMarca,
-      'imagenes': jsonEncode(
+      "id": product.id,
+      "nombre": product.nombre,
+      "codigo": product.codigo,
+      "referencia": product.referencia,
+      "stock": product.stock,
+      "descripcion": product.descripcion,
+      "sku": product.sku,
+      "precio": product.precio,
+      "total": product.total,
+      "descuento": product.descuento,
+      "iva": product.iva,
+      "catalogo": product.catalogoId,
+      "marca_id": product.marcaId,
+      // TODO: Objeto marca
+      "created_at": product.createdAt.toIso8601String(),
+      "updated_at": product.updatedAt.toIso8601String(),
+      "image": product.image,
+      "imagenes": jsonEncode(
           List<dynamic>.from(product.imagenes.map((x) => x.toJson()))),
-      'tipo': isShowRoom ? 'show room' : '',
+      "tipo": isShowRoom ? "show room" : "",
     };
 
-    if (await existsRecordById('products', product.idProducto)) {
-      await updateRecord('products', data, product.idProducto);
+    if (await existsRecordById("products", product.id)) {
+      await updateRecord("products", data, product.id);
     } else {
-      await saveRecord('products', data);
+      await saveRecord("products", data);
     }
   }
 
   Future<void> saveOrUpdateCatalogues(List<Catalogo> catalogues) async {
     for (final catalogue in catalogues) {
       Map<String, dynamic> data = {
-        'id': catalogue.id,
-        'estado': catalogue.estado,
-        'tipo': catalogue.tipo,
-        'imagen': catalogue.imagen,
-        'titulo': catalogue.titulo,
-        'cantidad': catalogue.cantidad,
-        'descuento': catalogue.descuento,
-        'etiqueta': catalogue.etiqueta,
-        'created_at': catalogue.createdAt.toIso8601String(),
-        'updated_at': catalogue.updatedAt.toIso8601String(),
+        "id": catalogue.id,
+        "estado": catalogue.estado,
+        "tipo": catalogue.tipo,
+        "imagen": catalogue.imagen,
+        "titulo": catalogue.titulo,
+        "cantidad": catalogue.cantidad,
+        "descuento": catalogue.descuento,
+        "etiqueta": catalogue.etiqueta,
+        "created_at": catalogue.createdAt.toIso8601String(),
+        "updated_at": catalogue.updatedAt.toIso8601String(),
       };
 
-      if (await existsRecordById('catalogues', catalogue.id)) {
-        await updateRecord('catalogues', data, catalogue.id);
+      if (await existsRecordById("catalogues", catalogue.id)) {
+        await updateRecord("catalogues", data, catalogue.id);
       } else {
-        await saveRecord('catalogues', data);
+        await saveRecord("catalogues", data);
       }
     }
   }
@@ -128,31 +128,31 @@ class DatabaseProvider {
 
   Future<void> saveOrUpdateClient(Cliente client) async {
     Map<String, dynamic> data = {
-      'id': client.id,
-      'rol_id': client.rolId,
-      'name': client.name,
-      'apellidos': client.apellidos,
-      'email': client.email,
-      'tipo_identificacion': client.tipoIdentificacion,
-      'dni': client.dni,
-      'nit': client.nit,
-      'id_vendedor_cliente': client.vendedorId,
-      'user_data': jsonEncode(List<dynamic>.from(
-        client.userData.map((x) => x.toJson()),
+      "id": client.id,
+      "rol_id": client.rolId,
+      "name": client.name,
+      "apellidos": client.apellidos,
+      "email": client.email,
+      "tipo_identificacion": client.tipoIdentificacion,
+      "dni": client.dni,
+      "nit": client.nit,
+      "id_vendedor_cliente": client.vendedorId,
+      "datos": jsonEncode(List<dynamic>.from(
+        client.datos.map((x) => x.toJson()),
       )),
-      'vendedor': jsonEncode(client.vendedor.toJson()),
-      'tiendas': jsonEncode(List<dynamic>.from(
+      "vendedor": jsonEncode(client.vendedor.toJson()),
+      "tiendas": jsonEncode(List<dynamic>.from(
         client.tiendas.map((x) => x.toJson()),
       )),
-      'pedidos': jsonEncode(List<dynamic>.from(
+      "pedidos": jsonEncode(List<dynamic>.from(
         client.pedidos.map((x) => x.toJson()),
       )),
     };
 
-    if (await existsRecordById('clients', client.id)) {
-      await updateRecord('clients', data, client.id);
+    if (await existsRecordById("clients", client.id)) {
+      await updateRecord("clients", data, client.id);
     } else {
-      await saveRecord('clients', data);
+      await saveRecord("clients", data);
     }
   }
 
@@ -160,48 +160,48 @@ class DatabaseProvider {
     const id = 1;
 
     Map<String, dynamic> data = {
-      'id': id,
-      'cantidad_clientes': resume.cantidadClientes,
-      'cantidad_clientes_atendidos': resume.cantidadClientesAtendidos,
-      'cantidad_tiendas': resume.cantidadTiendas,
-      'cantidad_pqrs': resume.cantidadPqrs,
-      'cantidad_pedidos': jsonEncode(resume.cantidadPedidos.toJson()),
+      "id": id,
+      "cantidad_clientes": resume.cantidadClientes,
+      "cantidad_clientes_atendidos": resume.cantidadClientesAtendidos,
+      "cantidad_tiendas": resume.cantidadTiendas,
+      "cantidad_pqrs": resume.cantidadPqrs,
+      "cantidad_pedidos": jsonEncode(resume.cantidadPedidos.toJson()),
     };
 
-    if (await existsRecordById('dashboard_resume', id)) {
-      await updateRecord('dashboard_resume', data, id);
+    if (await existsRecordById("dashboard_resume", id)) {
+      await updateRecord("dashboard_resume", data, id);
     } else {
-      await saveRecord('dashboard_resume', data);
+      await saveRecord("dashboard_resume", data);
     }
   }
 
   Future<void> saveOrUpdateRating(Rating rating) async {
     Map<String, dynamic> data = {
-      'producto_id': rating.productoId,
-      'cantidad_valoraciones': rating.cantidadValoraciones,
-      'usuarios': jsonEncode(rating.usuarios),
-      'valoraciones': jsonEncode(List<dynamic>.from(
+      "producto_id": rating.productoId,
+      "cantidad_valoraciones": rating.cantidadValoraciones,
+      "usuarios": jsonEncode(rating.usuarios),
+      "valoraciones": jsonEncode(List<dynamic>.from(
         rating.valoraciones.map((x) => x.toJson()),
       ))
     };
 
-    await saveRecord('ratings', data);
+    await saveRecord("ratings", data);
   }
 
   Future<void> saveOrUpdateQuestions(List<Pregunta> questions) async {
     for (final rating in questions) {
       Map<String, dynamic> data = {
-        'id_form': rating.idForm,
-        'catalogo': rating.catalogo,
-        'id_pregunta': rating.idPregunta,
-        'encuesta': rating.encuesta,
-        'pregunta': rating.pregunta,
-        'respuesta': rating.respuesta,
-        'created_at': rating.createdAt.toIso8601String(),
-        'updated_at': rating.updatedAt.toIso8601String(),
+        "id_form": rating.idForm,
+        "catalogo": rating.catalogo,
+        "id_pregunta": rating.idPregunta,
+        "encuesta": rating.encuesta,
+        "pregunta": rating.pregunta,
+        "respuesta": rating.respuesta,
+        "created_at": rating.createdAt.toIso8601String(),
+        "updated_at": rating.updatedAt.toIso8601String(),
       };
 
-      await saveRecord('questions', data);
+      await saveRecord("questions", data);
     }
   }
 
@@ -213,22 +213,22 @@ class DatabaseProvider {
 
   Future<void> saveOrUpdateStore(Tienda store) async {
     Map<String, dynamic> data = {
-      'id': store.idTiendas,
-      'nombre': store.nombre,
-      'lugar': store.lugar,
-      'local': store.local,
-      'direccion': store.direccion,
-      'telefono': store.telefono,
-      'created_at': store.createdAt.toIso8601String(),
-      'updated_at': store.updatedAt.toIso8601String(),
-      'cliente': store.cliente,
-      'check_delete': 0,
+      "id": store.idTiendas,
+      "nombre": store.nombre,
+      "lugar": store.lugar,
+      "local": store.local,
+      "direccion": store.direccion,
+      "telefono": store.telefono,
+      "created_at": store.createdAt.toIso8601String(),
+      "updated_at": store.updatedAt.toIso8601String(),
+      "cliente": store.cliente,
+      "check_delete": 0,
     };
 
-    if (await existsRecordById('stores', store.idTiendas)) {
-      await updateRecord('stores', data, store.idTiendas);
+    if (await existsRecordById("stores", store.idTiendas)) {
+      await updateRecord("stores", data, store.idTiendas);
     } else {
-      await saveRecord('stores', data);
+      await saveRecord("stores", data);
     }
   }
 
@@ -267,19 +267,19 @@ class DatabaseProvider {
       "updated_at": order.updatedAt.toIso8601String(),
     };
 
-    if (await existsRecordById('orders', order.idPedido)) {
-      await updateRecord('orders', data, order.idPedido);
+    if (await existsRecordById("orders", order.idPedido)) {
+      await updateRecord("orders", data, order.idPedido);
     } else {
-      await saveRecord('orders', data);
+      await saveRecord("orders", data);
     }
   }
 
   Future<List<Producto>> getProducts() async {
-    final list = await getRecords('products');
+    final list = await getRecords("products");
     final products = List<Producto>.from(list.map((x) {
       Map<String, Object> row = Map<String, Object>.of(x);
-      row['id_producto'] = row['id'];
-      row['imagenes'] = jsonDecode(row['imagenes']);
+      row["id_producto"] = row["id"];
+      row["imagenes"] = jsonDecode(row["imagenes"]);
       return Producto.fromJson(row);
     }));
     return products;
@@ -293,26 +293,26 @@ class DatabaseProvider {
 
     return await db.query(
       table,
-      where: 'check_delete = ?',
+      where: "check_delete = ?",
       whereArgs: [0],
     );
   }
 
   Future<Map<String, Object>> getRecordById(String table, int id) async {
     final db = await database;
-    final response = await db.query(table, where: 'id = ?', whereArgs: [id]);
+    final response = await db.query(table, where: "id = ?", whereArgs: [id]);
     return response.isEmpty ? null : response.first;
   }
 
   Future<bool> existsRecordById(String table, int id) async {
     final db = await database;
-    final records = await db.query(table, where: 'id = ?', whereArgs: [id]);
+    final records = await db.query(table, where: "id = ?", whereArgs: [id]);
     return records.isNotEmpty;
   }
 
   Future<int> deleteRecord(String table, int id) async {
     final db = await database;
-    return await db.delete(table, where: 'id = ?', whereArgs: [id]);
+    return await db.delete(table, where: "id = ?", whereArgs: [id]);
   }
 
   Future<int> saveRecord(String table, Map<String, Object> data) async {
@@ -323,15 +323,15 @@ class DatabaseProvider {
   Future<int> updateRecord(
       String table, Map<String, Object> data, int id) async {
     final db = await database;
-    return await db.update(table, data, where: 'id = ?', whereArgs: [id]);
+    return await db.update(table, data, where: "id = ?", whereArgs: [id]);
   }
 
   Future<int> checkRecordToDelete(String table, int id) async {
     final db = await database;
     return await db.update(
       table,
-      {'check_delete': 1},
-      where: 'id = ?',
+      {"check_delete": 1},
+      where: "id = ?",
       whereArgs: [id],
     );
   }
@@ -339,15 +339,15 @@ class DatabaseProvider {
   Future<MemoryImage> getImage(String path) async {
     final db = await database;
     final records =
-        await db.query('images', where: 'url = ?', whereArgs: [path]);
+        await db.query("images", where: "url = ?", whereArgs: [path]);
 
     if (records.isEmpty) return null;
-    return MemoryImage(base64Decode(records.first['image_file']));
+    return MemoryImage(base64Decode(records.first["image_file"]));
   }
 
   Future<List<Map<String, Object>>> getImages() async {
     final db = await database;
-    final records = await db.query('images');
+    final records = await db.query("images");
     return records;
   }
 
@@ -360,13 +360,13 @@ class DatabaseProvider {
     final imageBase64 = base64Encode(response.bodyBytes);
     final db = await database;
     final records =
-        await db.query('images', where: 'url = ?', whereArgs: [path]);
+        await db.query("images", where: "url = ?", whereArgs: [path]);
 
     if (records.isEmpty) {
-      await db.insert('images', {'url': path, 'image_file': imageBase64});
+      await db.insert("images", {"url": path, "image_file": imageBase64});
     } else {
-      await db.update('images', {'image_file': imageBase64},
-          where: 'url = ?', whereArgs: [path]);
+      await db.update("images", {"image_file": imageBase64},
+          where: "url = ?", whereArgs: [path]);
     }
   }
 
@@ -427,7 +427,7 @@ class DatabaseProvider {
             dni TEXT,
             nit TEXT,
             id_vendedor_cliente INTEGER,
-            user_data TEXT,
+            datos TEXT,
             vendedor TEXT,
             tiendas TEXT,
             pedidos TEXT

@@ -6,14 +6,11 @@ Session sessionFromJson(String str) => Session.fromJson(json.decode(str));
 String sessionToJson(Session data) => json.encode(data.toJson());
 
 class Session {
-  static const rolAdministrador = 1;
-  static const rolVendedor = 2;
-  static const rolCliente = 3;
-
   Session({
     this.accessToken,
     this.tokenType,
     this.expiresAt,
+    this.permisos,
     this.id,
     this.email,
     this.name,
@@ -21,13 +18,13 @@ class Session {
     this.rol,
     this.dni,
     this.tipoIdentificacion,
-    this.userdata,
-    this.permisos,
+    this.datos,
   });
 
   String accessToken;
   String tokenType;
   DateTime expiresAt;
+  List<String> permisos;
   int id;
   String email;
   String name;
@@ -35,30 +32,30 @@ class Session {
   int rol;
   String dni;
   String tipoIdentificacion;
-  List<UserData> userdata;
-  List<String> permisos;
+  List<UserData> datos;
 
   factory Session.fromJson(Map<String, dynamic> json) => Session(
         accessToken: json["access_token"],
         tokenType: json["token_type"],
         expiresAt: DateTime.parse(json["expires_at"]),
+        permisos: List<String>.from(json["permisos"].map((x) => x)),
         id: json["id"],
         email: json["email"],
         name: json["name"],
         apellidos: json["apellidos"],
         rol: json["rol"],
         dni: json["dni"],
-        tipoIdentificacion: json['tipo_identificacion'],
-        userdata: List<UserData>.from(
-          json["userdata"].map((x) => UserData.fromJson(x)),
+        tipoIdentificacion: json["tipo_identificacion"],
+        datos: List<UserData>.from(
+          json["datos"].map((x) => UserData.fromJson(x)),
         ),
-        permisos: List<String>.from(json["permisos"].map((x) => x)),
       );
 
   Map<String, dynamic> toJson() => {
         "access_token": accessToken,
         "token_type": tokenType,
         "expires_at": expiresAt.toIso8601String(),
+        "permisos": List<dynamic>.from(permisos.map((x) => x)),
         "id": id,
         "email": email,
         "name": name,
@@ -66,10 +63,9 @@ class Session {
         "rol": rol,
         "dni": dni,
         "tipo_identificacion": tipoIdentificacion,
-        "userdata": List<dynamic>.from(userdata.map((x) => x.toJson())),
-        "permisos": List<dynamic>.from(permisos.map((x) => x)),
+        "datos": List<dynamic>.from(datos.map((x) => x.toJson())),
       };
 
-  bool get isVendedor => rol == rolVendedor;
-  bool get isCliente => rol == rolCliente;
+  bool get isVendedor => rol == 2;
+  bool get isCliente => rol == 3;
 }

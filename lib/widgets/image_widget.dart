@@ -20,21 +20,28 @@ class ImageWidget extends StatelessWidget {
         ? FutureBuilder<MemoryImage>(
             future: DatabaseProvider.db.getImage(imageUrl),
             builder: (_, AsyncSnapshot<MemoryImage> snapshot) {
-              return FadeInImage(
-                placeholder: const AssetImage("assets/images/placeholder.png"),
-                image: !snapshot.hasData
-                    ? const AssetImage("assets/images/placeholder.png")
-                    : snapshot.data,
-                width: double.infinity,
-                fit: fit,
+              return ClipRRect(
+                borderRadius: BorderRadius.circular(10.0),
+                child: FadeInImage(
+                  placeholder:
+                      const AssetImage("assets/images/placeholder.png"),
+                  image: !snapshot.hasData
+                      ? const AssetImage("assets/images/placeholder.png")
+                      : snapshot.data,
+                  width: double.infinity,
+                  fit: fit,
+                ),
               );
             },
           )
-        : FadeInImage(
-            placeholder: const AssetImage("assets/images/placeholder.png"),
-            image: NetworkImage(imageUrl),
-            width: double.infinity,
-            fit: fit,
+        : ClipRRect(
+            borderRadius: BorderRadius.circular(10.0),
+            child: FadeInImage(
+              placeholder: const AssetImage("assets/images/placeholder.png"),
+              image: NetworkImage(imageUrl),
+              width: double.infinity,
+              fit: fit,
+            ),
           );
   }
 }

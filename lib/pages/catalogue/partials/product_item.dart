@@ -30,11 +30,8 @@ class ProductItem extends StatelessWidget {
       decoration: BoxDecoration(
         color: isShowRoom ? Colors.transparent : Colors.white,
         border: !isShowRoom ? null : Border.all(color: CustomTheme.goldColor),
-        boxShadow: isShowRoom
-            ? []
-            : [
-                BoxShadow(color: Colors.grey, blurRadius: 6.0),
-              ],
+        boxShadow:
+            isShowRoom ? [] : [BoxShadow(color: Colors.grey, blurRadius: 6.0)],
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(
@@ -50,12 +47,9 @@ class ProductItem extends StatelessWidget {
                 ? Container()
                 : Text("Ref: ${product.referencia}", style: textStyle2),
             const SizedBox(height: 15.0),
-            product.image == null
+            product.image.isEmpty
                 ? Container()
-                : ClipRRect(
-                    borderRadius: BorderRadius.circular(5.0),
-                    child: ImageWidget(imageUrl: product.image),
-                  ),
+                : ImageWidget(imageUrl: product.image),
             const SizedBox(height: 15.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -75,14 +69,11 @@ class ProductItem extends StatelessWidget {
                   ? Theme.of(context).textTheme.bodyText1.color
                   : Colors.white,
               icon: Icons.remove_red_eye_outlined,
-              label: 'Ver Producto',
+              label: "Ver Producto",
               onPressed: () {
                 Navigator.of(context).pushNamed(
                   ProductPage.route,
-                  arguments: ProductPageArgs(
-                    product.idProducto,
-                    product.catalogo,
-                  ),
+                  arguments: ProductPageArgs(product.id, product.catalogoId),
                 );
               },
             ),
@@ -95,7 +86,7 @@ class ProductItem extends StatelessWidget {
                   ? Theme.of(context).textTheme.bodyText1.color
                   : Colors.white,
               icon: Icons.shopping_bag_outlined,
-              label: 'Añadir al Pedido',
+              label: "Añadir al Pedido",
               onPressed: () => openStartOrderModal(
                 context,
                 onContinue: () => openAddProductModal(context, product),

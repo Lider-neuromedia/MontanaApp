@@ -21,13 +21,13 @@ class Preferences {
   }
 
   DateTime get lastSync {
-    final temp = _prefs.getString('last_sync');
+    final temp = _prefs.getString("last_sync");
 
     if (temp == null || temp.isEmpty) {
       return DateTime.now().subtract(Duration(minutes: 30));
     }
 
-    return DateTime.parse(_prefs.getString('last_sync'));
+    return DateTime.parse(_prefs.getString("last_sync"));
   }
 
   int get lastSyncInMinutes => DateTime.now().difference(lastSync).inMinutes;
@@ -36,34 +36,34 @@ class Preferences {
 
   set lastSync(DateTime value) {
     if (value == null) {
-      _prefs.remove('last_sync');
+      _prefs.remove("last_sync");
     } else {
-      _prefs.setString('last_sync', value.toIso8601String());
+      _prefs.setString("last_sync", value.toIso8601String());
     }
   }
 
   String get token {
-    return _prefs.getString('token') ?? null;
+    return _prefs.getString("token") ?? null;
   }
 
   set token(String value) {
     if (value == null) {
-      _prefs.remove('token');
+      _prefs.remove("token");
     } else {
-      _prefs.setString('token', value);
+      _prefs.setString("token", value);
     }
   }
 
   Session get session {
-    final value = _prefs.getString('session') ?? null;
+    final value = _prefs.getString("session") ?? null;
     return value != null ? sessionFromJson(value) : null;
   }
 
   set session(Session value) {
     if (value == null) {
-      _prefs.remove('session');
+      _prefs.remove("session");
     } else {
-      _prefs.setString('session', json.encode(value.toJson()));
+      _prefs.setString("session", json.encode(value.toJson()));
     }
   }
 
@@ -77,7 +77,7 @@ class Preferences {
       apellidos: session.apellidos,
       email: session.email,
       dni: session.dni,
-      userData: session.userdata,
+      datos: session.datos,
       tipoIdentificacion: session.tipoIdentificacion,
     );
   }
@@ -87,12 +87,12 @@ class Preferences {
   }
 
   Map<String, String> get guestHeaders => {
-        'X-Requested-With': 'XMLHttpRequest',
+        "X-Requested-With": "XMLHttpRequest",
       };
 
   Map<String, String> get signedHeaders => {
-        'content-type': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest',
-        'Authorization': 'Bearer $token',
+        "content-type": "application/json",
+        "X-Requested-With": "XMLHttpRequest",
+        "Authorization": "Bearer $token",
       };
 }

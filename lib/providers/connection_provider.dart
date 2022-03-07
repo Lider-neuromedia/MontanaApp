@@ -12,6 +12,7 @@ import 'package:montana_mobile/providers/dashboard_provider.dart';
 import 'package:montana_mobile/providers/database_provider.dart';
 import 'package:montana_mobile/providers/orders_provider.dart';
 import 'package:montana_mobile/providers/products_provider.dart';
+import 'package:montana_mobile/providers/product_provider.dart';
 import 'package:montana_mobile/providers/rating_provider.dart';
 import 'package:montana_mobile/providers/show_room_provider.dart';
 import 'package:montana_mobile/providers/stores_provider.dart';
@@ -30,18 +31,20 @@ class ConnectionProvider with ChangeNotifier {
     if (preferences.token == null) return;
     if (!preferences.canSync) return;
 
-    await connectionProvider.syncData(
-      dashboardProvider: Provider.of<DashboardProvider>(context, listen: false),
-      showRoomProvider: Provider.of<ShowRoomProvider>(context, listen: false),
-      productsProvider: Provider.of<ProductsProvider>(context, listen: false),
-      clientsProvider: Provider.of<ClientsProvider>(context, listen: false),
-      ratingProvider: Provider.of<RatingProvider>(context, listen: false),
-      storesProvider: Provider.of<StoresProvider>(context, listen: false),
-      ordersProvider: Provider.of<OrdersProvider>(context, listen: false),
-      cartProvider: Provider.of<CartProvider>(context, listen: false),
-      cataloguesProvider:
-          Provider.of<CataloguesProvider>(context, listen: false),
-    );
+    // TODO: Descomentar.
+    // await connectionProvider.syncData(
+    //   dashboardProvider: Provider.of<DashboardProvider>(context, listen: false),
+    //   showRoomProvider: Provider.of<ShowRoomProvider>(context, listen: false),
+    //   productsProvider: Provider.of<ProductsProvider>(context, listen: false),
+    //   productProvider: Provider.of<ProductProvider>(context, listen: false),
+    //   clientsProvider: Provider.of<ClientsProvider>(context, listen: false),
+    //   ratingProvider: Provider.of<RatingProvider>(context, listen: false),
+    //   storesProvider: Provider.of<StoresProvider>(context, listen: false),
+    //   ordersProvider: Provider.of<OrdersProvider>(context, listen: false),
+    //   cartProvider: Provider.of<CartProvider>(context, listen: false),
+    //   cataloguesProvider:
+    //       Provider.of<CataloguesProvider>(context, listen: false),
+    // );
   }
 
   bool _isConnected = true;
@@ -74,6 +77,7 @@ class ConnectionProvider with ChangeNotifier {
     @required DashboardProvider dashboardProvider,
     @required CataloguesProvider cataloguesProvider,
     @required ProductsProvider productsProvider,
+    @required ProductProvider productProvider,
     @required ClientsProvider clientsProvider,
     @required RatingProvider ratingProvider,
     @required ShowRoomProvider showRoomProvider,
@@ -98,6 +102,7 @@ class ConnectionProvider with ChangeNotifier {
         dashboardProvider: dashboardProvider,
         cataloguesProvider: cataloguesProvider,
         productsProvider: productsProvider,
+        productProvider: productProvider,
         clientsProvider: clientsProvider,
         ratingProvider: ratingProvider,
         showRoomProvider: showRoomProvider,
@@ -134,6 +139,7 @@ class ConnectionProvider with ChangeNotifier {
     @required DashboardProvider dashboardProvider,
     @required CataloguesProvider cataloguesProvider,
     @required ProductsProvider productsProvider,
+    @required ProductProvider productProvider,
     @required ClientsProvider clientsProvider,
     @required RatingProvider ratingProvider,
     @required ShowRoomProvider showRoomProvider,
@@ -156,10 +162,18 @@ class ConnectionProvider with ChangeNotifier {
       await _downloadCatalogues(cataloguesProvider),
     );
     images.addAll(
-      await _downloadProducts(cataloguesProvider, productsProvider),
+      await _downloadProducts(
+        cataloguesProvider,
+        productsProvider,
+        productProvider,
+      ),
     );
     images.addAll(
-      await _downloadShowRoom(showRoomProvider, productsProvider),
+      await _downloadShowRoom(
+        showRoomProvider,
+        productsProvider,
+        productProvider,
+      ),
     );
 
     await _downloadQuestions(cataloguesProvider, ratingProvider);
@@ -171,9 +185,10 @@ class ConnectionProvider with ChangeNotifier {
   Future<List<String>> _downloadProducts(
     CataloguesProvider cataloguesProvider,
     ProductsProvider productsProvider,
+    ProductProvider productProvider,
   ) async {
     List<String> images = [];
-    List<Future<List<Producto>>> productsFuture = [];
+    List<Future<Productos>> productsFuture = [];
     List<Future<Producto>> productFuture = [];
     List<Future<void>> productFutureDB = [];
 
@@ -181,15 +196,17 @@ class ConnectionProvider with ChangeNotifier {
     final catalogues = await cataloguesProvider.getCataloguesLocal();
 
     for (final c in catalogues) {
-      productsFuture.add(productsProvider.getProductsByCatalogue(c.id));
+      int productsPage = 1;
+      productsFuture.add(
+        productsProvider.getProductsByCatalogue(c.id, productsPage),
+      );
     }
 
-    List<List<Producto>> productsFutureResults =
-        await Future.wait(productsFuture);
+    List<Productos> productsFutureResults = await Future.wait(productsFuture);
 
-    for (List<Producto> products in productsFutureResults) {
-      for (final p in products) {
-        productFuture.add(productsProvider.getProduct(p.idProducto));
+    for (Productos products in productsFutureResults) {
+      for (final p in products.data) {
+        productFuture.add(productProvider.getProduct(p.id));
       }
     }
 
@@ -213,6 +230,7 @@ class ConnectionProvider with ChangeNotifier {
   Future<List<String>> _downloadShowRoom(
     ShowRoomProvider showRoomProvider,
     ProductsProvider productsProvider,
+    ProductProvider productProvider,
   ) async {
     List<String> images = [];
     List<Future<Producto>> productsFuture = [];
@@ -222,7 +240,7 @@ class ConnectionProvider with ChangeNotifier {
     final showRoomProducts = await showRoomProvider.getShowRoomProducts();
 
     for (final srp in showRoomProducts) {
-      productsFuture.add(productsProvider.getProduct(srp.idProducto));
+      productsFuture.add(productProvider.getProduct(srp.id));
     }
 
     List<Producto> productsFutureResults = await Future.wait(productsFuture);
@@ -331,7 +349,7 @@ class ConnectionProvider with ChangeNotifier {
     List<Future<void>> ratingsFutureDB = [];
 
     for (final x in products) {
-      ratingsFuture.add(ratingProvider.getRatings(x.idProducto));
+      ratingsFuture.add(ratingProvider.getRatings(x.id));
     }
     List<Rating> ratingsFutureResults = await Future.wait(ratingsFuture);
 

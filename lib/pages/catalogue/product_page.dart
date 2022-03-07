@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:montana_mobile/providers/product_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:montana_mobile/models/product.dart';
 import 'package:montana_mobile/pages/catalogue/partials/empty_message.dart';
@@ -8,7 +9,6 @@ import 'package:montana_mobile/pages/catalogue/partials/rating_form.dart';
 import 'package:montana_mobile/pages/catalogue/partials/ratings.dart';
 import 'package:montana_mobile/pages/catalogue/partials/section_card.dart';
 import 'package:montana_mobile/providers/connection_provider.dart';
-import 'package:montana_mobile/providers/products_provider.dart';
 import 'package:montana_mobile/providers/rating_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:montana_mobile/utils/utils.dart';
@@ -17,7 +17,7 @@ import 'package:montana_mobile/widgets/image_ink_widget.dart';
 import 'package:montana_mobile/widgets/image_widget.dart';
 
 class ProductPage extends StatefulWidget {
-  static final String route = 'product';
+  static final String route = "product";
 
   @override
   _ProductPageState createState() => _ProductPageState();
@@ -37,13 +37,13 @@ class _ProductPageState extends State<ProductPage> {
   }
 
   void _loadData(BuildContext context) {
-    final productsProvider =
-        Provider.of<ProductsProvider>(context, listen: false);
+    final productProvider =
+        Provider.of<ProductProvider>(context, listen: false);
     final connectionProvider =
         Provider.of<ConnectionProvider>(context, listen: false);
 
     _productArgs = ModalRoute.of(context).settings.arguments as ProductPageArgs;
-    productsProvider.loadProduct(
+    productProvider.loadProduct(
       _productArgs.productId,
       local: connectionProvider.isNotConnected,
     );
@@ -51,31 +51,31 @@ class _ProductPageState extends State<ProductPage> {
 
   @override
   Widget build(BuildContext context) {
-    final productsProvider = Provider.of<ProductsProvider>(context);
+    final productProvider = Provider.of<ProductProvider>(context);
     final connectionProvider = Provider.of<ConnectionProvider>(context);
 
     return Scaffold(
       backgroundColor: CustomTheme.grey3Color,
       appBar: AppBar(
-        title: Text('Detalle de Producto'),
+        title: Text("Detalle de Producto"),
         actions: [
           const CartIcon(),
         ],
       ),
-      body: productsProvider.isLoadingProduct
+      body: productProvider.isLoading
           ? const LoadingContainer()
-          : productsProvider.product == null
+          : productProvider.product == null
               ? EmptyMessage(
-                  message: 'No hay información.',
-                  onPressed: () => productsProvider.loadProduct(
+                  message: "No hay información.",
+                  onPressed: () => productProvider.loadProduct(
                     _productArgs.productId,
                     local: connectionProvider.isNotConnected,
                   ),
                 )
               : RefreshIndicator(
                   color: Theme.of(context).primaryColor,
-                  child: _ProductContent(product: productsProvider.product),
-                  onRefresh: () => productsProvider.loadProduct(
+                  child: _ProductContent(product: productProvider.product),
+                  onRefresh: () => productProvider.loadProduct(
                     _productArgs.productId,
                     local: connectionProvider.isNotConnected,
                   ),
@@ -107,11 +107,11 @@ class _ProductContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final htmlStyle = {
-      'body': Style(
+      "body": Style(
         margin: const EdgeInsets.all(0.0),
         fontSize: FontSize(16),
       ),
-      '*': Style(
+      "*": Style(
         fontFamily: CustomTheme.primaryFont,
         color: CustomTheme.textColor1,
       ),
@@ -122,9 +122,9 @@ class _ProductContent extends StatelessWidget {
         ListView(
           padding: const EdgeInsets.all(15.0),
           children: [
-            product.image == null
-                ? Container()
-                : _GalleryProduct(product: product),
+            product.image.isNotEmpty
+                ? _GalleryProduct(product: product)
+                : Container(),
             Container(
               height: 1.0,
               color: Colors.grey,
@@ -164,7 +164,7 @@ class _ProductContent extends StatelessWidget {
             padding: const EdgeInsets.all(10.0),
             width: double.infinity,
             child: ElevatedButton(
-              child: Text('Añadir al pedido'),
+              child: Text("Añadir al pedido"),
               onPressed: () => openStartOrderModal(
                 context,
                 onContinue: () => openAddProductModal(context, product),
@@ -210,8 +210,8 @@ class __RatingsContentState extends State<_RatingsContent> {
           Provider.of<ConnectionProvider>(context, listen: false);
 
       ratingProvider.loadData(
-        widget.product.catalogo,
-        widget.product.idProducto,
+        widget.product.catalogoId,
+        widget.product.id,
         local: connectionProvider.isNotConnected,
       );
     }();
@@ -227,10 +227,10 @@ class __RatingsContentState extends State<_RatingsContent> {
           ? const LoadingContainer()
           : ratingProvider.valoracion == null
               ? EmptyMessage(
-                  message: 'No hay información para valorar.',
+                  message: "No hay información para valorar.",
                   onPressed: () => ratingProvider.loadData(
-                    widget.product.catalogo,
-                    widget.product.idProducto,
+                    widget.product.catalogoId,
+                    widget.product.id,
                     local: connectionProvider.isNotConnected,
                   ),
                 )
@@ -242,8 +242,8 @@ class __RatingsContentState extends State<_RatingsContent> {
                         ? Container()
                         : RatingForm(
                             onCompleted: () => ratingProvider.loadData(
-                              widget.product.catalogo,
-                              widget.product.idProducto,
+                              widget.product.catalogoId,
+                              widget.product.id,
                               local: connectionProvider.isNotConnected,
                             ),
                           ),
@@ -329,10 +329,7 @@ class __GalleryProductState extends State<_GalleryProduct> {
         children: [
           Container(
             padding: const EdgeInsets.all(10.0),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(5.0),
-              child: ImageWidget(imageUrl: selectedImage),
-            ),
+            child: ImageWidget(imageUrl: selectedImage),
           ),
           const SizedBox(height: 10.0),
           widget.product.imagenes.length == 0

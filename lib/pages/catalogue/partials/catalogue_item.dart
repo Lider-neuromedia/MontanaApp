@@ -139,12 +139,7 @@ class _CatalogueCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ClipRRect(
-                borderRadius: const BorderRadius.all(
-                  const Radius.circular(10.0),
-                ),
-                child: ImageWidget(imageUrl: catalogue.imagen),
-              ),
+              ImageWidget(imageUrl: catalogue.imagen),
               const SizedBox(height: 5.0),
               Text(catalogue.titulo.toUpperCase(), style: textStyle1),
               const SizedBox(height: 5.0),

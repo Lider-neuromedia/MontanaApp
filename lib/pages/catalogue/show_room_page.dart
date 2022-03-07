@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:montana_mobile/models/product.dart';
 import 'package:montana_mobile/pages/catalogue/partials/empty_message.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/pages/catalogue/partials/product_item.dart';
@@ -49,53 +50,54 @@ class _ShowRoomPageState extends State<ShowRoomPage> {
           ? const LoadingContainer()
           : showRoomProvider.products.length == 0
               ? EmptyMessage(
+                  message: "No hay productos disponibles en ShowRoom.",
                   onPressed: () => showRoomProvider.loadShowRoomProducts(
                     local: connectionProvider.isNotConnected,
                   ),
-                  message: 'No hay productos disponibles en ShowRoom.',
                 )
               : RefreshIndicator(
+                  color: Theme.of(context).primaryColor,
+                  child: _ProductsList(products: showRoomProvider.products),
                   onRefresh: () => showRoomProvider.loadShowRoomProducts(
                     local: connectionProvider.isNotConnected,
                   ),
-                  color: Theme.of(context).primaryColor,
-                  child: _ProductsList(),
                 ),
     );
   }
 }
 
 class _ProductsList extends StatelessWidget {
-  const _ProductsList({Key key}) : super(key: key);
+  const _ProductsList({
+    Key key,
+    @required this.products,
+  }) : super(key: key);
+
+  final List<Producto> products;
 
   @override
   Widget build(BuildContext context) {
-    final showRoomProvider = Provider.of<ShowRoomProvider>(context);
-
     return ListView.separated(
       padding: const EdgeInsets.all(20.0),
-      itemCount: showRoomProvider.products.length,
-      itemBuilder: (_, index) {
-        if (index == 0) {
+      separatorBuilder: (_, i) => const SizedBox(height: 30.0),
+      itemCount: products.length,
+      itemBuilder: (_, i) {
+        if (i == 0) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
             children: [
               BannerShowRoom(),
               ProductItem(
-                product: showRoomProvider.products[index],
+                product: products[i],
                 isShowRoom: true,
               ),
             ],
           );
         }
         return ProductItem(
-          product: showRoomProvider.products[index],
+          product: products[i],
           isShowRoom: true,
         );
-      },
-      separatorBuilder: (_, index) {
-        return const SizedBox(height: 30.0);
       },
     );
   }

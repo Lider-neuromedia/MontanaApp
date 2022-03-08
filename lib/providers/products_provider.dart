@@ -20,15 +20,10 @@ class ProductsProvider with ChangeNotifier {
 
   String _search = "";
   String get search => _search;
-  bool get isSearchActive => _search.isNotEmpty && searchProducts.isEmpty;
 
   set search(String value) {
     _search = value.toLowerCase();
     notifyListeners();
-  }
-
-  List<Producto> get searchProducts {
-    return _products.where((x) => x.hasMatch(_search)).toList();
   }
 
   Future<void> loadProducts(int catalogId,
@@ -47,9 +42,7 @@ class ProductsProvider with ChangeNotifier {
     } else {
       // Cargar datos desde api.
       final responseProducts = await getProductsByCatalogue(
-        catalogId,
-        _pagination.currentPage + 1,
-      );
+          catalogId, _pagination.currentPage + 1, search);
 
       if (responseProducts != null) {
         _pagination = _Pagination(
@@ -64,8 +57,10 @@ class ProductsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<Productos> getProductsByCatalogue(int catalogId, int page) async {
-    final url = Uri.parse("$_url/productos/$catalogId?page=$page");
+  Future<Productos> getProductsByCatalogue(
+      int catalogId, int page, String search) async {
+    final path = "$_url/productos/$catalogId?page=$page&search=$search";
+    final url = Uri.parse(path);
     final response = await http.get(url, headers: _preferences.signedHeaders);
 
     if (response.statusCode != 200) return null;

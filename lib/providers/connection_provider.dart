@@ -198,7 +198,7 @@ class ConnectionProvider with ChangeNotifier {
     for (final c in catalogues) {
       int productsPage = 1;
       productsFuture.add(
-        productsProvider.getProductsByCatalogue(c.id, productsPage),
+        productsProvider.getProductsByCatalogue(c.id, productsPage, ""),
       );
     }
 

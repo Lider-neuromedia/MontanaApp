@@ -54,11 +54,7 @@ class _CatalogueProductsPageState extends State<CatalogueProductsPage> {
     final catalogue = args.catalogue;
     final productsProvider = Provider.of<ProductsProvider>(context);
     final connectionProvider = Provider.of<ConnectionProvider>(context);
-
-    final products = productsProvider.search.isEmpty
-        ? productsProvider.products
-        : productsProvider.searchProducts;
-
+    final products = productsProvider.products;
     final loadFromLocal = connectionProvider.isNotConnected;
 
     _scrollController.addListener(() {
@@ -70,9 +66,10 @@ class _CatalogueProductsPageState extends State<CatalogueProductsPage> {
         }
       }
 
-      if (_scrollController.position.pixels > 1000) {
+      if (_scrollController.position.pixels > 1000 && !_showScrollButton) {
         setState(() => _showScrollButton = true);
-      } else {
+      }
+      if (_scrollController.position.pixels <= 1000 && _showScrollButton) {
         setState(() => _showScrollButton = false);
       }
     });
@@ -95,55 +92,62 @@ class _CatalogueProductsPageState extends State<CatalogueProductsPage> {
               ),
             )
           : null,
-      body: productsProvider.isLoading && productsProvider.products.isEmpty
-          ? const LoadingContainer()
-          : productsProvider.products.isEmpty
-              ? EmptyMessage(
-                  message: "No hay productos disponibles en este catálogo.",
-                  onPressed: () => productsProvider.loadProducts(
+      body: RefreshIndicator(
+        color: Theme.of(context).primaryColor,
+        onRefresh: () => productsProvider.loadProducts(
+          catalogue.id,
+          refresh: true,
+          local: loadFromLocal,
+        ),
+        child: Column(
+          children: [
+            SearchBox(
+              value: productsProvider.search,
+              onChanged: (String value) {
+                if (value != productsProvider.search) {
+                  productsProvider.search = value;
+
+                  if (!productsProvider.isLoading) {}
+                  productsProvider.loadProducts(
                     catalogue.id,
                     refresh: true,
                     local: loadFromLocal,
-                  ),
-                )
-              : RefreshIndicator(
-                  color: Theme.of(context).primaryColor,
-                  onRefresh: () => productsProvider.loadProducts(
-                    catalogue.id,
-                    refresh: true,
-                    local: loadFromLocal,
-                  ),
-                  child: Column(
-                    children: [
-                      SearchBox(
-                        value: productsProvider.search,
-                        onChanged: (String value) {
-                          productsProvider.search = value;
-                        },
+                  );
+                }
+              },
+            ),
+            products.isEmpty && productsProvider.search.isNotEmpty
+                ? _EmptySearchMessage()
+                : Container(),
+            !productsProvider.isLoading &&
+                    productsProvider.search.isEmpty &&
+                    products.isEmpty
+                ? EmptyMessage(
+                    message: "No hay productos disponibles en este catálogo.",
+                    onPressed: () => productsProvider.loadProducts(
+                      catalogue.id,
+                      refresh: true,
+                      local: loadFromLocal,
+                    ),
+                  )
+                : Expanded(
+                    child: ListView.separated(
+                      controller: _scrollController,
+                      padding: const EdgeInsets.all(20.0),
+                      itemCount: products.length,
+                      separatorBuilder: (_, i) => const SizedBox(height: 30.0),
+                      itemBuilder: (_, i) => ProductItem(
+                        product: products[i],
+                        isShowRoom: false,
                       ),
-                      productsProvider.isSearchActive
-                          ? _EmptySearchMessage()
-                          : Container(),
-                      Expanded(
-                        child: ListView.separated(
-                          controller: _scrollController,
-                          padding: const EdgeInsets.all(20.0),
-                          itemCount: products.length,
-                          separatorBuilder: (_, i) => const SizedBox(
-                            height: 30.0,
-                          ),
-                          itemBuilder: (_, i) => ProductItem(
-                            product: products[i],
-                            isShowRoom: false,
-                          ),
-                        ),
-                      ),
-                      productsProvider.isLoading
-                          ? _BottomLoading()
-                          : Container()
-                    ],
+                    ),
                   ),
-                ),
+            productsProvider.isLoading && products.isNotEmpty
+                ? _BottomLoading()
+                : Container()
+          ],
+        ),
+      ),
     );
   }
 }

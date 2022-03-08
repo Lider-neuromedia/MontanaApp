@@ -16,25 +16,45 @@ class ShowRoomProvider with ChangeNotifier {
   List<Producto> _products = [];
   List<Producto> get products => _products;
 
-  Future<void> loadShowRoomProducts({@required bool local}) async {
-    _products = [];
+  _Pagination _pagination = _Pagination();
+  _Pagination get pagination => _pagination;
+
+  Future<void> loadShowRoomProducts(
+      {@required bool local, bool refresh = false}) async {
+    if (refresh) {
+      _products = [];
+      _pagination = _Pagination();
+    }
+
     _isLoading = true;
     notifyListeners();
 
-    _products =
-        local ? await getShowRoomProductsLocal() : await getShowRoomProducts();
+    if (local) {
+      _products = await getShowRoomProductsLocal();
+    } else {
+      final responseProducts =
+          await getShowRoomProducts(_pagination.currentPage + 1, "");
+
+      if (responseProducts != null) {
+        _pagination = _Pagination(
+          currentPage: responseProducts.currentPage,
+          lastPage: responseProducts.lastPage,
+        );
+        _products.addAll(responseProducts.data);
+      }
+    }
 
     _isLoading = false;
     notifyListeners();
   }
 
-  Future<List<Producto>> getShowRoomProducts() async {
-    // TODO: agregar paginación
-    final url = Uri.parse("$_url/getProductsShowRoom");
+  Future<Productos> getShowRoomProducts(int page, String search) async {
+    final path = "$_url/getProductsShowRoom?page=$page&search=$search";
+    final url = Uri.parse(path);
     final response = await http.get(url, headers: _preferences.signedHeaders);
 
-    if (response.statusCode != 200) return [];
-    return responseProductosFromJson(response.body).productos.data;
+    if (response.statusCode != 200) return null;
+    return responseProductosFromJson(response.body).productos;
   }
 
   Future<List<Producto>> getShowRoomProductsLocal() async {
@@ -53,5 +73,20 @@ class ShowRoomProvider with ChangeNotifier {
     }));
 
     return products;
+  }
+}
+
+class _Pagination {
+  int currentPage;
+  int lastPage;
+
+  _Pagination({this.currentPage = 0, this.lastPage = 1});
+
+  bool isEndReached() {
+    return currentPage >= lastPage;
+  }
+
+  bool isEndNotReached() {
+    return currentPage < lastPage;
   }
 }

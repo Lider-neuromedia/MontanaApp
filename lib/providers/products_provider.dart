@@ -12,6 +12,7 @@ class ProductsProvider with ChangeNotifier {
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
+
   List<Producto> _products = [];
   List<Producto> get products => _products;
 
@@ -37,10 +38,8 @@ class ProductsProvider with ChangeNotifier {
     notifyListeners();
 
     if (local) {
-      // Cargar datos desde db local.
-      _products.addAll(await getProductsByCatalogueLocal(catalogId));
+      _products = await getProductsByCatalogueLocal(catalogId);
     } else {
-      // Cargar datos desde api.
       final responseProducts = await getProductsByCatalogue(
           catalogId, _pagination.currentPage + 1, search);
 

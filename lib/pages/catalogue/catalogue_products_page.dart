@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:montana_mobile/models/product.dart';
 import 'package:provider/provider.dart';
 import 'package:montana_mobile/models/catalogue.dart';
 import 'package:montana_mobile/pages/catalogue/partials/empty_message.dart';
@@ -123,7 +122,7 @@ class _CatalogueProductsPageState extends State<CatalogueProductsPage> {
                     productsProvider.search.isEmpty &&
                     products.isEmpty
                 ? EmptyMessage(
-                    message: "No hay productos disponibles en este catálogo.",
+                    message: "No hay productos disponibles.",
                     onPressed: () => productsProvider.loadProducts(
                       catalogue.id,
                       refresh: true,
@@ -134,8 +133,8 @@ class _CatalogueProductsPageState extends State<CatalogueProductsPage> {
                     child: ListView.separated(
                       controller: _scrollController,
                       padding: const EdgeInsets.all(20.0),
-                      itemCount: products.length,
                       separatorBuilder: (_, i) => const SizedBox(height: 30.0),
+                      itemCount: products.length,
                       itemBuilder: (_, i) => ProductItem(
                         product: products[i],
                         isShowRoom: false,
@@ -143,26 +142,10 @@ class _CatalogueProductsPageState extends State<CatalogueProductsPage> {
                     ),
                   ),
             productsProvider.isLoading && products.isNotEmpty
-                ? _BottomLoading()
+                ? const _BottomLoading()
                 : Container()
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _EmptySearchMessage extends StatelessWidget {
-  const _EmptySearchMessage({
-    Key key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Padding(
-        child: Text("No hay coincidencias."),
-        padding: EdgeInsets.symmetric(vertical: 10.0),
       ),
     );
   }
@@ -185,6 +168,20 @@ class _BottomLoading extends StatelessWidget {
           padding: EdgeInsets.symmetric(vertical: 10.0),
           child: LoadingContainer(),
         ),
+      ),
+    );
+  }
+}
+
+class _EmptySearchMessage extends StatelessWidget {
+  const _EmptySearchMessage({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Padding(
+        child: Text("No hay coincidencias."),
+        padding: EdgeInsets.symmetric(vertical: 10.0),
       ),
     );
   }

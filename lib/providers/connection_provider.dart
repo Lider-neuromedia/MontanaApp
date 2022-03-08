@@ -237,9 +237,11 @@ class ConnectionProvider with ChangeNotifier {
     List<Future<void>> productsFutureDB = [];
 
     message = "Descargando ShowRoom.";
-    final showRoomProducts = await showRoomProvider.getShowRoomProducts();
+    int showRoomPage = 1;
+    final showRoomProducts =
+        await showRoomProvider.getShowRoomProducts(showRoomPage, "");
 
-    for (final srp in showRoomProducts) {
+    for (final srp in showRoomProducts.data) {
       productsFuture.add(productProvider.getProduct(srp.id));
     }
 

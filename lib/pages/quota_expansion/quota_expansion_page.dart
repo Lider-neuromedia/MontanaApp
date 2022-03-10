@@ -25,30 +25,33 @@ class _QuotaExpansionPageState extends State<QuotaExpansionPage> {
 
     () async {
       await Future.delayed(Duration.zero);
-
-      final quotaProvider = Provider.of<QuotaProvider>(context, listen: false);
-      final clientsProvider =
-          Provider.of<ClientsProvider>(context, listen: false);
-      final connectionProvider =
-          Provider.of<ConnectionProvider>(context, listen: false);
-
-      quotaProvider.clienteId = null;
-      quotaProvider.monto = "0";
-      quotaProvider.docIdentidad = null;
-      quotaProvider.docRut = null;
-      quotaProvider.docCamaraCom = null;
-      quotaProvider.clientes = [];
-
-      if (connectionProvider.isNotConnected) {
-        clientsProvider.getSellerClientsLocal().then((clients) {
-          quotaProvider.clientes = clients;
-        });
-      } else {
-        clientsProvider.getSellerClients().then((clients) {
-          quotaProvider.clientes = clients;
-        });
-      }
+      _loadData();
     }();
+  }
+
+  void _loadData() {
+    final quotaProvider = Provider.of<QuotaProvider>(context, listen: false);
+    final clientsProvider =
+        Provider.of<ClientsProvider>(context, listen: false);
+    final connectionProvider =
+        Provider.of<ConnectionProvider>(context, listen: false);
+
+    quotaProvider.clienteId = null;
+    quotaProvider.monto = "0";
+    quotaProvider.docIdentidad = null;
+    quotaProvider.docRut = null;
+    quotaProvider.docCamaraCom = null;
+    quotaProvider.clientes = [];
+
+    if (connectionProvider.isNotConnected) {
+      clientsProvider.getSellerClientsLocal().then((clients) {
+        quotaProvider.clientes = clients;
+      });
+    } else {
+      clientsProvider.getSellerClients().then((clients) {
+        quotaProvider.clientes = clients;
+      });
+    }
   }
 
   @override
@@ -63,11 +66,12 @@ class _QuotaExpansionPageState extends State<QuotaExpansionPage> {
       body: ListView(
         padding: const EdgeInsets.all(20.0),
         children: [
-          _TitleQuota(title: "Realiza tu Solicitud", size: 30.0),
+          const _TitleQuota(title: "Realiza tu Solicitud", size: 30.0),
           const SizedBox(height: 30.0),
           preferences.session.isCliente
               ? Container()
               : Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const _LabelField(label: "CLIENTE"),
                     const SizedBox(height: 10.0),
@@ -102,7 +106,7 @@ class _QuotaExpansionPageState extends State<QuotaExpansionPage> {
             },
           ),
           const SizedBox(height: 30.0),
-          _TitleQuota(
+          const _TitleQuota(
             title:
                 "Por favor coloque el monto por el cual desea solicitar ampliación de cupo",
             size: 20.0,
@@ -204,23 +208,27 @@ class _ClientsDropdown extends StatelessWidget {
     final quotaProvider = Provider.of<QuotaProvider>(context);
     final dropdownStyle = Theme.of(context).textTheme.bodyText1;
 
-    return DropdownPqrs(
-      onChanged: (dynamic value) {
-        quotaProvider.clienteId = value as int;
-      },
-      value: quotaProvider.clienteId,
-      items: quotaProvider.clientes.map<DropdownMenuItem<int>>(
-        (Usuario cliente) {
-          return DropdownMenuItem<int>(
-            value: cliente.id,
-            child: Text(
-              cliente.nombreCompleto,
-              style: dropdownStyle,
-            ),
+    return quotaProvider.clientes.isEmpty
+        ? Center(
+            child: Text("Cargando listado de clientes"),
+          )
+        : DropdownPqrs(
+            onChanged: (dynamic value) {
+              quotaProvider.clienteId = value as int;
+            },
+            value: quotaProvider.clienteId,
+            items: quotaProvider.clientes.map<DropdownMenuItem<int>>(
+              (Usuario cliente) {
+                return DropdownMenuItem<int>(
+                  value: cliente.id,
+                  child: Text(
+                    cliente.nombreCompleto,
+                    style: dropdownStyle,
+                  ),
+                );
+              },
+            ).toList(),
           );
-        },
-      ).toList(),
-    );
   }
 }
 

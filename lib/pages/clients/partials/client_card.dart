@@ -26,11 +26,9 @@ class ClientCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 15.0),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: const BorderRadius.all(
-          const Radius.circular(10.0),
-        ),
+        borderRadius: const BorderRadius.all(Radius.circular(10.0)),
         boxShadow: [
-          BoxShadow(
+          const BoxShadow(
             color: CustomTheme.greyColor,
             offset: Offset(0.0, 3.0),
             blurRadius: 6.0,
@@ -46,25 +44,21 @@ class ClientCard extends StatelessWidget {
         children: [
           Material(
             clipBehavior: Clip.none,
-            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            borderRadius: const BorderRadius.all(Radius.circular(10.0)),
             child: InkWell(
-              borderRadius: const BorderRadius.all(
-                const Radius.circular(10.0),
-              ),
+              borderRadius: const BorderRadius.all(Radius.circular(10.0)),
               onTap: () => goToDetailClient(context),
               child: Ink(
                 width: double.infinity,
                 decoration: const BoxDecoration(
                   color: Colors.white,
-                  borderRadius: const BorderRadius.all(
-                    const Radius.circular(10.0),
-                  ),
+                  borderRadius: const BorderRadius.all(Radius.circular(10.0)),
                 ),
                 padding: const EdgeInsets.only(
-                  top: 20.0,
-                  left: 10.0,
-                  right: 10.0,
                   bottom: 15.0,
+                  right: 10.0,
+                  left: 10.0,
+                  top: 20.0,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

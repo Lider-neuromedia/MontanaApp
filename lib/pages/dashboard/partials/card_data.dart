@@ -68,11 +68,9 @@ class _ContentMain extends StatelessWidget {
       width: size.width - 30.0,
       padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
       decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor,
+        borderRadius: const BorderRadius.all(Radius.circular(10.0)),
         border: Border.all(color: Colors.grey[200], width: 2.0),
-        borderRadius: const BorderRadius.all(
-          const Radius.circular(10.0),
-        ),
+        color: Theme.of(context).primaryColor,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -112,7 +110,7 @@ class _ContentNormal extends StatelessWidget {
     final titleStyle = Theme.of(context).textTheme.bodyText1.copyWith(
           color: CustomTheme.textColor1,
         );
-    final valueStyle = Theme.of(context).textTheme.headline5.copyWith(
+    final valueStyle = Theme.of(context).textTheme.headline6.copyWith(
           fontWeight: FontWeight.w700,
           color: CustomTheme.textColor1,
         );
@@ -121,14 +119,9 @@ class _ContentNormal extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.only(top: 10.0, left: 8.0, bottom: 10.0),
       decoration: BoxDecoration(
+        borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+        border: Border.all(color: Colors.grey[200], width: 2.0),
         color: Colors.white,
-        border: Border.all(
-          color: Colors.grey[200],
-          width: 2.0,
-        ),
-        borderRadius: const BorderRadius.all(
-          const Radius.circular(10.0),
-        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

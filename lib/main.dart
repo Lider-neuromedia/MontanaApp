@@ -3,6 +3,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
+import 'package:montana_mobile/providers/client_provider.dart';
 import 'package:montana_mobile/providers/order_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:navigation_history_observer/navigation_history_observer.dart';
@@ -70,6 +71,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => OrdersProvider()),
         ChangeNotifierProvider(create: (_) => OrderProvider()),
         ChangeNotifierProvider(create: (_) => ClientsProvider()),
+        ChangeNotifierProvider(create: (_) => ClientProvider()),
         ChangeNotifierProvider(create: (_) => PqrsProvider()),
         ChangeNotifierProvider(create: (_) => MessageProvider()),
         ChangeNotifierProvider(create: (_) => PqrsTicketProvider()),

@@ -21,7 +21,7 @@ class ClientsProvider with ChangeNotifier {
   bool get isSearchActive => _search.isNotEmpty && searchClients.length == 0;
 
   set search(String value) {
-    _search = value.toLowerCase();
+    _search = value.trim().toLowerCase();
     notifyListeners();
   }
 
@@ -63,27 +63,5 @@ class ClientsProvider with ChangeNotifier {
     }));
 
     return clients;
-  }
-
-  Future<Usuario> getClient(int id) async {
-    final url = Uri.parse("$_url/cliente/$id");
-    final response = await http.get(url, headers: _preferences.signedHeaders);
-
-    if (response.statusCode != 200) return null;
-    return responseUsuarioFromJson(response.body);
-  }
-
-  Future<Usuario> getClientLocal(int id) async {
-    bool exists = await DatabaseProvider.db.existsRecordById("clients", id);
-
-    if (!exists) return null;
-
-    final record = await DatabaseProvider.db.getRecordById("clients", id);
-    Map<String, Object> recordTemp = Map<String, Object>.of(record);
-    recordTemp["datos"] = jsonDecode(recordTemp["datos"]);
-    recordTemp["vendedor"] = jsonDecode(recordTemp["vendedor"]);
-    recordTemp["tiendas"] = jsonDecode(recordTemp["tiendas"]);
-    recordTemp["pedidos"] = jsonDecode(recordTemp["pedidos"]);
-    return Usuario.fromJson(recordTemp);
   }
 }

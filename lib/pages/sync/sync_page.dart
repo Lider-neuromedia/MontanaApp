@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:montana_mobile/models/user.dart';
 import 'package:montana_mobile/providers/cart_provider.dart';
+import 'package:montana_mobile/providers/client_provider.dart';
 import 'package:montana_mobile/providers/clients_provider.dart';
 import 'package:montana_mobile/providers/connection_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
@@ -180,11 +181,11 @@ class __ItemClientNameState extends State<_ItemClientName> {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     TextStyle textStyle2 = textTheme.subtitle1;
-    final clientsProvider = Provider.of<ClientsProvider>(context);
+    final clientProvider = Provider.of<ClientProvider>(context);
 
     return FutureBuilder<Usuario>(
       initialData: null,
-      future: clientsProvider.getClientLocal(widget.clientId),
+      future: clientProvider.getClientLocal(widget.clientId),
       builder: (ctx, AsyncSnapshot<Usuario> snapshot) {
         if (!snapshot.hasData) {
           return Text(

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:montana_mobile/models/user.dart';
+import 'package:montana_mobile/providers/client_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:fluttericon/maki_icons.dart';
 import 'package:montana_mobile/pages/cart/checkout_modal.dart';
 import 'package:montana_mobile/pages/catalogue/partials/action_button.dart';
 import 'package:montana_mobile/providers/cart_provider.dart';
-import 'package:montana_mobile/providers/clients_provider.dart';
 import 'package:montana_mobile/providers/connection_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:montana_mobile/utils/utils.dart';
@@ -67,14 +67,14 @@ class ClientDescription extends StatelessWidget {
     final mainStyle = Theme.of(context).textTheme.headline6.copyWith(
           fontWeight: FontWeight.w700,
         );
-    final clientsProvider = Provider.of<ClientsProvider>(context);
+    final clientProvider = Provider.of<ClientProvider>(context);
     final cartProvider = Provider.of<CartProvider>(context);
     final connectionProvider = Provider.of<ConnectionProvider>(context);
 
     return FutureBuilder(
       future: connectionProvider.isNotConnected
-          ? clientsProvider.getClientLocal(cartProvider.clientId)
-          : clientsProvider.getClient(cartProvider.clientId),
+          ? clientProvider.getClientLocal(cartProvider.clientId)
+          : clientProvider.getClient(cartProvider.clientId),
       builder: (_, AsyncSnapshot<Usuario> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Container();

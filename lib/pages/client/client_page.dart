@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:montana_mobile/models/user.dart';
+import 'package:montana_mobile/models/store.dart';
 import 'package:provider/provider.dart';
+import 'package:montana_mobile/models/user.dart';
+import 'package:montana_mobile/providers/client_provider.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/pages/client/partials/store_card.dart';
 import 'package:montana_mobile/pages/dashboard/partials/buyer_card.dart';
 import 'package:montana_mobile/pages/dashboard/partials/card_data.dart';
-import 'package:montana_mobile/providers/clients_provider.dart';
 import 'package:montana_mobile/providers/connection_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
 
@@ -15,7 +16,7 @@ class ClientPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final connectionProvider = Provider.of<ConnectionProvider>(context);
-    final clientsProvider = Provider.of<ClientsProvider>(context);
+    final clientProvider = Provider.of<ClientProvider>(context);
     final client = ModalRoute.of(context).settings.arguments as Usuario;
 
     return Scaffold(
@@ -24,14 +25,12 @@ class ClientPage extends StatelessWidget {
       ),
       body: FutureBuilder(
         future: connectionProvider.isNotConnected
-            ? clientsProvider.getClientLocal(client.id)
-            : clientsProvider.getClient(client.id),
+            ? clientProvider.getClientLocal(client.id)
+            : clientProvider.getClient(client.id),
         builder: (_, AsyncSnapshot<Usuario> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const LoadingContainer();
-          }
-
-          if (!snapshot.hasData) {
+          } else if (!snapshot.hasData) {
             return Center(
               child: Text("No hay información de cliente."),
             );
@@ -54,50 +53,59 @@ class _ClientContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final tiendas = client.tiendas;
-    final tiendas = [];
+    final connectionProvider = Provider.of<ConnectionProvider>(context);
+    final clientProvider = Provider.of<ClientProvider>(context);
 
-    // TODO: cargar tiendas de cliente con request por separado.
-    return ListView.separated(
-      padding: const EdgeInsets.only(bottom: 30.0),
-      itemCount: tiendas.length,
-      itemBuilder: (_, int i) {
-        if (i == 0) {
-          return _ClientData(
-            client: client,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 15.0,
-                vertical: 0.0,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const SizedBox(height: 30.0),
-                  const _StoresTitle(title: "Tiendas"),
-                  const SizedBox(height: 20.0),
-                  StoreCard(
-                    store: tiendas[i],
-                    index: i + 1,
-                  ),
-                ],
-              ),
-            ),
+    return FutureBuilder(
+      future: connectionProvider.isNotConnected
+          ? clientProvider.getClientStoresLocal(client.id)
+          : clientProvider.getClientStores(client.id),
+      builder: (_, AsyncSnapshot<List<Tienda>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const LoadingContainer();
+        } else if (!snapshot.hasData) {
+          return Center(
+            child: Text("No hay información de tiendas."),
           );
         }
 
-        return Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 15.0,
-            vertical: 0.0,
-          ),
-          child: StoreCard(
-            store: tiendas[i],
-            index: i + 1,
-          ),
+        final tiendas = snapshot.data ?? [];
+
+        return ListView.separated(
+          separatorBuilder: (_, int i) => const SizedBox(height: 20.0),
+          padding: const EdgeInsets.only(bottom: 30.0),
+          itemCount: tiendas.length,
+          itemBuilder: (_, int i) {
+            const padding = const EdgeInsets.symmetric(
+              horizontal: 10.0,
+              vertical: 0.0,
+            );
+            final storeCard = StoreCard(
+              store: tiendas[i],
+              index: i + 1,
+            );
+
+            return i == 0
+                ? _ClientData(
+                    client: client,
+                    child: Padding(
+                      padding: padding,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          const _StoresTitle(title: "Tiendas"),
+                          storeCard,
+                        ],
+                      ),
+                    ),
+                  )
+                : Padding(
+                    padding: padding,
+                    child: storeCard,
+                  );
+          },
         );
       },
-      separatorBuilder: (_, int i) => const SizedBox(height: 20.0),
     );
   }
 }
@@ -112,13 +120,15 @@ class _StoresTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        title,
-        style: Theme.of(context).textTheme.headline6.copyWith(
-              color: Theme.of(context).textTheme.bodyText1.color,
-              fontWeight: FontWeight.w700,
-            ),
+    final titleStyle = Theme.of(context).textTheme.headline6.copyWith(
+          color: Theme.of(context).textTheme.bodyText1.color,
+          fontWeight: FontWeight.w700,
+        );
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 20.0),
+      child: Center(
+        child: Text(title, style: titleStyle),
       ),
     );
   }
@@ -143,6 +153,7 @@ class _ClientData extends StatelessWidget {
         BuyerCard(client: client),
         _CardDataList(
           children: [
+            // TODO: obtener datos desde el API.
             CardData(
               title: "Cupo preaprobado",
               value: "\$4.300.400",

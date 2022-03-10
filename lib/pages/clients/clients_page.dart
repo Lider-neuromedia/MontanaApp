@@ -55,10 +55,10 @@ class _ClientsPageState extends State<ClientsPage> {
           ? const LoadingContainer()
           : clientsProvider.clients.length == 0
               ? EmptyMessage(
+                  message: "No hay clientes encontrados.",
                   onPressed: () => clientsProvider.loadClients(
                     local: connectionProvider.isNotConnected,
                   ),
-                  message: "No hay clientes encontrados.",
                 )
               : RefreshIndicator(
                   onRefresh: () => clientsProvider.loadClients(
@@ -116,14 +116,8 @@ class ClientsListResults extends StatelessWidget {
       child: ListView.separated(
         itemCount: clients.length,
         padding: const EdgeInsets.all(15.0),
-        itemBuilder: (_, int index) {
-          return ClientCard(
-            client: clients[index],
-          );
-        },
-        separatorBuilder: (_, int index) {
-          return const SizedBox(height: 5.0);
-        },
+        itemBuilder: (_, int i) => ClientCard(client: clients[i]),
+        separatorBuilder: (_, int i) => const SizedBox(height: 5.0),
       ),
     );
   }

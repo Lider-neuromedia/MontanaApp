@@ -171,16 +171,17 @@ class Usuario {
 
   String get iniciales {
     List<String> words = nombreCompleto.split(" ");
+    String respuesta = "CL";
 
     if (words.length == 1) {
-      return words[0].substring(0, 2).toUpperCase();
+      respuesta = words[0].substring(0, 2).toUpperCase();
     } else if (words.length > 1) {
-      String c1 = words[0].substring(0, 1);
-      String c2 = words[1].substring(0, 1);
-      return "$c1$c2";
+      final c1 = words[0].substring(0, 1);
+      final c2 = words[1].substring(0, 1);
+      respuesta = "$c1$c2";
     }
 
-    return "CL";
+    return respuesta.toUpperCase();
   }
 
   bool hasMatch(search) {

@@ -7,6 +7,7 @@ import 'package:montana_mobile/models/store.dart';
 import 'package:montana_mobile/models/user.dart';
 import 'package:montana_mobile/providers/cart_provider.dart';
 import 'package:montana_mobile/providers/catalogues_provider.dart';
+import 'package:montana_mobile/providers/client_provider.dart';
 import 'package:montana_mobile/providers/clients_provider.dart';
 import 'package:montana_mobile/providers/dashboard_provider.dart';
 import 'package:montana_mobile/providers/database_provider.dart';
@@ -39,6 +40,7 @@ class ConnectionProvider with ChangeNotifier {
     //   productsProvider: Provider.of<ProductsProvider>(context, listen: false),
     //   productProvider: Provider.of<ProductProvider>(context, listen: false),
     //   clientsProvider: Provider.of<ClientsProvider>(context, listen: false),
+    //   clientProvider: Provider.of<ClientProvider>(context, listen: false),
     //   ratingProvider: Provider.of<RatingProvider>(context, listen: false),
     //   storesProvider: Provider.of<StoresProvider>(context, listen: false),
     //   ordersProvider: Provider.of<OrdersProvider>(context, listen: false),
@@ -81,6 +83,7 @@ class ConnectionProvider with ChangeNotifier {
     @required ProductsProvider productsProvider,
     @required ProductProvider productProvider,
     @required ClientsProvider clientsProvider,
+    @required ClientProvider clientProvider,
     @required RatingProvider ratingProvider,
     @required ShowRoomProvider showRoomProvider,
     @required StoresProvider storesProvider,
@@ -108,6 +111,7 @@ class ConnectionProvider with ChangeNotifier {
         productsProvider: productsProvider,
         productProvider: productProvider,
         clientsProvider: clientsProvider,
+        clientProvider: clientProvider,
         ratingProvider: ratingProvider,
         storesProvider: storesProvider,
         ordersProvider: ordersProvider,
@@ -146,6 +150,7 @@ class ConnectionProvider with ChangeNotifier {
     @required ShowRoomProvider showRoomProvider,
     @required ProductProvider productProvider,
     @required ClientsProvider clientsProvider,
+    @required ClientProvider clientProvider,
     @required RatingProvider ratingProvider,
     @required StoresProvider storesProvider,
     @required OrdersProvider ordersProvider,
@@ -161,7 +166,8 @@ class ConnectionProvider with ChangeNotifier {
     final resume = await dashboardProvider.getDashboardResume();
     await DatabaseProvider.db.saveOrUpdateDashboardResume(resume);
 
-    await _downloadClientsAndStores(clientsProvider, cartProvider);
+    await _downloadClientsAndStores(
+        clientsProvider, clientProvider, cartProvider);
 
     images.addAll(
       await _downloadCatalogues(cataloguesProvider),
@@ -319,6 +325,7 @@ class ConnectionProvider with ChangeNotifier {
 
   Future<void> _downloadClientsAndStores(
     ClientsProvider clientsProvider,
+    ClientProvider clientProvider,
     CartProvider cartProvider,
   ) async {
     message = "Descargando clientes de vendedor.";
@@ -330,7 +337,7 @@ class ConnectionProvider with ChangeNotifier {
     List<Future<void>> storesFutureDB = [];
 
     for (final sc in sellerClients) {
-      clientsFuture.add(clientsProvider.getClient(sc.id));
+      clientsFuture.add(clientProvider.getClient(sc.id));
       storesFuture.add(cartProvider.getClientStores(sc.id));
     }
 

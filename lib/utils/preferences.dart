@@ -1,6 +1,6 @@
 import 'dart:convert';
+import 'package:montana_mobile/models/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:montana_mobile/models/client.dart';
 import 'package:montana_mobile/models/session.dart';
 import 'package:montana_mobile/pages/home/home_page.dart';
 import 'package:montana_mobile/pages/session/login_page.dart';
@@ -67,10 +67,10 @@ class Preferences {
     }
   }
 
-  Cliente get sessionCliente {
+  Usuario get sessionCliente {
     if (session == null) return null;
 
-    return Cliente(
+    return Usuario(
       id: session.id,
       rolId: session.rol,
       name: session.name,

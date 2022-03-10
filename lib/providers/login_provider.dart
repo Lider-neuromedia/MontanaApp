@@ -10,20 +10,17 @@ class LoginProvider with ChangeNotifier {
   final String _url = dotenv.env["API_URL"];
   final _preferences = Preferences();
 
-  ValidationField _email = ValidationField();
-  ValidationField _password = ValidationField();
   bool _isLoading = false;
-
-  String get email => _email.value;
-  String get password => _password.value;
-  String get emailError => _email.error;
-  String get passwordError => _password.error;
   bool get isLoading => _isLoading;
 
   set isLoading(bool value) {
     _isLoading = value;
     notifyListeners();
   }
+
+  ValidationField _email = ValidationField();
+  String get email => _email.value;
+  String get emailError => _email.error;
 
   set email(String value) {
     final errorLength = ValidationField.validateLength(value, max: 100);
@@ -40,6 +37,10 @@ class LoginProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  ValidationField _password = ValidationField();
+  String get password => _password.value;
+  String get passwordError => _password.error;
+
   set password(String value) {
     final errorLength = ValidationField.validateLength(value, max: 100, min: 6);
 
@@ -55,13 +56,9 @@ class LoginProvider with ChangeNotifier {
   bool get canSend {
     bool isValid = true;
 
-    if (_isLoading) {
+    if (_email.isEmptyOrHasError() || _password.isEmptyOrHasError()) {
       isValid = false;
-    }
-    if (_email.error != null || _password.error != null) {
-      isValid = false;
-    }
-    if (_email.value == null || _password.value == null) {
+    } else if (_isLoading) {
       isValid = false;
     }
 

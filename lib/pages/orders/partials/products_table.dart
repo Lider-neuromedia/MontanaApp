@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:montana_mobile/providers/order_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:montana_mobile/models/order_product.dart';
-import 'package:montana_mobile/providers/orders_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
 
 class ProductsTable extends StatefulWidget {
@@ -22,7 +22,7 @@ class _ProductsTableState extends State<ProductsTable> {
 
   @override
   Widget build(BuildContext context) {
-    final ordersProvider = Provider.of<OrdersProvider>(context);
+    final orderProvider = Provider.of<OrderProvider>(context);
     final List<TableRow> rows = [];
 
     rows.add(TableRow(
@@ -30,14 +30,14 @@ class _ProductsTableState extends State<ProductsTable> {
         _HeaderField(
           onTap: () {
             referenceDesc = !referenceDesc;
-            ordersProvider.sortOrderProductsBy("reference", referenceDesc);
+            orderProvider.sortOrderProductsBy("reference", referenceDesc);
           },
           label: "Referencia",
         ),
         _HeaderField(
           onTap: () {
             placeDesc = !placeDesc;
-            ordersProvider.sortOrderProductsBy("place", placeDesc);
+            orderProvider.sortOrderProductsBy("place", placeDesc);
           },
           label: "Tienda",
         ),
@@ -45,10 +45,24 @@ class _ProductsTableState extends State<ProductsTable> {
     ));
 
     widget.products.asMap().forEach((int index, PedidoProducto product) {
+      String referencia = "SIN NOMBRE";
+
+      if (product.referencia.isNotEmpty) {
+        referencia = product.referencia;
+      } else if (product.producto != null) {
+        if (product.producto.nombre.isNotEmpty) {
+          referencia = product.producto.nombre;
+        } else if (product.producto.codigo.isNotEmpty) {
+          referencia = product.producto.codigo;
+        }
+      }
+
       rows.add(TableRow(
         children: [
-          _TableField(field: product.referencia, index: index),
-          _TableField(field: product.lugar, index: index),
+          _TableField(
+              field: "$referencia (x${product.cantidadProducto})",
+              index: index),
+          _TableField(field: "${product.lugar}", index: index),
         ],
       ));
     });

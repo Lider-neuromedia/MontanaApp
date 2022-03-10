@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:montana_mobile/models/user.dart';
 import 'package:provider/provider.dart';
-import 'package:montana_mobile/models/client.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/pages/pqrs/partials/dropdown_pqrs.dart';
 import 'package:montana_mobile/pages/quota_expansion/partials/continue_button.dart';
@@ -210,7 +210,7 @@ class _ClientsDropdown extends StatelessWidget {
       },
       value: quotaProvider.clienteId,
       items: quotaProvider.clientes.map<DropdownMenuItem<int>>(
-        (Cliente cliente) {
+        (Usuario cliente) {
           return DropdownMenuItem<int>(
             value: cliente.id,
             child: Text(

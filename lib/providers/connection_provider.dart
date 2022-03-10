@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:montana_mobile/models/client.dart';
 import 'package:montana_mobile/models/order.dart';
 import 'package:montana_mobile/models/product.dart';
 import 'package:montana_mobile/models/question.dart';
 import 'package:montana_mobile/models/rating.dart';
 import 'package:montana_mobile/models/store.dart';
+import 'package:montana_mobile/models/user.dart';
 import 'package:montana_mobile/providers/cart_provider.dart';
 import 'package:montana_mobile/providers/catalogues_provider.dart';
 import 'package:montana_mobile/providers/clients_provider.dart';
 import 'package:montana_mobile/providers/dashboard_provider.dart';
 import 'package:montana_mobile/providers/database_provider.dart';
+import 'package:montana_mobile/providers/order_provider.dart';
 import 'package:montana_mobile/providers/orders_provider.dart';
 import 'package:montana_mobile/providers/products_provider.dart';
 import 'package:montana_mobile/providers/product_provider.dart';
@@ -41,6 +42,7 @@ class ConnectionProvider with ChangeNotifier {
     //   ratingProvider: Provider.of<RatingProvider>(context, listen: false),
     //   storesProvider: Provider.of<StoresProvider>(context, listen: false),
     //   ordersProvider: Provider.of<OrdersProvider>(context, listen: false),
+    //   orderProvider: Provider.of<OrderProvider>(context, listen: false),
     //   cartProvider: Provider.of<CartProvider>(context, listen: false),
     //   cataloguesProvider:
     //       Provider.of<CataloguesProvider>(context, listen: false),
@@ -84,6 +86,7 @@ class ConnectionProvider with ChangeNotifier {
     @required StoresProvider storesProvider,
     @required CartProvider cartProvider,
     @required OrdersProvider ordersProvider,
+    @required OrderProvider orderProvider,
   }) async {
     isSyncing = true;
 
@@ -101,14 +104,15 @@ class ConnectionProvider with ChangeNotifier {
       await _downloadData(
         dashboardProvider: dashboardProvider,
         cataloguesProvider: cataloguesProvider,
+        showRoomProvider: showRoomProvider,
         productsProvider: productsProvider,
         productProvider: productProvider,
         clientsProvider: clientsProvider,
         ratingProvider: ratingProvider,
-        showRoomProvider: showRoomProvider,
         storesProvider: storesProvider,
-        cartProvider: cartProvider,
         ordersProvider: ordersProvider,
+        orderProvider: orderProvider,
+        cartProvider: cartProvider,
       );
 
       _preferences.lastSync = DateTime.now();
@@ -136,16 +140,17 @@ class ConnectionProvider with ChangeNotifier {
   }
 
   Future<void> _downloadData({
-    @required DashboardProvider dashboardProvider,
     @required CataloguesProvider cataloguesProvider,
+    @required DashboardProvider dashboardProvider,
     @required ProductsProvider productsProvider,
+    @required ShowRoomProvider showRoomProvider,
     @required ProductProvider productProvider,
     @required ClientsProvider clientsProvider,
     @required RatingProvider ratingProvider,
-    @required ShowRoomProvider showRoomProvider,
     @required StoresProvider storesProvider,
-    @required CartProvider cartProvider,
     @required OrdersProvider ordersProvider,
+    @required OrderProvider orderProvider,
+    @required CartProvider cartProvider,
   }) async {
     List<String> images = [];
 
@@ -178,7 +183,7 @@ class ConnectionProvider with ChangeNotifier {
 
     await _downloadQuestions(cataloguesProvider, ratingProvider);
     await _downloadRatings(ratingProvider);
-    await _downloadOrders(ordersProvider);
+    await _downloadOrders(ordersProvider, orderProvider);
     await _downloadImages(images);
   }
 
@@ -319,7 +324,7 @@ class ConnectionProvider with ChangeNotifier {
     message = "Descargando clientes de vendedor.";
     final sellerClients = await clientsProvider.getSellerClients();
 
-    List<Future<Cliente>> clientsFuture = [];
+    List<Future<Usuario>> clientsFuture = [];
     List<Future<List<Tienda>>> storesFuture = [];
     List<Future<void>> clientsFutureDB = [];
     List<Future<void>> storesFutureDB = [];
@@ -329,7 +334,7 @@ class ConnectionProvider with ChangeNotifier {
       storesFuture.add(cartProvider.getClientStores(sc.id));
     }
 
-    List<Cliente> clientsFutureResults = await Future.wait(clientsFuture);
+    List<Usuario> clientsFutureResults = await Future.wait(clientsFuture);
     for (final client in clientsFutureResults) {
       clientsFutureDB.add(DatabaseProvider.db.saveOrUpdateClient(client));
     }
@@ -363,15 +368,18 @@ class ConnectionProvider with ChangeNotifier {
     await Future.wait(ratingsFutureDB);
   }
 
-  Future<void> _downloadOrders(OrdersProvider ordersProvider) async {
+  Future<void> _downloadOrders(
+      OrdersProvider ordersProvider, OrderProvider orderProvider) async {
     message = "Descargando pedidos.";
-    final orders = await ordersProvider.getOrders();
+    // TODO: Corregir paginación.
+    int page = 1;
+    final orders = (await ordersProvider.getOrders(page, "recientes", "")).data;
 
     List<Future<Pedido>> ordersFuture = [];
     List<Future<void>> ordersFutureDB = [];
 
     for (var x in orders) {
-      ordersFuture.add(ordersProvider.getOrder(x.idPedido));
+      ordersFuture.add(orderProvider.getOrder(x.id));
     }
     List<Pedido> ordersFutureResults = await Future.wait(ordersFuture);
 

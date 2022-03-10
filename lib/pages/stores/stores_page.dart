@@ -158,7 +158,7 @@ class _StoresListResults extends StatelessWidget {
           return Slidable(
             actionPane: SlidableDrawerActionPane(),
             actionExtentRatio: 0.25,
-            key: ValueKey<int>(store.idTiendas),
+            key: ValueKey<int>(store.id),
             secondaryActions: <Widget>[
               IconSlideAction(
                 color: CustomTheme.mainColor,
@@ -174,7 +174,7 @@ class _StoresListResults extends StatelessWidget {
                 icon: FontAwesome5.trash_alt,
                 onTap: () async {
                   final isSuccess = await storesProvider.makeDeleteStore(
-                    store.idTiendas,
+                    store.id,
                     local: connectionProvider.isNotConnected,
                   );
 

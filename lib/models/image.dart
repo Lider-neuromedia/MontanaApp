@@ -2,30 +2,30 @@ class Imagen {
   Imagen({
     this.id,
     this.image,
-    this.nameImg,
+    this.nombre,
     this.destacada,
-    this.producto,
+    this.productoId,
   });
 
   int id;
   String image;
-  String nameImg;
+  String nombre;
   int destacada;
-  int producto;
+  int productoId;
 
   factory Imagen.fromJson(Map<String, dynamic> json) => Imagen(
         id: json["id"],
         image: json["image"],
-        nameImg: json["name_img"],
+        nombre: json["name_img"],
         destacada: json["destacada"],
-        producto: json["producto"],
+        productoId: json["producto"],
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
         "image": image,
-        "name_img": nameImg,
+        "name_img": nombre,
         "destacada": destacada,
-        "producto": producto,
+        "producto": productoId,
       };
 }

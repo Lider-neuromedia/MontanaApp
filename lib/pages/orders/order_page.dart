@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:montana_mobile/providers/order_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:montana_mobile/models/order.dart';
 import 'package:montana_mobile/pages/catalogue/partials/empty_message.dart';
@@ -6,7 +7,6 @@ import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/pages/orders/partials/order_detail_card.dart';
 import 'package:montana_mobile/pages/orders/partials/products_table.dart';
 import 'package:montana_mobile/providers/connection_provider.dart';
-import 'package:montana_mobile/providers/orders_provider.dart';
 import 'package:montana_mobile/theme/theme.dart';
 import 'package:montana_mobile/utils/utils.dart';
 import 'package:montana_mobile/widgets/cart_icon.dart';
@@ -31,10 +31,10 @@ class _OrderPageState extends State<OrderPage> {
 
   void _loadData(BuildContext context) {
     final orderId = ModalRoute.of(context).settings.arguments as int;
-    final ordersProvider = Provider.of<OrdersProvider>(context, listen: false);
+    final orderProvider = Provider.of<OrderProvider>(context, listen: false);
     final connectionProvider =
         Provider.of<ConnectionProvider>(context, listen: false);
-    ordersProvider.loadOrder(
+    orderProvider.loadOrder(
       orderId,
       local: connectionProvider.isNotConnected,
     );
@@ -42,7 +42,7 @@ class _OrderPageState extends State<OrderPage> {
 
   @override
   Widget build(BuildContext context) {
-    final ordersProvider = Provider.of<OrdersProvider>(context);
+    final orderProvider = Provider.of<OrderProvider>(context);
     final connectionProvider = Provider.of<ConnectionProvider>(context);
     final orderId = ModalRoute.of(context).settings.arguments as int;
 
@@ -53,23 +53,23 @@ class _OrderPageState extends State<OrderPage> {
           const CartIcon(),
         ],
       ),
-      body: ordersProvider.isOrderLoading
+      body: orderProvider.isLoading
           ? const LoadingContainer()
-          : ordersProvider.order == null
+          : orderProvider.order == null
               ? EmptyMessage(
-                  onPressed: () => ordersProvider.loadOrder(
+                  onPressed: () => orderProvider.loadOrder(
                     orderId,
                     local: connectionProvider.isNotConnected,
                   ),
                   message: "No hay información.",
                 )
               : RefreshIndicator(
-                  onRefresh: () => ordersProvider.loadOrder(
+                  onRefresh: () => orderProvider.loadOrder(
                     orderId,
                     local: connectionProvider.isNotConnected,
                   ),
                   color: Theme.of(context).primaryColor,
-                  child: _OrderDetailContent(order: ordersProvider.order),
+                  child: _OrderDetailContent(order: orderProvider.order),
                 ),
     );
   }
@@ -104,7 +104,7 @@ class _OrderDetailContent extends StatelessWidget {
             const SizedBox(height: 10.0),
             _OrderDetailData(
               title: "Nit:",
-              value: order.cliente.nit,
+              value: order.cliente.getData("nit"),
             ),
           ],
         ),
@@ -132,7 +132,7 @@ class _OrderDetailContent extends StatelessWidget {
             Expanded(
               child: OrderDetailCard(
                 title: "Estado del pedido",
-                value: order.estadoFormatted,
+                value: order.estado.estadoFormatted,
               ),
             ),
             // const SizedBox(width: 10.0),
@@ -145,7 +145,7 @@ class _OrderDetailContent extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 20.0),
-        ProductsTable(products: order.productos),
+        ProductsTable(products: order.detalles),
       ],
     );
   }

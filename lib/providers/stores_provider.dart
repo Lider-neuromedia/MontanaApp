@@ -35,7 +35,7 @@ class StoresProvider with ChangeNotifier {
       String direccion = "${store.direccion.toLowerCase()}";
       String telefono = "${store.telefono.toLowerCase()}";
       String idCliente = "${store.cliente.toString().toLowerCase()}";
-      String idTiendas = "${store.idTiendas.toString().toLowerCase()}";
+      String id = "${store.id.toString().toLowerCase()}";
       String stock = "${store.stock.toString().toLowerCase()}";
 
       if (nombre.indexOf(_search) != -1 ||
@@ -44,7 +44,7 @@ class StoresProvider with ChangeNotifier {
           direccion.indexOf(_search) != -1 ||
           telefono.indexOf(_search) != -1 ||
           idCliente.indexOf(_search) != -1 ||
-          idTiendas.indexOf(_search) != -1 ||
+          id.indexOf(_search) != -1 ||
           stock.indexOf(_search) != -1) {
         match = true;
       }

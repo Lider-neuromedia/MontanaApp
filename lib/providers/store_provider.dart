@@ -212,7 +212,7 @@ class StoreProvider with ChangeNotifier {
   }
 
   Future<bool> updateStore() async {
-    final url = Uri.parse("$_url/tiendas/${_storeUpdate.idTiendas}");
+    final url = Uri.parse("$_url/tiendas/${_storeUpdate.id}");
 
     final store = Tienda(
       nombre: _nombre.value,

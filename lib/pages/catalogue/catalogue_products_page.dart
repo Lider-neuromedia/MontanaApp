@@ -39,11 +39,8 @@ class _CatalogueProductsPageState extends State<CatalogueProductsPage> {
     final connectionProvider =
         Provider.of<ConnectionProvider>(context, listen: false);
 
-    productsProvider.loadProducts(
-      catalogue.id,
-      local: connectionProvider.isNotConnected,
-      refresh: true,
-    );
+    productsProvider.loadProducts(catalogue.id,
+        local: connectionProvider.isNotConnected, refresh: true);
   }
 
   @override

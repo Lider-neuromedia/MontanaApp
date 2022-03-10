@@ -14,78 +14,105 @@ class OrdersPage extends StatefulWidget {
 }
 
 class _OrdersPageState extends State<OrdersPage> {
+  ScrollController _scrollController = ScrollController();
+  bool _showScrollButton = false;
+
   @override
   void initState() {
     super.initState();
 
     () async {
       await Future.delayed(Duration.zero);
-
-      final ordersProvider =
-          Provider.of<OrdersProvider>(context, listen: false);
-      final connectionProvider =
-          Provider.of<ConnectionProvider>(context, listen: false);
-      ordersProvider.loadOrders(local: connectionProvider.isNotConnected);
+      _loadData(context);
     }();
   }
 
+  void _loadData(BuildContext context) {
+    final ordersProvider = Provider.of<OrdersProvider>(context, listen: false);
+    final connectionProvider =
+        Provider.of<ConnectionProvider>(context, listen: false);
+
+    ordersProvider.loadOrders(
+        local: connectionProvider.isNotConnected, refresh: true);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final ordersProvider = Provider.of<OrdersProvider>(context);
     final connectionProvider = Provider.of<ConnectionProvider>(context);
+    final ordersProvider = Provider.of<OrdersProvider>(context);
+    final loadFromLocal = connectionProvider.isNotConnected;
+    final orders = ordersProvider.orders;
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.maxScrollExtent ==
+          _scrollController.position.pixels) {
+        if (!ordersProvider.isLoading &&
+            ordersProvider.pagination.isEndNotReached()) {
+          ordersProvider.loadOrders(local: loadFromLocal);
+        }
+      }
+
+      if (_scrollController.position.pixels > 1000 && !_showScrollButton) {
+        setState(() => _showScrollButton = true);
+      }
+      if (_scrollController.position.pixels <= 1000 && _showScrollButton) {
+        setState(() => _showScrollButton = false);
+      }
+    });
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Pedidos"),
-        actions: [
-          const CartIcon(),
-        ],
+        actions: [const CartIcon()],
       ),
       // floatingActionButton: _CreateOrderButton(),
-      body: ordersProvider.isLoading
-          ? const LoadingContainer()
-          : ordersProvider.orders.length == 0
-              ? EmptyMessage(
-                  onPressed: () => ordersProvider.loadOrders(
-                    local: connectionProvider.isNotConnected,
-                  ),
-                  message: "No hay pedidos.",
-                )
-              : RefreshIndicator(
-                  onRefresh: () => ordersProvider.loadOrders(
-                    local: connectionProvider.isNotConnected,
-                  ),
-                  color: Theme.of(context).primaryColor,
-                  child: Column(
-                    children: [
-                      _OrdersFilter(),
-                      _ListOrders(),
-                    ],
-                  ),
-                ),
-    );
-  }
-}
-
-class _ListOrders extends StatelessWidget {
-  const _ListOrders({Key key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final ordersProvider = Provider.of<OrdersProvider>(context);
-
-    return Expanded(
-      child: ListView.separated(
-        padding: const EdgeInsets.only(
-          top: 10.0,
-          left: 10.0,
-          right: 10.0,
-          bottom: 100.0,
+      floatingActionButton: _showScrollButton
+          ? FloatingActionButton(
+              backgroundColor: Theme.of(context).primaryColor,
+              child: const Icon(Icons.arrow_upward),
+              mini: true,
+              onPressed: () => _scrollController.animateTo(
+                _scrollController.position.minScrollExtent,
+                duration: Duration(milliseconds: 300),
+                curve: Curves.fastOutSlowIn,
+              ),
+            )
+          : null,
+      body: RefreshIndicator(
+        onRefresh: () => ordersProvider.loadOrders(
+          local: loadFromLocal,
+          refresh: true,
         ),
-        itemCount: ordersProvider.orders.length,
-        itemBuilder: (_, index) => OrderItem(
-          order: ordersProvider.orders[index],
+        color: Theme.of(context).primaryColor,
+        child: Column(
+          children: [
+            _OrdersFilter(),
+            orders.isEmpty && !ordersProvider.isLoading
+                ? EmptyMessage(
+                    message: "No hay pedidos.",
+                    onPressed: () => ordersProvider.loadOrders(
+                      local: loadFromLocal,
+                      refresh: true,
+                    ),
+                  )
+                : Container(),
+            orders.isNotEmpty
+                ? Expanded(
+                    child: ListView.separated(
+                      controller: _scrollController,
+                      padding: const EdgeInsets.only(
+                          bottom: 100.0, right: 10.0, left: 10.0, top: 10.0),
+                      separatorBuilder: (_, i) => const SizedBox(height: 10.0),
+                      itemCount: orders.length,
+                      itemBuilder: (_, i) => OrderItem(order: orders[i]),
+                    ),
+                  )
+                : Container(),
+            ordersProvider.isLoading && orders.isNotEmpty
+                ? const LoadingContainer()
+                : Container()
+          ],
         ),
-        separatorBuilder: (_, i) => const SizedBox(height: 10.0),
       ),
     );
   }
@@ -119,7 +146,9 @@ class __OrdersFilterState extends State<_OrdersFilter> {
   @override
   Widget build(BuildContext context) {
     final textStyle = Theme.of(context).textTheme.subtitle1;
+    final connectionProvider = Provider.of<ConnectionProvider>(context);
     final ordersProvider = Provider.of<OrdersProvider>(context);
+    final loadFromLocal = connectionProvider.isNotConnected;
 
     return Container(
       padding: const EdgeInsets.symmetric(
@@ -141,7 +170,13 @@ class __OrdersFilterState extends State<_OrdersFilter> {
               color: CustomTheme.greyColor,
               height: 2,
             ),
-            onChanged: (String value) => ordersProvider.sortBy = value,
+            onChanged: (String value) {
+              ordersProvider.sortBy = value;
+              ordersProvider.loadOrders(
+                local: loadFromLocal,
+                refresh: true,
+              );
+            },
             value: ordersProvider.sortBy,
             items: ordersProvider.sortValues
                 .map<DropdownMenuItem<String>>((value) {

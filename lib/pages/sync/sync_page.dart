@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:montana_mobile/models/client.dart';
+import 'package:montana_mobile/models/user.dart';
 import 'package:montana_mobile/providers/cart_provider.dart';
 import 'package:montana_mobile/providers/clients_provider.dart';
 import 'package:montana_mobile/providers/connection_provider.dart';
@@ -182,10 +182,10 @@ class __ItemClientNameState extends State<_ItemClientName> {
     TextStyle textStyle2 = textTheme.subtitle1;
     final clientsProvider = Provider.of<ClientsProvider>(context);
 
-    return FutureBuilder<Cliente>(
+    return FutureBuilder<Usuario>(
       initialData: null,
       future: clientsProvider.getClientLocal(widget.clientId),
-      builder: (ctx, AsyncSnapshot<Cliente> snapshot) {
+      builder: (ctx, AsyncSnapshot<Usuario> snapshot) {
         if (!snapshot.hasData) {
           return Text(
             "Cliente ID: ${widget.clientId}",

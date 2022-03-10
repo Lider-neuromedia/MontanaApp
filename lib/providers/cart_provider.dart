@@ -498,7 +498,7 @@ class Cart {
     if (pIndex == -1) return;
 
     int sIndex = products[pIndex].stores.indexWhere((CartStore item) {
-      return item.storeId == store.idTiendas;
+      return item.storeId == store.id;
     });
 
     // Si la tienda no existe no se hace nada.
@@ -531,7 +531,7 @@ class Cart {
           product: product,
           stores: [
             CartStore(
-              storeId: store.idTiendas,
+              storeId: store.id,
               quantity: stock,
               store: store,
             ),
@@ -543,14 +543,14 @@ class Cart {
     if (pIndex != -1) {
       // Si el producto ya existe.
       int sIndex = products[pIndex].stores.indexWhere((CartStore item) {
-        return item.storeId == store.idTiendas;
+        return item.storeId == store.id;
       });
 
       if (sIndex == -1) {
         // Si la tienda es nueva.
         products[pIndex].stores.add(
               CartStore(
-                storeId: store.idTiendas,
+                storeId: store.id,
                 quantity: stock,
                 store: store,
               ),

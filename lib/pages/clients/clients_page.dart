@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:montana_mobile/models/user.dart';
 import 'package:provider/provider.dart';
-import 'package:montana_mobile/models/client.dart';
 import 'package:montana_mobile/pages/catalogue/partials/empty_message.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/pages/clients/partials/client_card.dart';
@@ -108,7 +108,7 @@ class ClientsListResults extends StatelessWidget {
     @required this.clients,
   }) : super(key: key);
 
-  final List<Cliente> clients;
+  final List<Usuario> clients;
 
   @override
   Widget build(BuildContext context) {

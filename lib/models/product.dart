@@ -184,7 +184,7 @@ class Producto {
             ? List<Imagen>.from(json["imagenes"].map((x) => Imagen.fromJson(x)))
             : [],
         marcaId: json["marca_id"],
-        marca: Marca.fromJson(json["marca"]),
+        marca: json["marca"] != null ? Marca.fromJson(json["marca"]) : null,
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
       );
@@ -205,33 +205,8 @@ class Producto {
         "image": image,
         "imagenes": List<dynamic>.from(imagenes.map((x) => x.toJson())),
         "marca_id": marcaId,
-        "marca": marca.toJson(),
+        "marca": marca != null ? marca.toJson() : null,
         "created_at": createdAt.toIso8601String(),
         "updated_at": updatedAt.toIso8601String(),
       };
-
-  bool hasMatch(search) {
-    bool match = false;
-    String codigo = "${this.codigo.toLowerCase()}";
-    String descripcion = "${this.descripcion.toLowerCase()}";
-    String nombre = "${this.nombre.toLowerCase()}";
-    String marca = "${this.marca.nombreMarca.toLowerCase()}";
-    String sku = "${this.sku.toString().toLowerCase()}";
-    String referencia = "${this.referencia.toLowerCase()}";
-    String precio = "${this.precio.toString().toLowerCase()}";
-    String total = "${this.total.toString().toLowerCase()}";
-
-    if (codigo.indexOf(search) != -1 ||
-        descripcion.indexOf(search) != -1 ||
-        nombre.indexOf(search) != -1 ||
-        marca.indexOf(search) != -1 ||
-        sku.indexOf(search) != -1 ||
-        referencia.indexOf(search) != -1 ||
-        precio.indexOf(search) != -1 ||
-        total.indexOf(search) != -1) {
-      match = true;
-    }
-
-    return match;
-  }
 }

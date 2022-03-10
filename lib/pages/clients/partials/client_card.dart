@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:montana_mobile/models/client.dart';
+import 'package:montana_mobile/models/user.dart';
 import 'package:montana_mobile/pages/client/client_page.dart';
 import 'package:montana_mobile/theme/theme.dart';
 
@@ -9,7 +9,7 @@ class ClientCard extends StatelessWidget {
     @required this.client,
   }) : super(key: key);
 
-  final Cliente client;
+  final Usuario client;
 
   @override
   Widget build(BuildContext context) {

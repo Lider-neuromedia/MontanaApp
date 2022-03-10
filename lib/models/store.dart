@@ -1,64 +1,134 @@
 import 'dart:convert';
+import 'package:montana_mobile/models/user.dart';
 
-List<Tienda> responseTiendasFromJson(String str) => List<Tienda>.from(
-      json.decode(str).map((x) => Tienda.fromJson(x)),
-    );
+List<Tienda> responseTiendasFromJson(String str) =>
+    List<Tienda>.from(json.decode(str).map((x) => Tienda.fromJson(x)));
 
-String responseTiendasToJson(List<Tienda> data) => json.encode(
-      List<dynamic>.from(data.map((x) => x.toJson())),
-    );
+String responseTiendasToJson(List<Tienda> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+
+Tienda responseTiendaFromJson(String str) => Tienda.fromJson(json.decode(str));
+
+String responseTiendaToJson(Tienda data) => json.encode(data.toJson());
 
 class Tienda {
   Tienda({
-    this.idTiendas,
+    this.id,
     this.nombre,
     this.lugar,
     this.local,
     this.direccion,
     this.telefono,
-    this.cliente,
+    this.sucursal,
+    this.fechaIngreso,
+    this.fechaUltimaCompra,
+    this.cupo,
+    this.ciudadCodigo,
+    this.zona,
+    this.bloqueado,
+    this.bloqueadoFecha,
+    this.nombreRepresentante,
+    this.plazo,
+    this.escalaFactura,
+    this.observaciones,
+    this.clienteId,
     this.createdAt,
     this.updatedAt,
+    this.cliente,
+    this.vendedores,
   });
 
-  int idTiendas;
+  int id;
   String nombre;
   String lugar;
   String local;
   String direccion;
   String telefono;
-  int cliente;
+  String sucursal;
+  DateTime fechaIngreso;
+  DateTime fechaUltimaCompra;
+  int cupo;
+  String ciudadCodigo;
+  String zona;
+  String bloqueado;
+  DateTime bloqueadoFecha;
+  String nombreRepresentante;
+  int plazo;
+  String escalaFactura;
+  String observaciones;
+  int clienteId;
   DateTime createdAt;
   DateTime updatedAt;
+  Usuario cliente;
+  List<Usuario> vendedores;
 
+  // Nuevo Pedido
   int stock = 0;
 
   factory Tienda.fromJson(Map<String, dynamic> json) => Tienda(
-        idTiendas: json["id_tiendas"],
+        id: json["id_tiendas"],
         nombre: json["nombre"],
         lugar: json["lugar"],
-        local: json["local"] == null ? null : json["local"],
-        direccion: json["direccion"] == null ? null : json["direccion"],
-        telefono: json["telefono"] == null ? null : json["telefono"],
-        cliente: json["cliente"] == null ? null : json["cliente"],
-        createdAt: json["created_at"] == null
-            ? null
-            : DateTime.parse(json["created_at"]),
-        updatedAt: json["updated_at"] == null
-            ? null
-            : DateTime.parse(json["updated_at"]),
+        local: json["local"] ?? '',
+        direccion: json["direccion"] ?? '',
+        telefono: json["telefono"] ?? '',
+        clienteId: json["cliente_id"],
+        sucursal: json["sucursal"],
+        fechaIngreso: json["fecha_ingreso"] != null
+            ? DateTime.parse(json["fecha_ingreso"])
+            : DateTime.now(),
+        fechaUltimaCompra: json["fecha_ultima_compra"] != null
+            ? DateTime.parse(json["fecha_ultima_compra"])
+            : DateTime.now(),
+        cupo: json["cupo"],
+        ciudadCodigo: json["ciudad_codigo"],
+        zona: json["zona"],
+        bloqueado: json["bloqueado"],
+        bloqueadoFecha: json["bloqueado_fecha"] != null
+            ? DateTime.parse(json["bloqueado_fecha"])
+            : null,
+        nombreRepresentante: json["nombre_representante"] ?? '',
+        plazo: json["plazo"],
+        escalaFactura: json["escala_factura"],
+        observaciones: json["observaciones"] ?? '',
+        cliente:
+            json["cliente"] != null ? Usuario.fromJson(json["cliente"]) : null,
+        vendedores: json["vendedores"] != null
+            ? List<Usuario>.from(
+                json["vendedores"].map((x) => Usuario.fromJson(x)))
+            : [],
+        createdAt: DateTime.parse(json["created_at"]),
+        updatedAt: DateTime.parse(json["updated_at"]),
       );
 
   Map<String, dynamic> toJson() => {
-        "id_tiendas": idTiendas,
+        "id_tiendas": id,
         "nombre": nombre,
         "lugar": lugar,
-        "local": local ?? null,
-        "direccion": direccion ?? null,
-        "telefono": telefono ?? null,
-        "cliente": cliente ?? null,
-        "created_at": createdAt != null ? createdAt.toIso8601String() : null,
-        "updated_at": updatedAt != null ? updatedAt.toIso8601String() : null,
+        "local": local ?? '',
+        "direccion": direccion ?? '',
+        "telefono": telefono ?? '',
+        "cliente_id": clienteId,
+        "sucursal": sucursal,
+        "fecha_ingreso": fechaIngreso.toIso8601String(),
+        "fecha_ultima_compra": fechaUltimaCompra.toIso8601String(),
+        "cupo": cupo,
+        "ciudad_codigo": ciudadCodigo,
+        "zona": zona,
+        "bloqueado": bloqueado,
+        "bloqueado_fecha": bloqueadoFecha != null
+            ? "${bloqueadoFecha.year.toString().padLeft(4, '0')}-${bloqueadoFecha.month.toString().padLeft(2, '0')}-${bloqueadoFecha.day.toString().padLeft(2, '0')}"
+            : null,
+        "nombre_representante": nombreRepresentante,
+        "plazo": plazo,
+        "escala_factura": escalaFactura,
+        "observaciones": observaciones,
+        "cliente": cliente != null ? cliente.toJson() : null,
+        "vendedores": vendedores != null
+            ? List<dynamic>.from(vendedores.map((x) => x.toJson()))
+            : [],
+        "created_at": createdAt.toIso8601String(),
+        "updated_at": updatedAt.toIso8601String(),
       };
 
   Map<String, dynamic> toStoreFormJson() => {

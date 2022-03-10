@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:montana_mobile/models/user.dart';
 import 'package:provider/provider.dart';
-import 'package:montana_mobile/models/client.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/pages/pqrs/partials/dropdown_pqrs.dart';
 import 'package:montana_mobile/providers/clients_provider.dart';
@@ -109,7 +109,7 @@ class _CreatePqrsPageState extends State<CreatePqrsPage> {
                       value: pqrsTicketProvider.clienteId,
                       items: pqrsTicketProvider.clientes
                           .map<DropdownMenuItem<int>>(
-                        (Cliente client) {
+                        (Usuario client) {
                           return DropdownMenuItem<int>(
                             value: client.id,
                             child: Text(

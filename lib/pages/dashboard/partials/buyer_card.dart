@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:montana_mobile/models/client.dart';
+import 'package:montana_mobile/models/user.dart';
 import 'package:montana_mobile/theme/theme.dart';
 
 class BuyerCard extends StatefulWidget {
@@ -8,7 +8,7 @@ class BuyerCard extends StatefulWidget {
     @required this.client,
   }) : super(key: key);
 
-  final Cliente client;
+  final Usuario client;
 
   @override
   _BuyerCardState createState() => _BuyerCardState();

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:montana_mobile/models/user.dart';
 import 'package:provider/provider.dart';
 import 'package:fluttericon/maki_icons.dart';
-import 'package:montana_mobile/models/client.dart';
 import 'package:montana_mobile/pages/cart/checkout_modal.dart';
 import 'package:montana_mobile/pages/catalogue/partials/action_button.dart';
 import 'package:montana_mobile/providers/cart_provider.dart';
@@ -75,7 +75,7 @@ class ClientDescription extends StatelessWidget {
       future: connectionProvider.isNotConnected
           ? clientsProvider.getClientLocal(cartProvider.clientId)
           : clientsProvider.getClient(cartProvider.clientId),
-      builder: (_, AsyncSnapshot<Cliente> snapshot) {
+      builder: (_, AsyncSnapshot<Usuario> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Container();
         }

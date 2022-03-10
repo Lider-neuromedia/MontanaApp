@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:montana_mobile/models/user.dart';
 import 'package:provider/provider.dart';
-import 'package:montana_mobile/models/client.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/pages/client/partials/store_card.dart';
 import 'package:montana_mobile/pages/dashboard/partials/buyer_card.dart';
@@ -16,7 +16,7 @@ class ClientPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final connectionProvider = Provider.of<ConnectionProvider>(context);
     final clientsProvider = Provider.of<ClientsProvider>(context);
-    final client = ModalRoute.of(context).settings.arguments as Cliente;
+    final client = ModalRoute.of(context).settings.arguments as Usuario;
 
     return Scaffold(
       appBar: AppBar(
@@ -26,7 +26,7 @@ class ClientPage extends StatelessWidget {
         future: connectionProvider.isNotConnected
             ? clientsProvider.getClientLocal(client.id)
             : clientsProvider.getClient(client.id),
-        builder: (_, AsyncSnapshot<Cliente> snapshot) {
+        builder: (_, AsyncSnapshot<Usuario> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const LoadingContainer();
           }
@@ -50,15 +50,19 @@ class _ClientContent extends StatelessWidget {
     @required this.client,
   }) : super(key: key);
 
-  final Cliente client;
+  final Usuario client;
 
   @override
   Widget build(BuildContext context) {
+    // final tiendas = client.tiendas;
+    final tiendas = [];
+
+    // TODO: cargar tiendas de cliente con request por separado.
     return ListView.separated(
       padding: const EdgeInsets.only(bottom: 30.0),
-      itemCount: client.tiendas.length,
-      itemBuilder: (_, int index) {
-        if (index == 0) {
+      itemCount: tiendas.length,
+      itemBuilder: (_, int i) {
+        if (i == 0) {
           return _ClientData(
             client: client,
             child: Padding(
@@ -73,8 +77,8 @@ class _ClientContent extends StatelessWidget {
                   const _StoresTitle(title: "Tiendas"),
                   const SizedBox(height: 20.0),
                   StoreCard(
-                    store: client.tiendas[index],
-                    index: index + 1,
+                    store: tiendas[i],
+                    index: i + 1,
                   ),
                 ],
               ),
@@ -88,14 +92,12 @@ class _ClientContent extends StatelessWidget {
             vertical: 0.0,
           ),
           child: StoreCard(
-            store: client.tiendas[index],
-            index: index + 1,
+            store: tiendas[i],
+            index: i + 1,
           ),
         );
       },
-      separatorBuilder: (_, int index) {
-        return const SizedBox(height: 20.0);
-      },
+      separatorBuilder: (_, int i) => const SizedBox(height: 20.0),
     );
   }
 }
@@ -129,7 +131,7 @@ class _ClientData extends StatelessWidget {
     @required this.child,
   }) : super(key: key);
 
-  final Cliente client;
+  final Usuario client;
   final Widget child;
 
   @override

@@ -31,7 +31,7 @@ class OrderItem extends StatelessWidget {
         onTap: () {
           Navigator.of(context).pushNamed(
             OrderPage.route,
-            arguments: order.idPedido,
+            arguments: order.id,
           );
         },
         child: Container(
@@ -42,7 +42,10 @@ class OrderItem extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Cliente: ${order.clienteNombre}", style: textStyle1),
+              Text(
+                "Cliente: ${order.cliente.nombreCompleto}",
+                style: textStyle1,
+              ),
               const SizedBox(height: 5.0),
               Text("Pedido #${order.codigo}", style: textStyle2),
               const SizedBox(height: 5.0),
@@ -51,8 +54,8 @@ class OrderItem extends StatelessWidget {
               Text(formatMoney(order.total), style: textStyle3),
               const SizedBox(height: 10.0),
               Container(
-                child: Text(order.estadoFormatted, style: textStyle4),
-                color: order.estadoColor,
+                child: Text(order.estado.estadoFormatted, style: textStyle4),
+                color: order.estado.color,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 10.0,
                   vertical: 5.0,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:montana_mobile/models/user.dart';
 import 'package:provider/provider.dart';
 import 'package:montana_mobile/models/catalogue.dart';
-import 'package:montana_mobile/models/client.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/providers/cart_provider.dart';
 import 'package:montana_mobile/providers/catalogues_provider.dart';
@@ -25,7 +25,7 @@ class StartOrderModal extends StatefulWidget {
 }
 
 class _StartOrderModalState extends State<StartOrderModal> {
-  List<Cliente> _clients = [];
+  List<Usuario> _clients = [];
   List<Catalogo> _catalogues = [];
   bool _loading = false;
 
@@ -95,7 +95,7 @@ class _StartOrderModalState extends State<StartOrderModal> {
                           },
                           value: cartProvider.clientId,
                           items: _clients
-                              .map<Map<String, dynamic>>((Cliente cliente) => {
+                              .map<Map<String, dynamic>>((Usuario cliente) => {
                                     "id": cliente.id,
                                     "value": cliente.nombreCompleto,
                                   })

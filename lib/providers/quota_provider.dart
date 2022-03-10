@@ -5,7 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:mime_type/mime_type.dart';
-import 'package:montana_mobile/models/client.dart';
+import 'package:montana_mobile/models/user.dart';
 import 'package:montana_mobile/providers/validation_field.dart';
 import 'package:montana_mobile/utils/preferences.dart';
 
@@ -46,10 +46,10 @@ class QuotaProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  List<Cliente> _clientes = [];
-  List<Cliente> get clientes => _clientes;
+  List<Usuario> _clientes = [];
+  List<Usuario> get clientes => _clientes;
 
-  set clientes(List<Cliente> list) {
+  set clientes(List<Usuario> list) {
     _clientes = list;
     notifyListeners();
   }

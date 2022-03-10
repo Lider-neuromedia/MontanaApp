@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:montana_mobile/models/user.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
 import 'package:montana_mobile/models/catalogue.dart';
-import 'package:montana_mobile/models/client.dart';
 import 'package:montana_mobile/models/dashboard_resume.dart';
 import 'package:montana_mobile/models/order.dart';
 import 'package:montana_mobile/models/product.dart';
@@ -120,33 +120,26 @@ class DatabaseProvider {
     }
   }
 
-  Future<void> saveOrUpdateClients(List<Cliente> clients) async {
+  Future<void> saveOrUpdateClients(List<Usuario> clients) async {
     for (final client in clients) {
       await saveOrUpdateClient(client);
     }
   }
 
-  Future<void> saveOrUpdateClient(Cliente client) async {
+  Future<void> saveOrUpdateClient(Usuario client) async {
     Map<String, dynamic> data = {
       "id": client.id,
-      "rol_id": client.rolId,
       "name": client.name,
       "apellidos": client.apellidos,
       "email": client.email,
       "tipo_identificacion": client.tipoIdentificacion,
       "dni": client.dni,
-      "nit": client.nit,
-      "id_vendedor_cliente": client.vendedorId,
+      "rol_id": client.rolId,
       "datos": jsonEncode(List<dynamic>.from(
         client.datos.map((x) => x.toJson()),
       )),
-      "vendedor": jsonEncode(client.vendedor.toJson()),
-      "tiendas": jsonEncode(List<dynamic>.from(
-        client.tiendas.map((x) => x.toJson()),
-      )),
-      "pedidos": jsonEncode(List<dynamic>.from(
-        client.pedidos.map((x) => x.toJson()),
-      )),
+      "created_at": client.createdAt.toIso8601String(),
+      "updated_at": client.updatedAt.toIso8601String(),
     };
 
     if (await existsRecordById("clients", client.id)) {
@@ -213,7 +206,7 @@ class DatabaseProvider {
 
   Future<void> saveOrUpdateStore(Tienda store) async {
     Map<String, dynamic> data = {
-      "id": store.idTiendas,
+      "id": store.id,
       "nombre": store.nombre,
       "lugar": store.lugar,
       "local": store.local,
@@ -225,8 +218,8 @@ class DatabaseProvider {
       "check_delete": 0,
     };
 
-    if (await existsRecordById("stores", store.idTiendas)) {
-      await updateRecord("stores", data, store.idTiendas);
+    if (await existsRecordById("stores", store.id)) {
+      await updateRecord("stores", data, store.id);
     } else {
       await saveRecord("stores", data);
     }
@@ -240,35 +233,31 @@ class DatabaseProvider {
 
   Future<void> saveOrUpdateOrder(Pedido order) async {
     Map<String, dynamic> data = {
-      "id": order.idPedido,
+      "id": order.id,
       "fecha": order.fecha.toIso8601String(),
       "firma": order.firma,
       "codigo": order.codigo,
       "metodo_pago": order.metodoPago,
       "total": order.total,
       "sub_total": order.subTotal,
-      "descuento": order.descuento,
       "notas": order.notas,
       "notas_facturacion": order.notasFacturacion,
       "vendedor": order.vendedorId,
       "cliente": order.clienteId,
-      "id_estado": order.idEstado,
-      "estado": estadoValues.reverse[order.estado],
+      "estado_id": order.estadoId,
+      "estado": estadoEnumValues.reverse[order.estado],
       "info_cliente": jsonEncode(order.cliente.toJson()),
-      "name_vendedor": order.nameVendedor,
-      "apellido_vendedor": order.apellidoVendedor,
-      "name_cliente": order.nameCliente,
-      "apellido_cliente": order.apellidoCliente,
-      "productos": jsonEncode(
-          List<dynamic>.from(order.productos.map((x) => x.toJson()))),
-      "novedades": jsonEncode(
-          List<dynamic>.from(order.novedades.map((x) => x.toJson()))),
-      "created_at": order.createdAt.toIso8601String(),
-      "updated_at": order.updatedAt.toIso8601String(),
+      // TODO: completar atributos
+      "detalles": jsonEncode(List<dynamic>.from(
+        order.detalles.map((x) => x.toJson()),
+      )),
+      "novedades": jsonEncode(List<dynamic>.from(
+        order.novedades.map((x) => x.toJson()),
+      )),
     };
 
-    if (await existsRecordById("orders", order.idPedido)) {
-      await updateRecord("orders", data, order.idPedido);
+    if (await existsRecordById("orders", order.id)) {
+      await updateRecord("orders", data, order.id);
     } else {
       await saveRecord("orders", data);
     }
@@ -419,18 +408,15 @@ class DatabaseProvider {
           );''');
     await db.execute('''CREATE TABLE clients(
             id INTEGER PRIMARY KEY,
-            rol_id INTEGER,
             name TEXT,
             apellidos TEXT,
             email TEXT,
             tipo_identificacion TEXT,
             dni TEXT,
-            nit TEXT,
-            id_vendedor_cliente INTEGER,
+            rol_id INTEGER,
             datos TEXT,
-            vendedor TEXT,
-            tiendas TEXT,
-            pedidos TEXT
+            created_at TEXT,
+            updated_at TEXT
           );''');
     await db.execute('''CREATE TABLE stores(
             id INTEGER PRIMARY KEY,
@@ -470,22 +456,19 @@ class DatabaseProvider {
             metodo_pago TEXT,
             total TEXT,
             sub_total TEXT,
-            descuento INTEGER,
             notas TEXT,
             notas_facturacion TEXT,
             vendedor INTEGER,
             cliente INTEGER,
-            id_estado INTEGER,
+            estado_id INTEGER,
             estado TEXT,
             info_cliente TEXT,
             name_vendedor TEXT,
             apellido_vendedor TEXT,
             name_cliente TEXT,
             apellido_cliente TEXT,
-            productos TEXT,
-            novedades TEXT,
-            created_at TEXT,
-            updated_at TEXT
+            detalles TEXT,
+            novedades TEXT
           );''');
     await db.execute('''CREATE TABLE offline_orders(
             id INTEGER PRIMARY KEY AUTOINCREMENT,

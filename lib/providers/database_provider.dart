@@ -74,9 +74,10 @@ class DatabaseProvider {
     return products;
   }
 
-  Future<void> saveOrUpdateProducts(List<Producto> products,
-      {bool isShowRoom = false}) async {
+  Future<void> saveOrUpdateProducts(
+      List<Producto> products, List<int> showRoomCataloguesIds) async {
     for (final product in products) {
+      bool isShowRoom = showRoomCataloguesIds.contains(product.catalogoId);
       await saveOrUpdateProduct(product, isShowRoom);
     }
   }

@@ -162,7 +162,7 @@ class PqrsProvider with ChangeNotifier {
   }
 
   Future<List<Ticket>> getTicketsLocal() async {
-    // TODO
+    // TODO: No implementado y no es necesario, el id se genera en el backend.
     return [];
   }
 
@@ -175,7 +175,7 @@ class PqrsProvider with ChangeNotifier {
   }
 
   Future<Ticket> getTicketWithMessagesLocal(int id) async {
-    // TODO
+    // TODO: No implementado porque se ocultaron todas las opciones de pqrs.
     return null;
   }
 }

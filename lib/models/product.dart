@@ -95,8 +95,9 @@ class Productos {
 
   factory Productos.fromJson(Map<String, dynamic> json) => Productos(
         currentPage: json["current_page"],
-        data:
-            List<Producto>.from(json["data"].map((x) => Producto.fromJson(x))),
+        data: List<Producto>.from(
+          json["data"].map((x) => Producto.fromJson(x)),
+        ),
         firstPageUrl: json["first_page_url"],
         from: json["from"],
         lastPage: json["last_page"],
@@ -176,7 +177,7 @@ class Producto {
         descripcion: json["descripcion"],
         sku: json["sku"] ?? '',
         total: double.parse(json["total"].toString()),
-        descuento: json["descuento"],
+        descuento: json["descuento"] ?? 0,
         iva: json["iva"],
         catalogoId: json["catalogo"],
         image: json["image"] ?? '',

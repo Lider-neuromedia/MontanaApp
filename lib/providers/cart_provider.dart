@@ -244,7 +244,7 @@ class CartProvider with ChangeNotifier {
     }
 
     request.fields["codigo_pedido"] = "$orderCode";
-    request.fields["total_pedido"] = "${cartCompleted.total}";
+    request.fields["total"] = "${cartCompleted.total.toInt()}";
     request.fields["metodo_pago"] = "${cartCompleted.paymentMethod}";
     request.fields["forma_firma"] = "${cartCompleted.signMethod}";
 
@@ -257,7 +257,7 @@ class CartProvider with ChangeNotifier {
     }
 
     cartCompleted.products.asMap().forEach((int i, CartProduct product) {
-      request.fields["productos[$i][id_producto]"] = "${product.productId}";
+      request.fields["productos[$i][producto_id]"] = "${product.productId}";
       product.stores.asMap().forEach((int j, CartStore store) {
         request.fields["productos[$i][tiendas][$j][id_tienda]"] =
             "${store.storeId}";

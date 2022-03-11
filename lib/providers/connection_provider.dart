@@ -1,27 +1,21 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:montana_mobile/models/catalogue.dart';
+import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 import 'package:montana_mobile/models/order.dart';
 import 'package:montana_mobile/models/product.dart';
-import 'package:montana_mobile/models/question.dart';
-import 'package:montana_mobile/models/rating.dart';
 import 'package:montana_mobile/models/store.dart';
 import 'package:montana_mobile/models/user.dart';
 import 'package:montana_mobile/providers/cart_provider.dart';
-import 'package:montana_mobile/providers/catalogues_provider.dart';
-import 'package:montana_mobile/providers/client_provider.dart';
-import 'package:montana_mobile/providers/clients_provider.dart';
 import 'package:montana_mobile/providers/dashboard_provider.dart';
 import 'package:montana_mobile/providers/database_provider.dart';
-import 'package:montana_mobile/providers/order_provider.dart';
-import 'package:montana_mobile/providers/orders_provider.dart';
-import 'package:montana_mobile/providers/products_provider.dart';
-import 'package:montana_mobile/providers/product_provider.dart';
-import 'package:montana_mobile/providers/rating_provider.dart';
-import 'package:montana_mobile/providers/show_room_provider.dart';
 import 'package:montana_mobile/providers/stores_provider.dart';
 import 'package:montana_mobile/utils/preferences.dart';
-import 'package:provider/provider.dart';
 
 class ConnectionProvider with ChangeNotifier {
+  final String _url = dotenv.env["API_URL"];
   final _preferences = Preferences();
 
   static Future<void> syncDataNow(BuildContext context) async {
@@ -35,18 +29,8 @@ class ConnectionProvider with ChangeNotifier {
 
     await connectionProvider.syncData(
       dashboardProvider: Provider.of<DashboardProvider>(context, listen: false),
-      showRoomProvider: Provider.of<ShowRoomProvider>(context, listen: false),
-      productsProvider: Provider.of<ProductsProvider>(context, listen: false),
-      productProvider: Provider.of<ProductProvider>(context, listen: false),
-      clientsProvider: Provider.of<ClientsProvider>(context, listen: false),
-      clientProvider: Provider.of<ClientProvider>(context, listen: false),
-      ratingProvider: Provider.of<RatingProvider>(context, listen: false),
       storesProvider: Provider.of<StoresProvider>(context, listen: false),
-      ordersProvider: Provider.of<OrdersProvider>(context, listen: false),
-      orderProvider: Provider.of<OrderProvider>(context, listen: false),
       cartProvider: Provider.of<CartProvider>(context, listen: false),
-      cataloguesProvider:
-          Provider.of<CataloguesProvider>(context, listen: false),
     );
   }
 
@@ -78,17 +62,8 @@ class ConnectionProvider with ChangeNotifier {
 
   Future<void> syncData({
     @required DashboardProvider dashboardProvider,
-    @required CataloguesProvider cataloguesProvider,
-    @required ProductsProvider productsProvider,
-    @required ProductProvider productProvider,
-    @required ClientsProvider clientsProvider,
-    @required ClientProvider clientProvider,
-    @required RatingProvider ratingProvider,
-    @required ShowRoomProvider showRoomProvider,
     @required StoresProvider storesProvider,
     @required CartProvider cartProvider,
-    @required OrdersProvider ordersProvider,
-    @required OrderProvider orderProvider,
   }) async {
     isSyncing = true;
 
@@ -103,20 +78,7 @@ class ConnectionProvider with ChangeNotifier {
     }
 
     try {
-      await _downloadData(
-        dashboardProvider: dashboardProvider,
-        cataloguesProvider: cataloguesProvider,
-        showRoomProvider: showRoomProvider,
-        productsProvider: productsProvider,
-        productProvider: productProvider,
-        clientsProvider: clientsProvider,
-        clientProvider: clientProvider,
-        ratingProvider: ratingProvider,
-        storesProvider: storesProvider,
-        ordersProvider: ordersProvider,
-        orderProvider: orderProvider,
-        cartProvider: cartProvider,
-      );
+      await _downloadData(dashboardProvider: dashboardProvider);
 
       _preferences.lastSync = DateTime.now();
     } catch (ex, stacktrace) {
@@ -142,165 +104,91 @@ class ConnectionProvider with ChangeNotifier {
     await cartProvider.syncOfflineOrdersInLocal();
   }
 
-  Future<void> _downloadData({
-    @required CataloguesProvider cataloguesProvider,
-    @required DashboardProvider dashboardProvider,
-    @required ProductsProvider productsProvider,
-    @required ShowRoomProvider showRoomProvider,
-    @required ProductProvider productProvider,
-    @required ClientsProvider clientsProvider,
-    @required ClientProvider clientProvider,
-    @required RatingProvider ratingProvider,
-    @required StoresProvider storesProvider,
-    @required OrdersProvider ordersProvider,
-    @required OrderProvider orderProvider,
-    @required CartProvider cartProvider,
-  }) async {
-    List<String> images = [];
-
+  Future<void> _downloadData(
+      {@required DashboardProvider dashboardProvider}) async {
     message = "Limpiando base de datos.";
     await DatabaseProvider.db.cleanTables();
 
     message = "Descargando resumen de dashboard.";
     final resume = await dashboardProvider.getDashboardResume();
+    message = "Guardando resumen de dashboard.";
     await DatabaseProvider.db.saveOrUpdateDashboardResume(resume);
 
-    await _downloadClientsAndStores(
-        clientsProvider, clientProvider, cartProvider);
+    message = "Descargando Clientes.";
+    final clients = await _getClients();
+    message = "Guardando Clientes (${clients.length}).";
+    await DatabaseProvider.db.saveOrUpdateClients(clients);
 
-    images.addAll(
-      await _downloadCatalogues(cataloguesProvider),
-    );
-    images.addAll(
-      await _downloadProducts(
-        cataloguesProvider,
-        productsProvider,
-        productProvider,
-      ),
-    );
-    images.addAll(
-      await _downloadShowRoom(
-        showRoomProvider,
-        productsProvider,
-        productProvider,
-      ),
-    );
+    message = "Descargando Tiendas.";
+    final clientsIds = clients.map((x) => x.id).toList();
+    final stores = await _getStores(clientsIds);
+    message = "Guardando Tiendas (${stores.length}).";
+    await DatabaseProvider.db.saveOrUpdateStores(stores);
 
-    await _downloadQuestions(cataloguesProvider, ratingProvider);
-    await _downloadRatings(ratingProvider);
-    await _downloadOrders(ordersProvider, orderProvider);
-    await _downloadImages(images);
-  }
+    message = "Guardando Pedidos.";
+    final orders = await _getOrders();
+    message = "Guardando Pedidos (${orders.length}).";
+    await DatabaseProvider.db.saveOrUpdateOrders(orders);
 
-  Future<List<String>> _downloadProducts(
-    CataloguesProvider cataloguesProvider,
-    ProductsProvider productsProvider,
-    ProductProvider productProvider,
-  ) async {
-    List<String> images = [];
-    List<Future<Productos>> productsFuture = [];
-    List<Future<Producto>> productFuture = [];
-    List<Future<void>> productFutureDB = [];
-
-    message = "Descargando productos.";
-    final catalogues = await cataloguesProvider.getCataloguesLocal();
-
-    for (final c in catalogues) {
-      int productsPage = 1;
-      productsFuture.add(
-        productsProvider.getProductsByCatalogue(c.id, productsPage, ""),
-      );
-    }
-
-    List<Productos> productsFutureResults = await Future.wait(productsFuture);
-
-    for (Productos products in productsFutureResults) {
-      for (final p in products.data) {
-        productFuture.add(productProvider.getProduct(p.id));
-      }
-    }
-
-    List<Producto> productFutureResults = await Future.wait(productFuture);
-
-    for (final product in productFutureResults) {
-      productFutureDB.add(
-        DatabaseProvider.db.saveOrUpdateProduct(product, false),
-      );
-
-      images.add(product.image);
-      for (final image in product.imagenes) {
-        images.add(image.image);
-      }
-    }
-
-    await Future.wait(productFutureDB);
-    return images;
-  }
-
-  Future<List<String>> _downloadShowRoom(
-    ShowRoomProvider showRoomProvider,
-    ProductsProvider productsProvider,
-    ProductProvider productProvider,
-  ) async {
-    List<String> images = [];
-    List<Future<Producto>> productsFuture = [];
-    List<Future<void>> productsFutureDB = [];
-
-    message = "Descargando ShowRoom.";
-
-    int page = 1;
-    var showRoomProducts;
-
-    do {
-      showRoomProducts = await showRoomProvider.getShowRoomProducts(page, "");
-      page = showRoomProducts.currentPage + 1;
-
-      for (final srp in showRoomProducts.data) {
-        productsFuture.add(productProvider.getProduct(srp.id));
-      }
-
-      List<Producto> productsFutureResults = await Future.wait(productsFuture);
-
-      for (final x in productsFutureResults) {
-        productsFutureDB.add(DatabaseProvider.db.saveOrUpdateProduct(x, true));
-
-        if (x.image != null && x.image.isNotEmpty) {
-          images.add(x.image);
-        }
-
-        for (final image in x.imagenes) {
-          if (image.image != null && image.image.isNotEmpty) {
-            images.add(image.image);
-          }
-        }
-      }
-
-      await Future.wait(productsFutureDB);
-      await Future.delayed(Duration(milliseconds: 300));
-    } while (page <= showRoomProducts.lastPage);
-
-    return images;
-  }
-
-  Future<List<String>> _downloadCatalogues(
-      CataloguesProvider cataloguesProvider) async {
-    List<String> images = [];
-
-    message = "Descargando catálogos.";
-    final catalogues = await cataloguesProvider.getCatalogues();
+    message = "Descargando Catálogos.";
+    final catalogues = await _getCatalogues();
+    final showRoomCataloguesIds = catalogues
+        .where((x) => x.tipo == "show room")
+        .toList()
+        .map((x) => x.id)
+        .toList();
+    message = "Guardando Catálogos (${catalogues.length}).";
     await DatabaseProvider.db.saveOrUpdateCatalogues(catalogues);
 
-    for (var catalogue in catalogues) {
-      images.add(catalogue.imagen);
+    message = "Descargando Productos.";
+    final products = await _getProducts();
+    final productsPages = (products.length / 500).ceil();
+    int productsStart, productsEnd;
+    message = "Guardando Productos (${products.length}).";
+
+    for (var page = 0; page < productsPages; page++) {
+      productsStart = page * 500;
+      productsEnd = productsStart + 499;
+      productsEnd = productsPages - 1 == page ? products.length : productsEnd;
+      final subProducts =
+          products.getRange(productsStart, productsEnd).toList();
+      message =
+          "Guardando Productos ${products.length}, $productsStart - $productsEnd.";
+
+      await DatabaseProvider.db
+          .saveOrUpdateProducts(subProducts, showRoomCataloguesIds);
+      await Future.delayed(Duration(milliseconds: 100));
     }
 
-    return images;
+    message = "Guardando Imágenes.";
+    final images = await _getImagenes();
+    final imagesPages = (images.length / 5).ceil();
+    int imagesStart, imagesEnd;
+    message = "Guardando Imágenes (${images.length}).";
+
+    for (var page = 0; page < imagesPages; page++) {
+      imagesStart = page * 5;
+      imagesEnd = imagesStart + 4;
+      imagesEnd = imagesPages - 1 == page ? images.length : imagesEnd;
+      final subImages = images.getRange(imagesStart, imagesEnd).toList();
+      message =
+          "Guardando Imágenes ${images.length}, $imagesStart - $imagesEnd.";
+
+      await _downloadImages(subImages);
+      await Future.delayed(Duration(milliseconds: 200));
+    }
+
+    // TODO: Datos no usados
+    // await _downloadQuestions(cataloguesProvider, ratingProvider);
+    // await _downloadRatings(ratingProvider);
+
+    message = "Descarga completada.";
+    await Future.delayed(Duration(milliseconds: 300));
   }
 
   Future<void> _downloadImages(List<String> images) async {
     List<Future<void>> imagesFuture = [];
     images = images.toSet().toList();
-    message = "Descargando ${images.length} imagenes.";
 
     for (var image in images) {
       if (image.isNotEmpty) {
@@ -311,101 +199,115 @@ class ConnectionProvider with ChangeNotifier {
     await Future.wait(imagesFuture);
   }
 
-  Future<void> _downloadQuestions(
-    CataloguesProvider cataloguesProvider,
-    RatingProvider ratingProvider,
-  ) async {
-    message = "Descargando preguntas.";
-    final catalogues = await cataloguesProvider.getCataloguesLocal();
-    List<Future<List<Pregunta>>> questionsFuture = [];
-    List<Future<void>> questionsFutureDB = [];
+  Future<List<Producto>> _getProducts() async {
+    final url = Uri.parse("$_url/offline/productos");
+    final response = await http.get(url, headers: _preferences.signedHeaders);
 
-    for (final x in catalogues) {
-      questionsFuture.add(ratingProvider.getQuestions(x.id));
-    }
+    if (response.statusCode != 200) return [];
 
-    List<List<Pregunta>> questionsFutureResults =
-        await Future.wait(questionsFuture);
-
-    for (final questions in questionsFutureResults) {
-      questionsFutureDB.add(
-        DatabaseProvider.db.saveOrUpdateQuestions(questions),
-      );
-    }
-
-    await Future.wait(questionsFutureDB);
+    return List<Producto>.from(
+      json.decode(response.body).map((x) => Producto.fromJson(x)),
+    );
   }
 
-  Future<void> _downloadClientsAndStores(
-    ClientsProvider clientsProvider,
-    ClientProvider clientProvider,
-    CartProvider cartProvider,
-  ) async {
-    message = "Descargando clientes de vendedor.";
-    final sellerClients = await clientsProvider.getSellerClients();
+  Future<List<Catalogo>> _getCatalogues() async {
+    final url = Uri.parse("$_url/offline/catalogos");
+    final response = await http.get(url, headers: _preferences.signedHeaders);
 
-    List<Future<Usuario>> clientsFuture = [];
-    List<Future<List<Tienda>>> storesFuture = [];
-    List<Future<void>> clientsFutureDB = [];
-    List<Future<void>> storesFutureDB = [];
+    if (response.statusCode != 200) return [];
 
-    for (final sc in sellerClients) {
-      clientsFuture.add(clientProvider.getClient(sc.id));
-      storesFuture.add(cartProvider.getClientStores(sc.id));
-    }
-
-    List<Usuario> clientsFutureResults = await Future.wait(clientsFuture);
-    for (final client in clientsFutureResults) {
-      clientsFutureDB.add(DatabaseProvider.db.saveOrUpdateClient(client));
-    }
-    await Future.wait(clientsFutureDB);
-
-    message = "Descargando tiendas de clientes.";
-    List<List<Tienda>> storesFutureResults = await Future.wait(storesFuture);
-    for (final stores in storesFutureResults) {
-      storesFutureDB.add(DatabaseProvider.db.saveOrUpdateStores(stores));
-    }
-    await Future.wait(storesFutureDB);
+    return List<Catalogo>.from(
+      json.decode(response.body).map((x) => Catalogo.fromJson(x)),
+    );
   }
 
-  Future<void> _downloadRatings(RatingProvider ratingProvider) async {
-    message = "Descargando ratings.";
-    final products = await DatabaseProvider.db.getProducts();
+  Future<List<Usuario>> _getClients() async {
+    final url = Uri.parse("$_url/offline/clientes");
+    final response = await http.get(url, headers: _preferences.signedHeaders);
 
-    List<Future<Rating>> ratingsFuture = [];
-    List<Future<void>> ratingsFutureDB = [];
+    if (response.statusCode != 200) return [];
 
-    for (final x in products) {
-      ratingsFuture.add(ratingProvider.getRatings(x.id));
-    }
-    List<Rating> ratingsFutureResults = await Future.wait(ratingsFuture);
-
-    for (final x in ratingsFutureResults) {
-      if (x != null) {
-        ratingsFutureDB.add(DatabaseProvider.db.saveOrUpdateRating(x));
-      }
-    }
-    await Future.wait(ratingsFutureDB);
+    return List<Usuario>.from(
+      json.decode(response.body).map((x) => Usuario.fromJson(x)),
+    );
   }
 
-  Future<void> _downloadOrders(
-      OrdersProvider ordersProvider, OrderProvider orderProvider) async {
-    message = "Descargando pedidos.";
-    // TODO: Corregir paginación.
-    int page = 1;
-    final orders = (await ordersProvider.getOrders(page, "recientes", "")).data;
+  Future<List<Tienda>> _getStores(List<int> clientsIds) async {
+    final params = clientsIds.map((x) => "clientes_ids[]=$x").join("&");
+    final url = Uri.parse("$_url/offline/tiendas?$params");
+    final response = await http.get(url, headers: _preferences.signedHeaders);
 
-    List<Future<Pedido>> ordersFuture = [];
-    List<Future<void>> ordersFutureDB = [];
+    if (response.statusCode != 200) return [];
 
-    for (var x in orders) {
-      ordersFuture.add(orderProvider.getOrder(x.id));
-    }
-    List<Pedido> ordersFutureResults = await Future.wait(ordersFuture);
-
-    for (var x in ordersFutureResults) {
-      ordersFutureDB.add(DatabaseProvider.db.saveOrUpdateOrder(x));
-    }
-    await Future.wait(ordersFutureDB);
+    return List<Tienda>.from(
+      json.decode(response.body).map((x) => Tienda.fromJson(x)),
+    );
   }
+
+  Future<List<Pedido>> _getOrders() async {
+    final url = Uri.parse("$_url/offline/pedidos");
+    final response = await http.get(url, headers: _preferences.signedHeaders);
+
+    if (response.statusCode != 200) return [];
+
+    return List<Pedido>.from(
+      json.decode(response.body).map((x) => Pedido.fromJson(x)),
+    );
+  }
+
+  Future<List<String>> _getImagenes() async {
+    final url = Uri.parse("$_url/offline/imagenes");
+    final response = await http.get(url, headers: _preferences.signedHeaders);
+
+    if (response.statusCode != 200) return [];
+
+    return List<String>.from(json.decode(response.body).map((x) => x));
+  }
+
+  /// TODO: Datos no usados
+  // Future<void> _downloadQuestions(
+  //   CataloguesProvider cataloguesProvider,
+  //   RatingProvider ratingProvider,
+  // ) async {
+  //   message = "Descargando preguntas.";
+  //   final catalogues = await cataloguesProvider.getCataloguesLocal();
+  //   List<Future<List<Pregunta>>> questionsFuture = [];
+  //   List<Future<void>> questionsFutureDB = [];
+
+  //   for (final x in catalogues) {
+  //     questionsFuture.add(ratingProvider.getQuestions(x.id));
+  //   }
+
+  //   List<List<Pregunta>> questionsFutureResults =
+  //       await Future.wait(questionsFuture);
+
+  //   for (final questions in questionsFutureResults) {
+  //     questionsFutureDB.add(
+  //       DatabaseProvider.db.saveOrUpdateQuestions(questions),
+  //     );
+  //   }
+
+  //   await Future.wait(questionsFutureDB);
+  // }
+
+  /// TODO: Datos no usados
+  // Future<void> _downloadRatings(RatingProvider ratingProvider) async {
+  //   message = "Descargando ratings.";
+  //   final products = await DatabaseProvider.db.getProducts();
+
+  //   List<Future<Rating>> ratingsFuture = [];
+  //   List<Future<void>> ratingsFutureDB = [];
+
+  //   for (final x in products) {
+  //     ratingsFuture.add(ratingProvider.getRatings(x.id));
+  //   }
+  //   List<Rating> ratingsFutureResults = await Future.wait(ratingsFuture);
+
+  //   for (final x in ratingsFutureResults) {
+  //     if (x != null) {
+  //       ratingsFutureDB.add(DatabaseProvider.db.saveOrUpdateRating(x));
+  //     }
+  //   }
+  //   await Future.wait(ratingsFutureDB);
+  // }
 }

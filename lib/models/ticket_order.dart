@@ -48,7 +48,7 @@ class TicketPedido {
         metodoPago: json["metodo_pago"],
         subTotal: json["sub_total"],
         total: json["total"],
-        descuento: json["descuento"],
+        descuento: json["descuento"] ?? 0,
         notas: json["notas"] == null ? null : json["notas"],
         notasFacturacion: json["notas_facturacion"] == null
             ? null

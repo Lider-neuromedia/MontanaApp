@@ -26,17 +26,17 @@ class PushNotificationService {
     // }
   }
 
-  static Future<void> _onBackgroundHandler(RemoteMessage message) async {
-    _messageStreamController.add(message);
-  }
+  // static Future<void> _onBackgroundHandler(RemoteMessage message) async {
+  //   _messageStreamController.add(message);
+  // }
 
-  static Future<void> _onMessageHandler(RemoteMessage message) async {
-    _messageStreamController.add(message);
-  }
+  // static Future<void> _onMessageHandler(RemoteMessage message) async {
+  //   _messageStreamController.add(message);
+  // }
 
-  static Future<void> _onMessageOpenApp(RemoteMessage message) async {
-    _messageStreamController.add(message);
-  }
+  // static Future<void> _onMessageOpenApp(RemoteMessage message) async {
+  //   _messageStreamController.add(message);
+  // }
 
   static StreamController<RemoteMessage> _messageStreamController =
       new StreamController.broadcast();

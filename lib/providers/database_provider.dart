@@ -12,13 +12,12 @@ import 'package:montana_mobile/models/order.dart';
 import 'package:montana_mobile/models/product.dart';
 import 'package:montana_mobile/models/question.dart';
 import 'package:montana_mobile/models/rating.dart';
-import 'package:montana_mobile/models/status.dart';
 import 'package:montana_mobile/models/store.dart';
 
 class DatabaseProvider {
   static Database _database;
   static final String _databaseName = "montana.db";
-  static final int _databaseVersion = 2;
+  static final int _databaseVersion = 3;
 
   static final DatabaseProvider db = DatabaseProvider._();
 
@@ -59,6 +58,22 @@ class DatabaseProvider {
     await db.rawDelete("DELETE FROM images;");
   }
 
+  /// --------------------------------------------------------------------------
+  /// PRODUCTOS
+  /// --------------------------------------------------------------------------
+
+  Future<List<Producto>> getProducts() async {
+    final list = await getRecords("products");
+    final products = List<Producto>.from(list.map((x) {
+      Map<String, Object> row = Map<String, Object>.of(x);
+      row["id_producto"] = row["id"];
+      row["imagenes"] = jsonDecode(row["imagenes"]);
+      row["marca"] = row["marca"] != null ? jsonDecode(row["marca"]) : null;
+      return Producto.fromJson(row);
+    }));
+    return products;
+  }
+
   Future<void> saveOrUpdateProducts(List<Producto> products,
       {bool isShowRoom = false}) async {
     for (final product in products) {
@@ -73,20 +88,24 @@ class DatabaseProvider {
       "codigo": product.codigo,
       "referencia": product.referencia,
       "stock": product.stock,
+      "precio": product.precio,
       "descripcion": product.descripcion,
       "sku": product.sku,
-      "precio": product.precio,
       "total": product.total,
       "descuento": product.descuento,
       "iva": product.iva,
       "catalogo": product.catalogoId,
+      "image": product.image,
+      "imagenes": product.imagenes.isNotEmpty
+          ? jsonEncode(List<dynamic>.from(
+              product.imagenes.map((x) => x.toJson()),
+            ))
+          : jsonEncode([]),
       "marca_id": product.marcaId,
-      // TODO: Objeto marca
+      "marca":
+          product.marca != null ? jsonEncode(product.marca.toJson()) : null,
       "created_at": product.createdAt.toIso8601String(),
       "updated_at": product.updatedAt.toIso8601String(),
-      "image": product.image,
-      "imagenes": jsonEncode(
-          List<dynamic>.from(product.imagenes.map((x) => x.toJson()))),
       "tipo": isShowRoom ? "show room" : "",
     };
 
@@ -96,6 +115,10 @@ class DatabaseProvider {
       await saveRecord("products", data);
     }
   }
+
+  /// --------------------------------------------------------------------------
+  /// CATÁLOGOS
+  /// --------------------------------------------------------------------------
 
   Future<void> saveOrUpdateCatalogues(List<Catalogo> catalogues) async {
     for (final catalogue in catalogues) {
@@ -120,6 +143,10 @@ class DatabaseProvider {
     }
   }
 
+  /// --------------------------------------------------------------------------
+  /// CLIENTES
+  /// --------------------------------------------------------------------------
+
   Future<void> saveOrUpdateClients(List<Usuario> clients) async {
     for (final client in clients) {
       await saveOrUpdateClient(client);
@@ -135,9 +162,11 @@ class DatabaseProvider {
       "tipo_identificacion": client.tipoIdentificacion,
       "dni": client.dni,
       "rol_id": client.rolId,
-      "datos": jsonEncode(List<dynamic>.from(
-        client.datos.map((x) => x.toJson()),
-      )),
+      "datos": client.datos.isNotEmpty
+          ? jsonEncode(List<dynamic>.from(
+              client.datos.map((x) => x.toJson()),
+            ))
+          : jsonEncode([]),
       "created_at": client.createdAt.toIso8601String(),
       "updated_at": client.updatedAt.toIso8601String(),
     };
@@ -148,6 +177,10 @@ class DatabaseProvider {
       await saveRecord("clients", data);
     }
   }
+
+  /// --------------------------------------------------------------------------
+  /// RESUME
+  /// --------------------------------------------------------------------------
 
   Future<void> saveOrUpdateDashboardResume(DashboardResumen resume) async {
     const id = 1;
@@ -168,18 +201,30 @@ class DatabaseProvider {
     }
   }
 
+  /// --------------------------------------------------------------------------
+  /// RATING
+  /// --------------------------------------------------------------------------
+
   Future<void> saveOrUpdateRating(Rating rating) async {
     Map<String, dynamic> data = {
       "producto_id": rating.productoId,
       "cantidad_valoraciones": rating.cantidadValoraciones,
-      "usuarios": jsonEncode(rating.usuarios),
-      "valoraciones": jsonEncode(List<dynamic>.from(
-        rating.valoraciones.map((x) => x.toJson()),
-      ))
+      "usuarios": rating.usuarios.isNotEmpty
+          ? jsonEncode(rating.usuarios)
+          : jsonEncode([]),
+      "valoraciones": rating.valoraciones.isNotEmpty
+          ? jsonEncode(List<dynamic>.from(
+              rating.valoraciones.map((x) => x.toJson()),
+            ))
+          : jsonEncode([])
     };
 
     await saveRecord("ratings", data);
   }
+
+  /// --------------------------------------------------------------------------
+  /// PREGUNTAS
+  /// --------------------------------------------------------------------------
 
   Future<void> saveOrUpdateQuestions(List<Pregunta> questions) async {
     for (final rating in questions) {
@@ -198,6 +243,10 @@ class DatabaseProvider {
     }
   }
 
+  /// --------------------------------------------------------------------------
+  /// TIENDAS
+  /// --------------------------------------------------------------------------
+
   Future<void> saveOrUpdateStores(List<Tienda> stores) async {
     for (final store in stores) {
       await saveOrUpdateStore(store);
@@ -212,9 +261,30 @@ class DatabaseProvider {
       "local": store.local,
       "direccion": store.direccion,
       "telefono": store.telefono,
+      "sucursal": store.sucursal,
+      "fecha_ingreso": store.fechaIngreso.toIso8601String(),
+      "fecha_ultima_compra": store.fechaUltimaCompra.toIso8601String(),
+      "cupo": store.cupo,
+      "ciudad_codigo": store.ciudadCodigo,
+      "zona": store.zona,
+      "bloqueado": store.bloqueado,
+      "bloqueado_fecha": store.bloqueadoFecha != null
+          ? store.bloqueadoFecha.toIso8601String()
+          : null,
+      "nombre_representante": store.nombreRepresentante,
+      "plazo": store.plazo,
+      "escala_factura": store.escalaFactura,
+      "observaciones": store.observaciones,
+      "cliente_id": store.clienteId,
+      "cliente":
+          store.cliente != null ? jsonEncode(store.cliente.toJson()) : null,
+      "vendedores": store.vendedores.isNotEmpty
+          ? jsonEncode(List<dynamic>.from(
+              store.vendedores.map((x) => x.toJson()),
+            ))
+          : jsonEncode([]),
       "created_at": store.createdAt.toIso8601String(),
       "updated_at": store.updatedAt.toIso8601String(),
-      "cliente": store.cliente,
       "check_delete": 0,
     };
 
@@ -224,6 +294,10 @@ class DatabaseProvider {
       await saveRecord("stores", data);
     }
   }
+
+  /// --------------------------------------------------------------------------
+  /// ORDENES
+  /// --------------------------------------------------------------------------
 
   Future<void> saveOrUpdateOrders(List<Pedido> orders) async {
     for (final order in orders) {
@@ -235,25 +309,31 @@ class DatabaseProvider {
     Map<String, dynamic> data = {
       "id": order.id,
       "fecha": order.fecha.toIso8601String(),
-      "firma": order.firma,
       "codigo": order.codigo,
-      "metodo_pago": order.metodoPago,
       "total": order.total,
+      "firma": order.firma,
+      "vendedor":
+          order.vendedor != null ? jsonEncode(order.vendedor.toJson()) : null,
+      "cliente":
+          order.cliente != null ? jsonEncode(order.cliente.toJson()) : null,
+      "estado": order.estado != null ? jsonEncode(order.estado.toJson()) : null,
+      "estado_id": order.estadoId,
+      "vendedor_id": order.vendedorId,
+      "cliente_id": order.clienteId,
+      "metodo_pago": order.metodoPago,
       "sub_total": order.subTotal,
       "notas": order.notas,
       "notas_facturacion": order.notasFacturacion,
-      "vendedor": order.vendedorId,
-      "cliente": order.clienteId,
-      "estado_id": order.estadoId,
-      "estado": estadoEnumValues.reverse[order.estado],
-      "info_cliente": jsonEncode(order.cliente.toJson()),
-      // TODO: completar atributos
-      "detalles": jsonEncode(List<dynamic>.from(
-        order.detalles.map((x) => x.toJson()),
-      )),
-      "novedades": jsonEncode(List<dynamic>.from(
-        order.novedades.map((x) => x.toJson()),
-      )),
+      "detalles": order.detalles.isNotEmpty
+          ? jsonEncode(List<dynamic>.from(
+              order.detalles.map((x) => x.toJson()),
+            ))
+          : jsonEncode([]),
+      "novedades": order.novedades.isNotEmpty
+          ? jsonEncode(List<dynamic>.from(
+              order.novedades.map((x) => x.toJson()),
+            ))
+          : jsonEncode([]),
     };
 
     if (await existsRecordById("orders", order.id)) {
@@ -263,16 +343,9 @@ class DatabaseProvider {
     }
   }
 
-  Future<List<Producto>> getProducts() async {
-    final list = await getRecords("products");
-    final products = List<Producto>.from(list.map((x) {
-      Map<String, Object> row = Map<String, Object>.of(x);
-      row["id_producto"] = row["id"];
-      row["imagenes"] = jsonDecode(row["imagenes"]);
-      return Producto.fromJson(row);
-    }));
-    return products;
-  }
+  /// --------------------------------------------------------------------------
+  /// CONSULTAS SQL
+  /// --------------------------------------------------------------------------
 
   Future<List<Map<String, Object>>> getRecords(String table,
       {bool withDeleted: true}) async {
@@ -341,6 +414,8 @@ class DatabaseProvider {
   }
 
   Future<void> saveImage(String path) async {
+    if (path == null || path.isEmpty) return;
+
     final url = Uri.parse(path);
     final response = await http.get(url);
 
@@ -359,6 +434,10 @@ class DatabaseProvider {
     }
   }
 
+  /// --------------------------------------------------------------------------
+  /// TABLAS
+  /// --------------------------------------------------------------------------
+
   Future<void> _onCreate(Database db, int version) async {
     await db.execute('''CREATE TABLE dashboard_resume(
             id INTEGER PRIMARY KEY,
@@ -374,19 +453,19 @@ class DatabaseProvider {
             codigo TEXT,
             referencia TEXT,
             stock INTEGER,
+            precio REAL,
             descripcion TEXT,
             sku TEXT,
-            precio REAL,
             total REAL,
             descuento INTEGER,
             iva INTEGER,
             catalogo INTEGER,
-            marca INTEGER,
+            image TEXT,
+            imagenes TEXT,
+            marca_id INTEGER,
+            marca TEXT,
             created_at TEXT,
             updated_at TEXT,
-            image TEXT,
-            nombre_marca TEXT,
-            imagenes TEXT,
             tipo TEXT
           );''');
     await db.execute('''CREATE TABLE images(
@@ -418,6 +497,7 @@ class DatabaseProvider {
             created_at TEXT,
             updated_at TEXT
           );''');
+
     await db.execute('''CREATE TABLE stores(
             id INTEGER PRIMARY KEY,
             nombre TEXT,
@@ -425,9 +505,23 @@ class DatabaseProvider {
             local TEXT,
             direccion TEXT,
             telefono TEXT,
+            sucursal TEXT,
+            fecha_ingreso TEXT,
+            fecha_ultima_compra TEXT,
+            cupo INTEGER,
+            ciudad_codigo TEXT,
+            zona TEXT,
+            bloqueado TEXT,
+            bloqueado_fecha TEXT,
+            nombre_representante TEXT,
+            plazo INTEGER,
+            escala_factura TEXT,
+            observaciones TEXT,
+            cliente_id INTEGER,
+            cliente TEXT,
+            vendedores TEXT,
             created_at TEXT,
             updated_at TEXT,
-            cliente INTEGER,
             check_delete INTEGER
           );''');
     await db.execute('''CREATE TABLE ratings(
@@ -451,22 +545,19 @@ class DatabaseProvider {
     await db.execute('''CREATE TABLE orders(
             id INTEGER PRIMARY KEY,
             fecha TEXT,
-            firma TEXT,
             codigo TEXT,
+            total REAL,
+            firma TEXT,
+            vendedor TEXT,
+            cliente TEXT,
+            estado TEXT,
+            estado_id INTEGER,
+            vendedor_id INTEGER,
+            cliente_id INTEGER,
             metodo_pago TEXT,
-            total TEXT,
-            sub_total TEXT,
+            sub_total REAL,
             notas TEXT,
             notas_facturacion TEXT,
-            vendedor INTEGER,
-            cliente INTEGER,
-            estado_id INTEGER,
-            estado TEXT,
-            info_cliente TEXT,
-            name_vendedor TEXT,
-            apellido_vendedor TEXT,
-            name_cliente TEXT,
-            apellido_cliente TEXT,
             detalles TEXT,
             novedades TEXT
           );''');

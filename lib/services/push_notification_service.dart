@@ -11,7 +11,7 @@ class PushNotificationService {
   static String token;
 
   static Future<void> initializeApp() async {
-    // TODO: Inicialización de Firebase deshabilitada.
+    // TODO: Inicialización de Firebase deshabilitada porque no se va a usar.
     // await Firebase.initializeApp();
     // token = await FirebaseMessaging.instance.getToken();
 

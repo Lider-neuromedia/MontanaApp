@@ -93,6 +93,9 @@ class StoresProvider with ChangeNotifier {
     List<Tienda> stores = List<Tienda>.from(list.map((x) {
       Map<String, Object> row = Map<String, Object>.of(x);
       row["id_tiendas"] = row["id"];
+      row["cliente"] =
+          row["cliente"] != null ? jsonDecode(row["cliente"]) : null;
+      row["vendedores"] = jsonDecode(row["vendedores"]);
       return Tienda.fromJson(row);
     }));
 

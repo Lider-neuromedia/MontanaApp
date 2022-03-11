@@ -78,6 +78,7 @@ class ProductsProvider with ChangeNotifier {
       Map<String, Object> row = Map<String, Object>.of(x);
       row["id_producto"] = row["id"];
       row["imagenes"] = jsonDecode(row["imagenes"]);
+      row["marca"] = jsonDecode(row["marca"]);
       return Producto.fromJson(row);
     }));
 

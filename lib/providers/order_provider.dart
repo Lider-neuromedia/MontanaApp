@@ -43,8 +43,10 @@ class OrderProvider with ChangeNotifier {
 
     Map<String, Object> row = Map<String, Object>.of(record);
     row["id_pedido"] = row["id"];
-    row["info_cliente"] = jsonDecode(row["info_cliente"]);
-    row["productos"] = jsonDecode(row["productos"]);
+    row["vendedor"] = jsonDecode(row["vendedor"]);
+    row["cliente"] = jsonDecode(row["cliente"]);
+    row["estado"] = jsonDecode(row["estado"]);
+    row["detalles"] = jsonDecode(row["detalles"]);
     row["novedades"] = jsonDecode(row["novedades"]);
     return Pedido.fromJson(row);
   }

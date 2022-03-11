@@ -32,10 +32,10 @@ class Tienda {
     this.escalaFactura,
     this.observaciones,
     this.clienteId,
-    this.createdAt,
-    this.updatedAt,
     this.cliente,
     this.vendedores,
+    this.createdAt,
+    this.updatedAt,
   });
 
   int id;
@@ -57,10 +57,10 @@ class Tienda {
   String escalaFactura;
   String observaciones;
   int clienteId;
-  DateTime createdAt;
-  DateTime updatedAt;
   Usuario cliente;
   List<Usuario> vendedores;
+  DateTime createdAt;
+  DateTime updatedAt;
 
   // Nuevo Pedido
   int stock = 0;
@@ -72,7 +72,6 @@ class Tienda {
         local: json["local"] ?? '',
         direccion: json["direccion"] ?? '',
         telefono: json["telefono"] ?? '',
-        clienteId: json["cliente_id"],
         sucursal: json["sucursal"],
         fechaIngreso: json["fecha_ingreso"] != null
             ? DateTime.parse(json["fecha_ingreso"])
@@ -91,6 +90,7 @@ class Tienda {
         plazo: json["plazo"],
         escalaFactura: json["escala_factura"],
         observaciones: json["observaciones"] ?? '',
+        clienteId: json["cliente_id"],
         cliente:
             json["cliente"] != null ? Usuario.fromJson(json["cliente"]) : null,
         vendedores: json["vendedores"] != null

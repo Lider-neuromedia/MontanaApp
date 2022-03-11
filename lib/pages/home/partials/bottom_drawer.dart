@@ -68,7 +68,7 @@ class BottomDrawer extends StatelessWidget {
                   : () => navigationProvider.currentPage = 4,
             ),
             const SizedBox(width: 15.0),
-            // TODO: Botón de PQRS ocultado.
+            // TODO: Botón de PQRS ocultado porque no se va a usar.
             // DrawerItem(
             //   title: "PQRS",
             //   iconData: Octicons.comment_discussion,

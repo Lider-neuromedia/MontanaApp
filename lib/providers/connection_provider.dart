@@ -33,22 +33,21 @@ class ConnectionProvider with ChangeNotifier {
     if (preferences.token == null) return;
     if (!preferences.canSync) return;
 
-    // TODO: Descomentar.
-    // await connectionProvider.syncData(
-    //   dashboardProvider: Provider.of<DashboardProvider>(context, listen: false),
-    //   showRoomProvider: Provider.of<ShowRoomProvider>(context, listen: false),
-    //   productsProvider: Provider.of<ProductsProvider>(context, listen: false),
-    //   productProvider: Provider.of<ProductProvider>(context, listen: false),
-    //   clientsProvider: Provider.of<ClientsProvider>(context, listen: false),
-    //   clientProvider: Provider.of<ClientProvider>(context, listen: false),
-    //   ratingProvider: Provider.of<RatingProvider>(context, listen: false),
-    //   storesProvider: Provider.of<StoresProvider>(context, listen: false),
-    //   ordersProvider: Provider.of<OrdersProvider>(context, listen: false),
-    //   orderProvider: Provider.of<OrderProvider>(context, listen: false),
-    //   cartProvider: Provider.of<CartProvider>(context, listen: false),
-    //   cataloguesProvider:
-    //       Provider.of<CataloguesProvider>(context, listen: false),
-    // );
+    await connectionProvider.syncData(
+      dashboardProvider: Provider.of<DashboardProvider>(context, listen: false),
+      showRoomProvider: Provider.of<ShowRoomProvider>(context, listen: false),
+      productsProvider: Provider.of<ProductsProvider>(context, listen: false),
+      productProvider: Provider.of<ProductProvider>(context, listen: false),
+      clientsProvider: Provider.of<ClientsProvider>(context, listen: false),
+      clientProvider: Provider.of<ClientProvider>(context, listen: false),
+      ratingProvider: Provider.of<RatingProvider>(context, listen: false),
+      storesProvider: Provider.of<StoresProvider>(context, listen: false),
+      ordersProvider: Provider.of<OrdersProvider>(context, listen: false),
+      orderProvider: Provider.of<OrderProvider>(context, listen: false),
+      cartProvider: Provider.of<CartProvider>(context, listen: false),
+      cataloguesProvider:
+          Provider.of<CataloguesProvider>(context, listen: false),
+    );
   }
 
   bool _isConnected = true;
@@ -248,26 +247,38 @@ class ConnectionProvider with ChangeNotifier {
     List<Future<void>> productsFutureDB = [];
 
     message = "Descargando ShowRoom.";
-    int showRoomPage = 1;
-    final showRoomProducts =
-        await showRoomProvider.getShowRoomProducts(showRoomPage, "");
 
-    for (final srp in showRoomProducts.data) {
-      productsFuture.add(productProvider.getProduct(srp.id));
-    }
+    int page = 1;
+    var showRoomProducts;
 
-    List<Producto> productsFutureResults = await Future.wait(productsFuture);
+    do {
+      showRoomProducts = await showRoomProvider.getShowRoomProducts(page, "");
+      page = showRoomProducts.currentPage + 1;
 
-    for (final x in productsFutureResults) {
-      productsFutureDB.add(DatabaseProvider.db.saveOrUpdateProduct(x, true));
-      images.add(x.image);
-
-      for (final image in x.imagenes) {
-        images.add(image.image);
+      for (final srp in showRoomProducts.data) {
+        productsFuture.add(productProvider.getProduct(srp.id));
       }
-    }
 
-    await Future.wait(productsFutureDB);
+      List<Producto> productsFutureResults = await Future.wait(productsFuture);
+
+      for (final x in productsFutureResults) {
+        productsFutureDB.add(DatabaseProvider.db.saveOrUpdateProduct(x, true));
+
+        if (x.image != null && x.image.isNotEmpty) {
+          images.add(x.image);
+        }
+
+        for (final image in x.imagenes) {
+          if (image.image != null && image.image.isNotEmpty) {
+            images.add(image.image);
+          }
+        }
+      }
+
+      await Future.wait(productsFutureDB);
+      await Future.delayed(Duration(milliseconds: 300));
+    } while (page <= showRoomProducts.lastPage);
+
     return images;
   }
 
@@ -292,7 +303,9 @@ class ConnectionProvider with ChangeNotifier {
     message = "Descargando ${images.length} imagenes.";
 
     for (var image in images) {
-      imagesFuture.add(DatabaseProvider.db.saveImage(image));
+      if (image.isNotEmpty) {
+        imagesFuture.add(DatabaseProvider.db.saveImage(image));
+      }
     }
 
     await Future.wait(imagesFuture);

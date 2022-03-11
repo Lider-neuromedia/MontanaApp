@@ -44,6 +44,7 @@ class ProductProvider with ChangeNotifier {
     Map<String, Object> recordTemp = Map<String, Object>.of(record);
     recordTemp["id_producto"] = recordTemp["id"];
     recordTemp["imagenes"] = jsonDecode(recordTemp["imagenes"]);
+    recordTemp["marca"] = jsonDecode(recordTemp["marca"]);
     return Producto.fromJson(recordTemp);
   }
 }

@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:montana_mobile/models/user.dart';
+import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
 import 'package:montana_mobile/providers/cart_provider.dart';
 import 'package:montana_mobile/providers/client_provider.dart';
 import 'package:montana_mobile/providers/connection_provider.dart';
@@ -52,6 +54,23 @@ class _SyncPageState extends State<SyncPage> {
             SizedBox(height: 15.0),
             Center(child: Text("Pedidos esperando sincronizar")),
             SizedBox(height: 10.0),
+            connectionProvider.isSyncing
+                ? Expanded(
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const LoadingContainer(),
+                          const SizedBox(height: 10.0),
+                          const Center(
+                            child: Text("Sincronización en proceso"),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                : Container(),
+            SizedBox(height: 10.0),
             FutureBuilder<List<Cart>>(
               initialData: [],
               future: cartProvider.getOfflineOrders(),
@@ -79,10 +98,63 @@ class _SyncPageState extends State<SyncPage> {
                 );
               },
             ),
+            _LastSyncTimer(
+              onTime: () => setState(() {}),
+            ),
           ],
         ),
       ),
     );
+  }
+}
+
+class _LastSyncTimer extends StatefulWidget {
+  const _LastSyncTimer({Key key, @required this.onTime}) : super(key: key);
+  final Function onTime;
+
+  @override
+  State<_LastSyncTimer> createState() => __LastSyncTimerState();
+}
+
+class __LastSyncTimerState extends State<_LastSyncTimer> {
+  final preferences = Preferences();
+  int _timeToSync = 0;
+  Timer _timer;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _timer = Timer.periodic(const Duration(microseconds: 1000), (timer) {
+      setState(() {
+        _timeToSync =
+            (DateTime.now().difference(preferences.lastSync).inSeconds - 60) *
+                -1;
+
+        if (_timeToSync == 0) {
+          widget.onTime();
+        }
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final connectionProvider = Provider.of<ConnectionProvider>(context);
+
+    return connectionProvider.isSyncing || preferences.canSync
+        ? Container()
+        : Container(
+            child: Center(
+              child: Text("Puede sincronizar dentro de $_timeToSync segundos"),
+            ),
+          );
   }
 }
 

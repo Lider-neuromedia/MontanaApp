@@ -225,6 +225,14 @@ class _ScreenWrapper extends StatelessWidget {
               children: [
                 Expanded(child: child),
                 connectionProvider.isSyncing
+                    ? LinearProgressIndicator(
+                        backgroundColor: Colors.white,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Theme.of(context).primaryColor,
+                        ),
+                      )
+                    : Container(),
+                connectionProvider.isSyncing
                     ? connectionProvider.message.isNotEmpty
                         ? AppMessage(message: connectionProvider.message)
                         : AppMessage(message: "Sincronizando datos.")

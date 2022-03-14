@@ -36,20 +36,22 @@ class ProductsProvider with ChangeNotifier {
 
     _isLoading = true;
     notifyListeners();
+    var responseProducts;
 
     if (local) {
-      _products = await getProductsByCatalogueLocal(catalogId);
-    } else {
-      final responseProducts = await getProductsByCatalogue(
+      responseProducts = await getProductsByCatalogueLocal(
           catalogId, _pagination.currentPage + 1, search);
+    } else {
+      responseProducts = await getProductsByCatalogue(
+          catalogId, _pagination.currentPage + 1, search);
+    }
 
-      if (responseProducts != null) {
-        _pagination = _Pagination(
-          currentPage: responseProducts.currentPage,
-          lastPage: responseProducts.lastPage,
-        );
-        _products.addAll(responseProducts.data);
-      }
+    if (responseProducts != null) {
+      _pagination = _Pagination(
+        currentPage: responseProducts.currentPage,
+        lastPage: responseProducts.lastPage,
+      );
+      _products.addAll(responseProducts.data);
     }
 
     _isLoading = false;
@@ -66,13 +68,66 @@ class ProductsProvider with ChangeNotifier {
     return responseProductosFromJson(response.body).productos;
   }
 
-  Future<List<Producto>> getProductsByCatalogueLocal(int id) async {
+  Future<Productos> getProductsByCatalogueLocal(
+      int id, int page, String search) async {
     final db = await DatabaseProvider.db.database;
-    List<Map<String, Object>> list = await db.query(
-      "products",
-      where: "catalogo = ?",
-      whereArgs: [id],
-    );
+    List<Map<String, Object>> list;
+    List<Map<String, Object>> response;
+
+    if (search.isEmpty) {
+      response = await db.rawQuery("""
+        select count(*) as total
+        from products
+        where catalogo = ?1""", [id]);
+    } else {
+      response = await db.rawQuery("""
+        select count(*) as total
+        from products
+        where catalogo = ?1 and (
+            nombre LIKE ?2
+            or codigo LIKE ?2
+            or referencia LIKE ?2
+            or precio LIKE ?2
+            or descripcion LIKE ?2
+            or sku LIKE ?2
+            or total LIKE ?2
+            or marca LIKE ?2
+            or marca_id LIKE ?2
+          )""", [id, "%$search%"]);
+    }
+
+    final int limit = 20;
+    final int offset = (page - 1) * limit;
+    final int total = response.first["total"];
+    final int lastPage = (total / limit).ceil();
+
+    if (search.isEmpty) {
+      list = await db.query(
+        "products",
+        where: "catalogo = :id",
+        whereArgs: [id],
+        offset: offset,
+        limit: limit,
+      );
+    } else {
+      list = await db.query(
+        "products",
+        where: """catalogo = ?1 and (
+          nombre LIKE ?2
+          or codigo LIKE ?2
+          or referencia LIKE ?2
+          or precio LIKE ?2
+          or descripcion LIKE ?2
+          or sku LIKE ?2
+          or total LIKE ?2
+          or marca LIKE ?2
+          or marca_id LIKE ?2
+        )""",
+        whereArgs: [id, "%$search%"],
+        offset: offset,
+        limit: limit,
+      );
+    }
 
     List<Producto> products = List<Producto>.from(list.map((x) {
       Map<String, Object> row = Map<String, Object>.of(x);
@@ -82,7 +137,11 @@ class ProductsProvider with ChangeNotifier {
       return Producto.fromJson(row);
     }));
 
-    return products;
+    return Productos(
+      currentPage: page,
+      lastPage: lastPage,
+      data: products,
+    );
   }
 }
 

@@ -56,9 +56,6 @@ class ClientsProvider with ChangeNotifier {
     var clients = List<Usuario>.from(list.map((x) {
       Map<String, Object> row = Map<String, Object>.of(x);
       row["datos"] = jsonDecode(row["datos"]);
-      row["vendedor"] = jsonDecode(row["vendedor"]);
-      row["tiendas"] = jsonDecode(row["tiendas"]);
-      row["pedidos"] = jsonDecode(row["pedidos"]);
       return Usuario.fromJson(row);
     }));
 

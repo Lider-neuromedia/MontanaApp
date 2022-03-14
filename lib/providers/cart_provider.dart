@@ -175,13 +175,17 @@ class CartProvider with ChangeNotifier {
     final db = await DatabaseProvider.db.database;
     List<Map<String, Object>> list = await db.query(
       "stores",
-      where: "cliente = ?",
+      where: "cliente_id = ?",
       whereArgs: [clientId],
     );
 
     List<Tienda> stores = List<Tienda>.from(list.map((x) {
       Map<String, Object> row = Map<String, Object>.of(x);
       row["id_tiendas"] = row["id"];
+      row["cliente"] =
+          row["cliente"] != null ? jsonDecode(row["cliente"]) : null;
+      row["vendedores"] =
+          row["vendedores"] != null ? jsonDecode(row["vendedores"]) : null;
       return Tienda.fromJson(row);
     }));
 

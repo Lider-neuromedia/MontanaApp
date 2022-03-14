@@ -36,15 +36,12 @@ class ProductsProvider with ChangeNotifier {
 
     _isLoading = true;
     notifyListeners();
-    var responseProducts;
 
-    if (local) {
-      responseProducts = await getProductsByCatalogueLocal(
-          catalogId, _pagination.currentPage + 1, search);
-    } else {
-      responseProducts = await getProductsByCatalogue(
-          catalogId, _pagination.currentPage + 1, search);
-    }
+    final responseProducts = local
+        ? await getProductsByCatalogueLocal(
+            catalogId, _pagination.currentPage + 1, search)
+        : await getProductsByCatalogue(
+            catalogId, _pagination.currentPage + 1, search);
 
     if (responseProducts != null) {
       _pagination = _Pagination(
@@ -71,8 +68,7 @@ class ProductsProvider with ChangeNotifier {
   Future<Productos> getProductsByCatalogueLocal(
       int id, int page, String search) async {
     final db = await DatabaseProvider.db.database;
-    List<Map<String, Object>> list;
-    List<Map<String, Object>> response;
+    List<Map<String, Object>> list, response;
 
     if (search.isEmpty) {
       response = await db.rawQuery("""

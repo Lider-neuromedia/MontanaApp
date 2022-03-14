@@ -37,19 +37,16 @@ class OrdersProvider with ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
-    if (local) {
-      _orders = await getOrdersLocal();
-    } else {
-      final responseOrders =
-          await getOrders(_pagination.currentPage + 1, _sortBy, "");
+    final responseOrders = local
+        ? await getOrdersLocal(_pagination.currentPage + 1, _sortBy)
+        : await getOrders(_pagination.currentPage + 1, _sortBy, "");
 
-      if (responseOrders != null) {
-        _pagination = _Pagination(
-          currentPage: responseOrders.currentPage,
-          lastPage: responseOrders.lastPage,
-        );
-        _orders.addAll(responseOrders.data);
-      }
+    if (responseOrders != null) {
+      _pagination = _Pagination(
+        currentPage: responseOrders.currentPage,
+        lastPage: responseOrders.lastPage,
+      );
+      _orders.addAll(responseOrders.data);
     }
 
     _isLoading = false;
@@ -64,8 +61,35 @@ class OrdersProvider with ChangeNotifier {
     return responseOrdersFromJson(response.body).pedidos;
   }
 
-  Future<List<Pedido>> getOrdersLocal() async {
-    final list = await DatabaseProvider.db.getRecords("orders");
+  Future<Pedidos> getOrdersLocal(int page, String sort) async {
+    final db = await DatabaseProvider.db.database;
+
+    final response = await db.rawQuery("select count(*) as total from orders");
+
+    final int limit = 20;
+    final int offset = (page - 1) * limit;
+    final int total = response.first["total"];
+    final int lastPage = (total / limit).ceil();
+
+    String sortBy = "";
+
+    if (sort == 'recientes') {
+      sortBy = 'fecha desc';
+    } else if (sort == 'ultimos') {
+      sortBy = 'fecha asc';
+    } else if (sort == 'entregados') {
+      sortBy = 'estado asc';
+    } else if (sort == 'cancelados') {
+      sortBy = 'estado desc';
+    }
+
+    final list = await db.query(
+      "orders",
+      offset: offset,
+      limit: limit,
+      orderBy: sortBy,
+    );
+
     final orders = List<Pedido>.from(list.map((x) {
       Map<String, Object> row = Map<String, Object>.of(x);
       row["id_pedido"] = row["id"];
@@ -76,7 +100,12 @@ class OrdersProvider with ChangeNotifier {
       row["novedades"] = jsonDecode(row["novedades"]);
       return Pedido.fromJson(row);
     }));
-    return orders;
+
+    return Pedidos(
+      currentPage: page,
+      lastPage: lastPage,
+      data: orders,
+    );
   }
 }
 

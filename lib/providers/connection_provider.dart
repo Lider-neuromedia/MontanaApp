@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:montana_mobile/models/catalogue.dart';
+import 'package:montana_mobile/models/client_wallet_resume.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
@@ -113,6 +114,11 @@ class ConnectionProvider with ChangeNotifier {
     final resume = await dashboardProvider.getDashboardResume();
     message = "Guardando resumen de dashboard.";
     await DatabaseProvider.db.saveOrUpdateDashboardResume(resume);
+
+    message = "Descargando carteras.";
+    final resumes = await _getResumeClientsWallets();
+    message = "Guardando carteras.";
+    await DatabaseProvider.db.saveOrUpdateResumeClientWallets(resumes);
 
     message = "Descargando Clientes.";
     final clients = await _getClients();
@@ -262,6 +268,17 @@ class ConnectionProvider with ChangeNotifier {
     if (response.statusCode != 200) return [];
 
     return List<String>.from(json.decode(response.body).map((x) => x));
+  }
+
+  Future<List<ResumenCarteraCliente>> _getResumeClientsWallets() async {
+    final url = Uri.parse("$_url/offline/resumenes-cartera");
+    final response = await http.get(url, headers: _preferences.signedHeaders);
+
+    if (response.statusCode != 200) return [];
+
+    return List<ResumenCarteraCliente>.from(json
+        .decode(response.body)
+        .map((x) => ResumenCarteraCliente.fromJson(x)));
   }
 
   /// TODO: Datos no usados

@@ -54,7 +54,9 @@ Future<void> main() async {
   await preferences.initialize();
   await (SessionProvider()).isUserSessionValid();
   await PushNotificationService.initializeApp();
+
   // await DatabaseProvider.db.dropDatabase();
+  // await Future.delayed(Duration(milliseconds: 1000));
 
   runApp(
     MultiProvider(

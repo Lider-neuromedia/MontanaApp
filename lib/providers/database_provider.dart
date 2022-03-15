@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:montana_mobile/models/client_wallet_resume.dart';
 import 'package:montana_mobile/models/user.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:http/http.dart' as http;
@@ -56,6 +57,29 @@ class DatabaseProvider {
     await db.rawDelete("DELETE FROM questions;");
     await db.rawDelete("DELETE FROM orders;");
     await db.rawDelete("DELETE FROM images;");
+  }
+
+  /// --------------------------------------------------------------------------
+  /// RESUMENES
+  /// --------------------------------------------------------------------------
+
+  Future<void> saveOrUpdateResumeClientWallets(
+      List<ResumenCarteraCliente> wallets) async {
+    for (final wallet in wallets) {
+      await saveOrUpdateResumeClientWallet(wallet);
+    }
+  }
+
+  Future<void> saveOrUpdateResumeClientWallet(
+      ResumenCarteraCliente wallet) async {
+    Map<String, dynamic> data = wallet.toJson();
+    data['id'] = wallet.clienteId;
+
+    if (await existsRecordById("clients_resume", wallet.clienteId)) {
+      await updateRecord("clients_resume", data, wallet.clienteId);
+    } else {
+      await saveRecord("clients_resume", data);
+    }
   }
 
   /// --------------------------------------------------------------------------
@@ -447,6 +471,14 @@ class DatabaseProvider {
             cantidad_tiendas INTEGER,
             cantidad_pqrs INTEGER,
             cantidad_pedidos TEXT
+          );''');
+    await db.execute('''CREATE TABLE clients_resume(
+            id INTEGER PRIMARY KEY,
+            cliente_id INTEGER,
+            cupo_preaprobado INTEGER,
+            cupo_disponible INTEGER,
+            saldo_total_deuda INTEGER,
+            saldo_mora INTEGER
           );''');
     await db.execute('''CREATE TABLE products(
             id INTEGER PRIMARY KEY,

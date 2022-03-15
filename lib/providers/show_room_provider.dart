@@ -68,7 +68,9 @@ class ShowRoomProvider with ChangeNotifier {
     List<Producto> products = List<Producto>.from(list.map((x) {
       Map<String, Object> row = Map<String, Object>.of(x);
       row["id_producto"] = row["id"];
-      row["imagenes"] = jsonDecode(row["imagenes"]);
+      row["imagenes"] =
+          row["imagenes"] != null ? jsonDecode(row["imagenes"]) : null;
+      row["marca"] = row["marca"] != null ? jsonDecode(row["marca"]) : null;
       return Producto.fromJson(row);
     }));
 

@@ -162,7 +162,7 @@ class _ConsolidatedClients extends StatelessWidget {
       children: [
         CardStatistic(
           isMain: false,
-          title: "Clientes Generados",
+          title: "Clientes Asignados",
           value: dashboardProvider.resumen.cantidadClientes,
           label: "Clientes",
         ),

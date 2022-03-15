@@ -38,6 +38,11 @@ class ConsolidatedOrders extends StatelessWidget {
             value: dashboardProvider.resumen.cantidadPedidos.rechazados,
             color: CustomTheme.redColor,
           ),
+          CircularStatistic(
+            title: "Pendientes",
+            value: dashboardProvider.resumen.cantidadPedidos.pendientes,
+            color: CustomTheme.purpleColor,
+          ),
         ],
       ),
     );

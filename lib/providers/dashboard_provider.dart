@@ -126,7 +126,7 @@ List<CalendarFilter> _yearsFilter() {
   final currentDate = DateTime.now();
   List<CalendarFilter> list = [];
 
-  list.add(CalendarFilter("Seleccione mes", ""));
+  list.add(CalendarFilter("Seleccione año", ""));
 
   for (int i = 2018; i <= currentDate.year; i++) {
     list.add(CalendarFilter("$i", "$i"));

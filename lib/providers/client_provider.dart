@@ -35,7 +35,7 @@ class ClientProvider with ChangeNotifier {
   Future<List<Tienda>> getClientStores(int clientId) async {
     final url = Uri.parse("$_url/tiendas-cliente/$clientId");
     final response = await http.get(url, headers: _preferences.signedHeaders);
-    print("f");
+
     if (response.statusCode != 200) return [];
     return responseTiendasFromJson(response.body);
   }

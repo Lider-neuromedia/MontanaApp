@@ -1,10 +1,11 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
-import 'package:montana_mobile/models/catalogue.dart';
-import 'package:montana_mobile/models/client_wallet_resume.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
+import 'package:montana_mobile/models/catalogue.dart';
+import 'package:montana_mobile/models/client_wallet_resume.dart';
+import 'package:montana_mobile/providers/quota_provider.dart';
 import 'package:montana_mobile/models/order.dart';
 import 'package:montana_mobile/models/product.dart';
 import 'package:montana_mobile/models/store.dart';
@@ -32,6 +33,7 @@ class ConnectionProvider with ChangeNotifier {
       dashboardProvider: Provider.of<DashboardProvider>(context, listen: false),
       storesProvider: Provider.of<StoresProvider>(context, listen: false),
       cartProvider: Provider.of<CartProvider>(context, listen: false),
+      quotaProvider: Provider.of<QuotaProvider>(context, listen: false),
     );
   }
 
@@ -65,14 +67,19 @@ class ConnectionProvider with ChangeNotifier {
     @required DashboardProvider dashboardProvider,
     @required StoresProvider storesProvider,
     @required CartProvider cartProvider,
+    @required QuotaProvider quotaProvider,
   }) async {
     isSyncing = true;
 
     try {
-      await _uploadData(
-        storesProvider: storesProvider,
-        cartProvider: cartProvider,
-      );
+      message = "Sincronizando tiendas.";
+      await storesProvider.syncDeletedStoresInLocal();
+
+      message = "Sincronizando pedidos offline.";
+      await cartProvider.syncOfflineOrdersInLocal();
+
+      message = "Sincronizando solicitudes de aplicación de cupo offline.";
+      await quotaProvider.syncOfflineQuotasInLocal();
     } catch (ex, stacktrace) {
       print(ex);
       print(stacktrace);
@@ -80,7 +87,6 @@ class ConnectionProvider with ChangeNotifier {
 
     try {
       await _downloadData(dashboardProvider: dashboardProvider);
-
       _preferences.lastSync = DateTime.now();
     } catch (ex, stacktrace) {
       print(ex);
@@ -92,17 +98,6 @@ class ConnectionProvider with ChangeNotifier {
 
     isSyncing = false;
     message = "";
-  }
-
-  Future<void> _uploadData({
-    @required StoresProvider storesProvider,
-    @required CartProvider cartProvider,
-  }) async {
-    message = "Sincronizando tiendas.";
-    await storesProvider.syncDeletedStoresInLocal();
-
-    message = "Sincronizando pedidos offline.";
-    await cartProvider.syncOfflineOrdersInLocal();
   }
 
   Future<void> _downloadData(
@@ -149,17 +144,15 @@ class ConnectionProvider with ChangeNotifier {
     message = "Descargando Productos.";
     final products = await _getProducts();
     final productsPages = (products.length / 500).ceil();
-    int productsStart, productsEnd;
+    int pStart, pEnd;
     message = "Guardando Productos (${products.length}).";
 
     for (var page = 0; page < productsPages; page++) {
-      productsStart = page * 500;
-      productsEnd = productsStart + 499;
-      productsEnd = productsPages - 1 == page ? products.length : productsEnd;
-      final subProducts =
-          products.getRange(productsStart, productsEnd).toList();
-      message =
-          "Guardando Productos ${products.length}, $productsStart - $productsEnd.";
+      pStart = page * 500;
+      pEnd = pStart + 499;
+      pEnd = productsPages - 1 == page ? products.length : pEnd;
+      final subProducts = products.getRange(pStart, pEnd).toList();
+      message = "Guardando Productos ${products.length}, $pStart - $pEnd.";
 
       await DatabaseProvider.db
           .saveOrUpdateProducts(subProducts, showRoomCataloguesIds);
@@ -169,16 +162,15 @@ class ConnectionProvider with ChangeNotifier {
     message = "Guardando Imágenes.";
     final images = await _getImagenes();
     final imagesPages = (images.length / 5).ceil();
-    int imagesStart, imagesEnd;
+    int iStart, iEnd;
     message = "Guardando Imágenes (${images.length}).";
 
     for (var page = 0; page < imagesPages; page++) {
-      imagesStart = page * 5;
-      imagesEnd = imagesStart + 4;
-      imagesEnd = imagesPages - 1 == page ? images.length : imagesEnd;
-      final subImages = images.getRange(imagesStart, imagesEnd).toList();
-      message =
-          "Guardando Imágenes ${images.length}, $imagesStart - $imagesEnd.";
+      iStart = page * 5;
+      iEnd = iStart + 4;
+      iEnd = imagesPages - 1 == page ? images.length : iEnd;
+      final subImages = images.getRange(iStart, iEnd).toList();
+      message = "Guardando Imágenes ${images.length}, $iStart - $iEnd.";
 
       await _downloadImages(subImages);
       await Future.delayed(Duration(milliseconds: 200));

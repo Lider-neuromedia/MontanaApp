@@ -598,5 +598,9 @@ class DatabaseProvider {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             content TEXT
           );''');
+    await db.execute('''CREATE TABLE offline_quotas(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            content TEXT
+          );''');
   }
 }

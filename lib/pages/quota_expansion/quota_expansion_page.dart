@@ -142,6 +142,8 @@ class _QuotaExpansionPageState extends State<QuotaExpansionPage> {
 }
 
 class _SubmitAction extends StatelessWidget {
+  final _preferences = Preferences();
+
   @override
   Widget build(BuildContext context) {
     final quotaProvider = Provider.of<QuotaProvider>(context);
@@ -172,22 +174,42 @@ class _SubmitAction extends StatelessWidget {
     ConnectionProvider connectionProvider,
   ) async {
     quotaProvider.isLoading = true;
-    final success = await quotaProvider.createQuotaExpansion(
-      local: connectionProvider.isNotConnected,
-    );
+    final user = _preferences.session;
+
+    if (user.isCliente) {
+      // TODO: getSellerId ya no es válido porque un cliente tiene varios vendedores.
+      final sellerId = connectionProvider.isNotConnected
+          ? await quotaProvider.getSellerIdLocal()
+          : await quotaProvider.getSellerId();
+
+      if (sellerId == null) {
+        quotaProvider.isLoading = false;
+        showMessageDialog(context, "Aviso", "Vendedor no asignado.");
+        return;
+      }
+
+      quotaProvider.quota.vendedorId = sellerId;
+      quotaProvider.quota.clienteId = user.id;
+    } else {
+      quotaProvider.quota.vendedorId = user.id;
+      quotaProvider.quota.clienteId = quotaProvider.clienteId;
+    }
+
+    final success = connectionProvider.isNotConnected
+        ? await quotaProvider.createQuotaExpansionLocal(quotaProvider.quota)
+        : await quotaProvider.createQuotaExpansion(quotaProvider.quota);
+
     quotaProvider.isLoading = false;
 
     if (!success) {
-      showMessageDialog(
-        context,
-        "Aviso",
-        "No se pudieron guardar los datos.",
-      );
+      showMessageDialog(context, "Aviso", "No se pudieron guardar los datos.");
     } else {
       showMessageDialog(
         context,
         "Listo",
-        "Solicitud guardada correctamente.",
+        connectionProvider.isNotConnected
+            ? "Solicitud guardada localmente, cuando haya conexión se sincronizará."
+            : "Solicitud guardada correctamente.",
         onAccept: () {
           quotaProvider.montoController.text = "0";
           quotaProvider.monto = "0";

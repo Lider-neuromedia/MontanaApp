@@ -201,8 +201,7 @@ class CartProvider with ChangeNotifier {
     return decodedResponse["code"];
   }
 
-  Future<bool> createOrder(Cart cartCompleted,
-      [bool isFromOffline = false]) async {
+  Future<bool> createOrder(Cart cartCompleted) async {
     final orderCode = await getOrderCode();
     final user = _preferences.session;
 
@@ -319,7 +318,7 @@ class CartProvider with ChangeNotifier {
     for (final record in records) {
       final cartId = record["id"];
       final cart = Cart.fromJson(jsonDecode(record["content"]));
-      final isSuccessResponse = await createOrder(cart, true);
+      final isSuccessResponse = await createOrder(cart);
 
       if (isSuccessResponse) {
         await DatabaseProvider.db.deleteRecord("offline_orders", cartId);
@@ -394,7 +393,8 @@ class Cart {
       notes: json["notes"] ?? "",
       billingNotes: json["billing_notes"] ?? "",
       products: List<CartProduct>.from(
-          json["products"].map((x) => CartProduct.fromJson(x))),
+        json["products"].map((x) => CartProduct.fromJson(x)),
+      ),
     );
   }
 

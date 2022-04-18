@@ -112,6 +112,16 @@ class ConnectionProvider with ChangeNotifier {
         await _downloadImages(subImages);
         await Future.delayed(Duration(milliseconds: 10));
       }
+
+      // Borrar imagenes locales que no se usan
+      final localImages = await DatabaseProvider.db.getImages();
+      final localImagesIds = localImages.map((x) => x["url"]).toList();
+      localImagesIds.removeWhere((x) => images.contains(x));
+
+      if (localImagesIds.isNotEmpty) {
+        await DatabaseProvider.db
+            .deleteInRecords("images", "url", localImagesIds);
+      }
     } catch (ex, stacktrace) {
       print(ex);
       print(stacktrace);
@@ -191,6 +201,18 @@ class ConnectionProvider with ChangeNotifier {
 
       await DatabaseProvider.db
           .saveOrUpdateProducts(subProducts, showRoomCataloguesIds);
+      await Future.delayed(Duration(milliseconds: 100));
+    }
+
+    // Borrar productos locales que no se usan.
+    final localProducts = await DatabaseProvider.db.getProducts();
+    final localProductIds = localProducts.map((x) => x.id).toList();
+    final apiProductIds = products.map((x) => x.id).toList();
+    localProductIds.removeWhere((x) => apiProductIds.contains(x));
+
+    if (localProductIds.isNotEmpty) {
+      await DatabaseProvider.db
+          .deleteInRecords("products", "id", localProductIds);
     }
   }
 

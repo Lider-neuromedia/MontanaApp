@@ -442,6 +442,28 @@ class DatabaseProvider {
     return await db.delete(table, where: "id = ?", whereArgs: [id]);
   }
 
+  Future<int> deleteInRecords(
+      String table, String column, List<dynamic> ids) async {
+    final db = await database;
+    final params = List.filled(ids.length, '?').join(',');
+    return await db.delete(
+      table,
+      where: "$column IN ($params)",
+      whereArgs: ids,
+    );
+  }
+
+  Future<int> deleteNotInRecords(
+      String table, String column, List<dynamic> ids) async {
+    final db = await database;
+    final params = List.filled(ids.length, '?').join(',');
+    return await db.delete(
+      table,
+      where: "$column NOT IN ($params)",
+      whereArgs: ids,
+    );
+  }
+
   Future<int> saveRecord(String table, Map<String, Object> data) async {
     final db = await database;
     return await db.insert(table, data);

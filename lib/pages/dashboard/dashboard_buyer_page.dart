@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttericon/octicons_icons.dart';
+import 'package:montana_mobile/utils/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:montana_mobile/pages/catalogue/partials/empty_message.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
@@ -44,9 +45,7 @@ class _DashboardBuyerPageState extends State<DashboardBuyerPage> {
     return Scaffold(
       appBar: AppBar(
         title: const ScaffoldLogo(),
-        actions: [
-          const CartIcon(),
-        ],
+        actions: [const CartIcon()],
       ),
       body: RefreshIndicator(
         onRefresh: () => dashboardProvider.loadDashboardResume(
@@ -60,10 +59,7 @@ class _DashboardBuyerPageState extends State<DashboardBuyerPage> {
 }
 
 class _ResumeData extends StatelessWidget {
-  _ResumeData({
-    Key key,
-    @required this.local,
-  }) : super(key: key);
+  _ResumeData({Key key, @required this.local}) : super(key: key);
 
   final _preferences = Preferences();
   final bool local;
@@ -84,14 +80,16 @@ class _ResumeData extends StatelessWidget {
           children: [
             CardData(
               title: "Cupo preaprobado",
-              value: "\$4.300.400",
+              value: formatMoney(
+                  dashboardProvider.clientResume.cupoPreaprobado.toDouble()),
               icon: Icons.sentiment_neutral_rounded,
               color: CustomTheme.yellowColor,
               isMain: false,
             ),
             CardData(
               title: "Cupo disponible",
-              value: "\$3.500.400",
+              value: formatMoney(
+                  dashboardProvider.clientResume.cupoDisponible.toDouble()),
               icon: Icons.sentiment_very_satisfied,
               color: CustomTheme.greenColor,
               isMain: false,
@@ -102,14 +100,16 @@ class _ResumeData extends StatelessWidget {
           children: [
             CardData(
               title: "Saldo total deuda",
-              value: "\$4.300.400",
+              value: formatMoney(
+                  dashboardProvider.clientResume.saldoTotalDeuda.toDouble()),
               icon: Icons.error_outline,
               color: CustomTheme.purpleColor,
               isMain: false,
             ),
             CardData(
               title: "Saldo en mora",
-              value: "\$3.500.400",
+              value: formatMoney(
+                  dashboardProvider.clientResume.saldoMora.toDouble()),
               icon: Icons.sentiment_dissatisfied_rounded,
               color: CustomTheme.redColor,
               isMain: false,
@@ -118,7 +118,7 @@ class _ResumeData extends StatelessWidget {
         ),
         dashboardProvider.isLoading
             ? const LoadingContainer()
-            : dashboardProvider.resumen == null
+            : dashboardProvider.resume == null
                 ? EmptyMessage(
                     onPressed: () =>
                         dashboardProvider.loadDashboardResume(local: local),
@@ -130,7 +130,7 @@ class _ResumeData extends StatelessWidget {
                         CardStatistic(
                           isMain: true,
                           title: "Tiendas Creadas",
-                          value: dashboardProvider.resumen.cantidadTiendas,
+                          value: dashboardProvider.resume.cantidadTiendas,
                           label: "Tiendas",
                           icon: Icons.storefront,
                         ),
@@ -138,7 +138,7 @@ class _ResumeData extends StatelessWidget {
                           isMain: false,
                           icon: Octicons.comment_discussion,
                           title: "PQRS Generados",
-                          value: dashboardProvider.resumen.cantidadPqrs,
+                          value: dashboardProvider.resume.cantidadPqrs,
                           label: "PQRS",
                         ),
                       ]),

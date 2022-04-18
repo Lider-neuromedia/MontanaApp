@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:montana_mobile/models/dashboard_resume.dart';
+import 'package:montana_mobile/models/seller_wallet_resume.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -11,7 +13,6 @@ import 'package:montana_mobile/models/product.dart';
 import 'package:montana_mobile/models/store.dart';
 import 'package:montana_mobile/models/user.dart';
 import 'package:montana_mobile/providers/cart_provider.dart';
-import 'package:montana_mobile/providers/dashboard_provider.dart';
 import 'package:montana_mobile/providers/database_provider.dart';
 import 'package:montana_mobile/providers/stores_provider.dart';
 import 'package:montana_mobile/utils/preferences.dart';
@@ -29,12 +30,7 @@ class ConnectionProvider with ChangeNotifier {
     if (preferences.token == null) return;
     if (!preferences.canSync) return;
 
-    await connectionProvider.syncData(
-      dashboardProvider: Provider.of<DashboardProvider>(context, listen: false),
-      storesProvider: Provider.of<StoresProvider>(context, listen: false),
-      cartProvider: Provider.of<CartProvider>(context, listen: false),
-      quotaProvider: Provider.of<QuotaProvider>(context, listen: false),
-    );
+    await connectionProvider.sync(context);
   }
 
   bool _isConnected = true;
@@ -63,15 +59,15 @@ class ConnectionProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> syncData({
-    @required DashboardProvider dashboardProvider,
-    @required StoresProvider storesProvider,
-    @required CartProvider cartProvider,
-    @required QuotaProvider quotaProvider,
-  }) async {
+  Future<void> sync(BuildContext context) async {
     isSyncing = true;
 
     try {
+      final storesProvider =
+          Provider.of<StoresProvider>(context, listen: false);
+      final cartProvider = Provider.of<CartProvider>(context, listen: false);
+      final quotaProvider = Provider.of<QuotaProvider>(context, listen: false);
+
       message = "Sincronizando tiendas.";
       await storesProvider.syncDeletedStoresInLocal();
 
@@ -86,8 +82,10 @@ class ConnectionProvider with ChangeNotifier {
     }
 
     try {
-      await _downloadData(dashboardProvider: dashboardProvider);
-      _preferences.lastSync = DateTime.now();
+      // Limpiar DB.
+      message = "Limpiando base de datos.";
+      await DatabaseProvider.db.cleanTables();
+      await _downloadData();
     } catch (ex, stacktrace) {
       print(ex);
       print(stacktrace);
@@ -96,41 +94,77 @@ class ConnectionProvider with ChangeNotifier {
       await DatabaseProvider.db.cleanTables();
     }
 
+    try {
+      // Imágenes.
+      message = "Descargando Imágenes.";
+      final images = await _getImagenes();
+      final imagesPages = (images.length / 50).ceil();
+      int iStart, iEnd;
+      message = "Guardando Imágenes (${images.length}).";
+
+      for (int page = 0; page < imagesPages; page++) {
+        iStart = page * 50;
+        iEnd = iStart + 49;
+        iEnd = imagesPages - 1 == page ? images.length : iEnd;
+        final subImages = images.getRange(iStart, iEnd).toList();
+        message = "Guardando Imágenes ${images.length}, $iStart - $iEnd.";
+
+        await _downloadImages(subImages);
+        await Future.delayed(Duration(milliseconds: 10));
+      }
+    } catch (ex, stacktrace) {
+      print(ex);
+      print(stacktrace);
+      message = "Error al descargar imagenes.";
+    }
+
+    message = "Descarga completada.";
+    await Future.delayed(Duration(milliseconds: 300));
+    _preferences.lastSync = DateTime.now();
+
     isSyncing = false;
     message = "";
   }
 
-  Future<void> _downloadData(
-      {@required DashboardProvider dashboardProvider}) async {
-    message = "Limpiando base de datos.";
-    await DatabaseProvider.db.cleanTables();
-
+  Future<void> _downloadData() async {
+    // Dashboard.
     message = "Descargando resumen de dashboard.";
-    final resume = await dashboardProvider.getDashboardResume();
+    final resume = await _getDashboardResume();
     message = "Guardando resumen de dashboard.";
     await DatabaseProvider.db.saveOrUpdateDashboardResume(resume);
 
+    // Cartera de vendedor.
+    message = "Descargando resumen de cartera.";
+    final resumeWallet = await _getResumeSellerWallet();
+    message = "Guardando resumen de cartera.";
+    await DatabaseProvider.db.saveOrUpdateResumeSellerWallet(resumeWallet);
+
+    // Carteras de clientes.
     message = "Descargando carteras.";
     final resumes = await _getResumeClientsWallets();
     message = "Guardando carteras.";
     await DatabaseProvider.db.saveOrUpdateResumeClientWallets(resumes);
 
+    // Clientes de vendedor.
     message = "Descargando Clientes.";
     final clients = await _getClients();
     message = "Guardando Clientes (${clients.length}).";
     await DatabaseProvider.db.saveOrUpdateClients(clients);
 
+    // Tiendas de clientes de vendedor.
     message = "Descargando Tiendas.";
     final clientsIds = clients.map((x) => x.id).toList();
     final stores = await _getStores(clientsIds);
     message = "Guardando Tiendas (${stores.length}).";
     await DatabaseProvider.db.saveOrUpdateStores(stores);
 
+    // Pedidos de vendedor.
     message = "Guardando Pedidos.";
     final orders = await _getOrders();
     message = "Guardando Pedidos (${orders.length}).";
     await DatabaseProvider.db.saveOrUpdateOrders(orders);
 
+    // Catálogo de productos.
     message = "Descargando Catálogos.";
     final catalogues = await _getCatalogues();
     final showRoomCataloguesIds = catalogues
@@ -141,13 +175,14 @@ class ConnectionProvider with ChangeNotifier {
     message = "Guardando Catálogos (${catalogues.length}).";
     await DatabaseProvider.db.saveOrUpdateCatalogues(catalogues);
 
+    // Productos.
     message = "Descargando Productos.";
     final products = await _getProducts();
     final productsPages = (products.length / 500).ceil();
     int pStart, pEnd;
     message = "Guardando Productos (${products.length}).";
 
-    for (var page = 0; page < productsPages; page++) {
+    for (int page = 0; page < productsPages; page++) {
       pStart = page * 500;
       pEnd = pStart + 499;
       pEnd = productsPages - 1 == page ? products.length : pEnd;
@@ -156,45 +191,53 @@ class ConnectionProvider with ChangeNotifier {
 
       await DatabaseProvider.db
           .saveOrUpdateProducts(subProducts, showRoomCataloguesIds);
-      await Future.delayed(Duration(milliseconds: 100));
     }
-
-    message = "Guardando Imágenes.";
-    final images = await _getImagenes();
-    final imagesPages = (images.length / 5).ceil();
-    int iStart, iEnd;
-    message = "Guardando Imágenes (${images.length}).";
-
-    for (var page = 0; page < imagesPages; page++) {
-      iStart = page * 5;
-      iEnd = iStart + 4;
-      iEnd = imagesPages - 1 == page ? images.length : iEnd;
-      final subImages = images.getRange(iStart, iEnd).toList();
-      message = "Guardando Imágenes ${images.length}, $iStart - $iEnd.";
-
-      await _downloadImages(subImages);
-      await Future.delayed(Duration(milliseconds: 200));
-    }
-
-    // TODO: Datos no usados
-    // await _downloadQuestions(cataloguesProvider, ratingProvider);
-    // await _downloadRatings(ratingProvider);
-
-    message = "Descarga completada.";
-    await Future.delayed(Duration(milliseconds: 300));
   }
 
   Future<void> _downloadImages(List<String> images) async {
     List<Future<void>> imagesFuture = [];
     images = images.toSet().toList();
 
-    for (var image in images) {
+    for (String image in images) {
       if (image.isNotEmpty) {
-        imagesFuture.add(DatabaseProvider.db.saveImage(image));
+        final exists =
+            await DatabaseProvider.db.existsRecordBy("images", "url", image);
+
+        if (!exists) {
+          imagesFuture.add(DatabaseProvider.db.saveImage(image));
+        }
       }
     }
 
     await Future.wait(imagesFuture);
+  }
+
+  Future<DashboardResumen> _getDashboardResume() async {
+    final url = Uri.parse("$_url/dashboard-resumen");
+    final response = await http.get(url, headers: _preferences.signedHeaders);
+
+    if (response.statusCode != 200) return null;
+    return dashboardResumenFromJson(response.body);
+  }
+
+  Future<ResumenCarteraVendedor> _getResumeSellerWallet() async {
+    final path = "$_url/resumen/vendedor/${_preferences.session.id}";
+    final url = Uri.parse(path);
+    final response = await http.get(url, headers: _preferences.signedHeaders);
+
+    if (response.statusCode != 200) return null;
+    return resumenCarteraVendedorFromJson(response.body);
+  }
+
+  Future<List<ResumenCarteraCliente>> _getResumeClientsWallets() async {
+    final url = Uri.parse("$_url/offline/resumenes-cartera");
+    final response = await http.get(url, headers: _preferences.signedHeaders);
+
+    if (response.statusCode != 200) return [];
+
+    return List<ResumenCarteraCliente>.from(json
+        .decode(response.body)
+        .map((x) => ResumenCarteraCliente.fromJson(x)));
   }
 
   Future<List<Producto>> _getProducts() async {
@@ -236,10 +279,8 @@ class ConnectionProvider with ChangeNotifier {
     final response = await http.get(url, headers: _preferences.signedHeaders);
 
     if (response.statusCode != 200) return [];
-
     return List<Tienda>.from(
-      json.decode(response.body).map((x) => Tienda.fromJson(x)),
-    );
+        json.decode(response.body).map((x) => Tienda.fromJson(x)));
   }
 
   Future<List<Pedido>> _getOrders() async {
@@ -247,10 +288,8 @@ class ConnectionProvider with ChangeNotifier {
     final response = await http.get(url, headers: _preferences.signedHeaders);
 
     if (response.statusCode != 200) return [];
-
     return List<Pedido>.from(
-      json.decode(response.body).map((x) => Pedido.fromJson(x)),
-    );
+        json.decode(response.body).map((x) => Pedido.fromJson(x)));
   }
 
   Future<List<String>> _getImagenes() async {
@@ -258,19 +297,7 @@ class ConnectionProvider with ChangeNotifier {
     final response = await http.get(url, headers: _preferences.signedHeaders);
 
     if (response.statusCode != 200) return [];
-
     return List<String>.from(json.decode(response.body).map((x) => x));
-  }
-
-  Future<List<ResumenCarteraCliente>> _getResumeClientsWallets() async {
-    final url = Uri.parse("$_url/offline/resumenes-cartera");
-    final response = await http.get(url, headers: _preferences.signedHeaders);
-
-    if (response.statusCode != 200) return [];
-
-    return List<ResumenCarteraCliente>.from(json
-        .decode(response.body)
-        .map((x) => ResumenCarteraCliente.fromJson(x)));
   }
 
   /// TODO: Datos no usados

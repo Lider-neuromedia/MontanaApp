@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
+import 'package:montana_mobile/models/client_wallet_resume.dart';
 import 'package:montana_mobile/models/dashboard_resume.dart';
+import 'package:montana_mobile/models/seller_wallet_resume.dart';
 import 'package:montana_mobile/providers/database_provider.dart';
 import 'package:montana_mobile/utils/preferences.dart';
 
@@ -24,6 +26,9 @@ class DashboardProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  String _clientsReadyMonth = "";
+  String get clientsReadyMonth => _clientsReadyMonth;
+
   set clientsReadyMonth(String value) {
     _clientsReadyMonth = value;
     notifyListeners();
@@ -37,23 +42,36 @@ class DashboardProvider with ChangeNotifier {
     return null;
   }
 
-  String _clientsReadyMonth = "";
-  String get clientsReadyMonth => _clientsReadyMonth;
-
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
-  DashboardResumen _resumen;
-  DashboardResumen get resumen => _resumen;
+  DashboardResumen _resume;
+  DashboardResumen get resume => _resume;
+
+  ResumenCarteraVendedor _sellerResume;
+  ResumenCarteraVendedor get sellerResume => _sellerResume;
+
+  ResumenCarteraCliente _clientResume;
+  ResumenCarteraCliente get clientResume => _clientResume;
 
   Future<void> loadDashboardResume({@required bool local}) async {
-    _resumen = null;
+    _resume = null;
     _isLoading = true;
     _currentClientsReadyDate = clientsReadyDate;
     notifyListeners();
 
-    _resumen =
+    _resume =
         local ? await getDashboardResumeLocal() : await getDashboardResume();
+
+    if (_preferences.session.isVendedor) {
+      _sellerResume = local
+          ? await getResumeSellerWalletLocal()
+          : await getResumeSellerWallet();
+    } else {
+      _clientResume = local
+          ? await getResumeClientWalletLocal()
+          : await getResumeClientWallet();
+    }
 
     _isLoading = false;
     notifyListeners();
@@ -96,6 +114,43 @@ class DashboardProvider with ChangeNotifier {
     resumeTemp["cantidad_pedidos"] = jsonDecode(resumeTemp["cantidad_pedidos"]);
 
     return DashboardResumen.fromJson(resumeTemp);
+  }
+
+  Future<ResumenCarteraVendedor> getResumeSellerWallet() async {
+    final path = "$_url/resumen/vendedor/${_preferences.session.id}";
+    Uri url = Uri.parse(path);
+    final response = await http.get(url, headers: _preferences.signedHeaders);
+
+    if (response.statusCode != 200) return null;
+    return resumenCarteraVendedorFromJson(response.body);
+  }
+
+  Future<ResumenCarteraVendedor> getResumeSellerWalletLocal() async {
+    final record = await DatabaseProvider.db
+        .getRecordById("sellers_resume", _preferences.session.id);
+
+    if (record == null) return null;
+
+    Map<String, Object> recordTemp = Map<String, Object>.of(record);
+    return ResumenCarteraVendedor.fromJson(recordTemp);
+  }
+
+  Future<ResumenCarteraCliente> getResumeClientWallet() async {
+    Uri url = Uri.parse("$_url/resumen/cliente/${_preferences.session.id}");
+    final response = await http.get(url, headers: _preferences.signedHeaders);
+
+    if (response.statusCode != 200) return null;
+    return resumenCarteraClienteFromJson(response.body);
+  }
+
+  Future<ResumenCarteraCliente> getResumeClientWalletLocal() async {
+    final record = await DatabaseProvider.db
+        .getRecordById("clients_resume", _preferences.session.id);
+
+    if (record == null) return null;
+
+    Map<String, Object> recordTemp = Map<String, Object>.of(record);
+    return ResumenCarteraCliente.fromJson(recordTemp);
   }
 }
 

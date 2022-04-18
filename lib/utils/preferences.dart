@@ -30,8 +30,6 @@ class Preferences {
     return DateTime.parse(_prefs.getString("last_sync"));
   }
 
-  int get lastSyncInMinutes => DateTime.now().difference(lastSync).inMinutes;
-  int get lastSyncInSeconds => DateTime.now().difference(lastSync).inSeconds;
   bool get canSync => DateTime.now().difference(lastSync).inSeconds >= 60;
 
   set lastSync(DateTime value) {

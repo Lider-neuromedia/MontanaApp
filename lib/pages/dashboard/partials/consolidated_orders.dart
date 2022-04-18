@@ -25,22 +25,22 @@ class ConsolidatedOrders extends StatelessWidget {
         children: [
           CircularStatistic(
             title: "Realizados",
-            value: dashboardProvider.resumen.cantidadPedidos.realizados,
+            value: dashboardProvider.resume.cantidadPedidos.realizados,
             color: CustomTheme.yellowColor,
           ),
           CircularStatistic(
             title: "Aprobados",
-            value: dashboardProvider.resumen.cantidadPedidos.aprobados,
+            value: dashboardProvider.resume.cantidadPedidos.aprobados,
             color: CustomTheme.greenColor,
           ),
           CircularStatistic(
             title: "Rechazados",
-            value: dashboardProvider.resumen.cantidadPedidos.rechazados,
+            value: dashboardProvider.resume.cantidadPedidos.rechazados,
             color: CustomTheme.redColor,
           ),
           CircularStatistic(
             title: "Pendientes",
-            value: dashboardProvider.resumen.cantidadPedidos.pendientes,
+            value: dashboardProvider.resume.cantidadPedidos.pendientes,
             color: CustomTheme.purpleColor,
           ),
         ],

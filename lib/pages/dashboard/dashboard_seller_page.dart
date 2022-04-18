@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:montana_mobile/utils/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:montana_mobile/pages/catalogue/partials/empty_message.dart';
 import 'package:montana_mobile/pages/catalogue/partials/loading_container.dart';
@@ -69,51 +70,57 @@ class _ResumeData extends StatelessWidget {
   Widget build(BuildContext context) {
     final dashboardProvider = Provider.of<DashboardProvider>(context);
 
-    return ListView(
-      children: [
-        const SizedBox(height: 30.0),
-        const Center(
-          child: const _SectionTitle("CONSOLIDADO COMISIONES"),
-        ),
-        const SizedBox(height: 20.0),
-        Center(
-          child: CardData(
-            title: "Comisiones perdidas",
-            value: "\$3.300.400",
-            icon: Icons.sentiment_dissatisfied_rounded,
-            color: CustomTheme.yellowColor,
-            isMain: true,
-          ),
-        ),
-        _CommisionsList(
-          children: [
-            CardData(
-              title: "Próximas a perder",
-              value: "\$4.300.400",
-              icon: Icons.sentiment_neutral_rounded,
-              color: CustomTheme.yellowColor,
-              isMain: false,
-            ),
-            CardData(
-              title: "Comisiones ganadas",
-              value: "\$3.500.400",
-              icon: Icons.sentiment_very_satisfied,
-              color: CustomTheme.greenColor,
-              isMain: false,
-            ),
-          ],
-        ),
-        const SizedBox(height: 20.0),
-        dashboardProvider.isLoading
-            ? const LoadingContainer()
-            : dashboardProvider.resumen == null
-                ? EmptyMessage(
-                    onPressed: () => dashboardProvider.loadDashboardResume(
-                      local: local,
+    return dashboardProvider.isLoading
+        ? Center(
+            child: const LoadingContainer(),
+          )
+        : dashboardProvider.resume == null ||
+                dashboardProvider.sellerResume == null
+            ? EmptyMessage(
+                message: "No hay información.",
+                onPressed: () =>
+                    dashboardProvider.loadDashboardResume(local: local),
+              )
+            : ListView(
+                children: [
+                  const SizedBox(height: 30.0),
+                  const Center(child: _SectionTitle("CONSOLIDADO COMISIONES")),
+                  const SizedBox(height: 20.0),
+                  Center(
+                    child: CardData(
+                      title: "Comisiones perdidas",
+                      value: formatMoney(dashboardProvider
+                          .sellerResume.comisionesPerdidas
+                          .toDouble()),
+                      icon: Icons.sentiment_dissatisfied_rounded,
+                      color: CustomTheme.yellowColor,
+                      isMain: true,
                     ),
-                    message: "No hay información.",
-                  )
-                : Column(
+                  ),
+                  _CommisionsList(
+                    children: [
+                      CardData(
+                        title: "Próximas a perder",
+                        value: formatMoney(dashboardProvider
+                            .sellerResume.comisionesProximasPerder
+                            .toDouble()),
+                        icon: Icons.sentiment_neutral_rounded,
+                        color: CustomTheme.yellowColor,
+                        isMain: false,
+                      ),
+                      CardData(
+                        title: "Comisiones ganadas",
+                        value: formatMoney(dashboardProvider
+                            .sellerResume.comisionesGanadas
+                            .toDouble()),
+                        icon: Icons.sentiment_very_satisfied,
+                        color: CustomTheme.greenColor,
+                        isMain: false,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20.0),
+                  Column(
                     children: [
                       const _SectionTitle("CONSOLIDADO CLIENTES"),
                       const SizedBox(height: 20.0),
@@ -125,8 +132,8 @@ class _ResumeData extends StatelessWidget {
                       const SizedBox(height: 50.0),
                     ],
                   ),
-      ],
-    );
+                ],
+              );
   }
 }
 
@@ -163,7 +170,7 @@ class _ConsolidatedClients extends StatelessWidget {
         CardStatistic(
           isMain: false,
           title: "Clientes Asignados",
-          value: dashboardProvider.resumen.cantidadClientes,
+          value: dashboardProvider.resume.cantidadClientes,
           label: "Clientes",
         ),
         CardStatistic(
@@ -172,7 +179,7 @@ class _ConsolidatedClients extends StatelessWidget {
           subtitle: dashboardProvider.currentClientsReadyDate != null
               ? dashboardProvider.currentClientsReadyDate
               : "Último mes",
-          value: dashboardProvider.resumen.cantidadClientesAtendidos,
+          value: dashboardProvider.resume.cantidadClientesAtendidos,
           label: "Clientes",
           onTap: () => openFilterReadyClientsModal(context),
         ),

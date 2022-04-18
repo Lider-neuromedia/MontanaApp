@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:montana_mobile/utils/database_tables.dart';
 import 'package:montana_mobile/models/client_wallet_resume.dart';
+import 'package:montana_mobile/models/seller_wallet_resume.dart';
 import 'package:montana_mobile/models/user.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:http/http.dart' as http;
@@ -37,6 +39,7 @@ class DatabaseProvider {
       path,
       version: _databaseVersion,
       onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
     );
   }
 
@@ -50,13 +53,11 @@ class DatabaseProvider {
     final db = await database;
     await db.rawDelete("DELETE FROM dashboard_resume;");
     await db.rawDelete("DELETE FROM catalogues;");
-    await db.rawDelete("DELETE FROM products;");
     await db.rawDelete("DELETE FROM clients;");
     await db.rawDelete("DELETE FROM stores;");
-    await db.rawDelete("DELETE FROM ratings;");
-    await db.rawDelete("DELETE FROM questions;");
     await db.rawDelete("DELETE FROM orders;");
-    await db.rawDelete("DELETE FROM images;");
+    await db.rawDelete("DELETE FROM sellers_resume;");
+    await db.rawDelete("DELETE FROM clients_resume;");
   }
 
   /// --------------------------------------------------------------------------
@@ -82,6 +83,18 @@ class DatabaseProvider {
     }
   }
 
+  Future<void> saveOrUpdateResumeSellerWallet(
+      ResumenCarteraVendedor wallet) async {
+    Map<String, dynamic> data = wallet.toJson();
+    data['id'] = wallet.vendedorId;
+
+    if (await existsRecordById("sellers_resume", wallet.vendedorId)) {
+      await updateRecord("sellers_resume", data, wallet.vendedorId);
+    } else {
+      await saveRecord("sellers_resume", data);
+    }
+  }
+
   /// --------------------------------------------------------------------------
   /// PRODUCTOS
   /// --------------------------------------------------------------------------
@@ -101,8 +114,13 @@ class DatabaseProvider {
   Future<void> saveOrUpdateProducts(
       List<Producto> products, List<int> showRoomCataloguesIds) async {
     for (final product in products) {
-      bool isShowRoom = showRoomCataloguesIds.contains(product.catalogoId);
-      await saveOrUpdateProduct(product, isShowRoom);
+      final isShowRoom = showRoomCataloguesIds.contains(product.catalogoId);
+      final canUpdate =
+          await canUpdateRecord("products", product.id, product.updatedAt);
+
+      if (canUpdate) {
+        await saveOrUpdateProduct(product, isShowRoom);
+      }
     }
   }
 
@@ -397,6 +415,28 @@ class DatabaseProvider {
     return records.isNotEmpty;
   }
 
+  Future<bool> existsRecordBy(String table, String column, String value) async {
+    final db = await database;
+    final records = await db.query(
+      table,
+      where: "$column = ?",
+      whereArgs: [value],
+    );
+    return records.isNotEmpty;
+  }
+
+  // Validar si debe actualizar un registro basado en la fecha de actualización.
+  Future<bool> canUpdateRecord(
+      String table, int id, DateTime currentDate) async {
+    final db = await database;
+    final records = await db.query(
+      table,
+      where: "id = ? and updated_at = ?",
+      whereArgs: [id, currentDate.toIso8601String()],
+    );
+    return records.isEmpty;
+  }
+
   Future<int> deleteRecord(String table, int id) async {
     final db = await database;
     return await db.delete(table, where: "id = ?", whereArgs: [id]);
@@ -415,12 +455,8 @@ class DatabaseProvider {
 
   Future<int> checkRecordToDelete(String table, int id) async {
     final db = await database;
-    return await db.update(
-      table,
-      {"check_delete": 1},
-      where: "id = ?",
-      whereArgs: [id],
-    );
+    return await db.update(table, {"check_delete": 1},
+        where: "id = ?", whereArgs: [id]);
   }
 
   Future<MemoryImage> getImage(String path) async {
@@ -464,143 +500,24 @@ class DatabaseProvider {
   /// --------------------------------------------------------------------------
 
   Future<void> _onCreate(Database db, int version) async {
-    await db.execute('''CREATE TABLE dashboard_resume(
-            id INTEGER PRIMARY KEY,
-            cantidad_clientes INTEGER,
-            cantidad_clientes_atendidos INTEGER,
-            cantidad_tiendas INTEGER,
-            cantidad_pqrs INTEGER,
-            cantidad_pedidos TEXT
-          );''');
-    await db.execute('''CREATE TABLE clients_resume(
-            id INTEGER PRIMARY KEY,
-            cliente_id INTEGER,
-            cupo_preaprobado INTEGER,
-            cupo_disponible INTEGER,
-            saldo_total_deuda INTEGER,
-            saldo_mora INTEGER
-          );''');
-    await db.execute('''CREATE TABLE products(
-            id INTEGER PRIMARY KEY,
-            nombre TEXT,
-            codigo TEXT,
-            referencia TEXT,
-            stock INTEGER,
-            precio REAL,
-            descripcion TEXT,
-            sku TEXT,
-            total REAL,
-            descuento INTEGER,
-            iva INTEGER,
-            catalogo INTEGER,
-            image TEXT,
-            imagenes TEXT,
-            marca_id INTEGER,
-            marca TEXT,
-            created_at TEXT,
-            updated_at TEXT,
-            tipo TEXT
-          );''');
-    await db.execute('''CREATE TABLE images(
-            id INTEGER PRIMARY KEY,
-            url TEXT,
-            image_file TEXT
-          );''');
-    await db.execute('''CREATE TABLE catalogues(
-            id INTEGER PRIMARY KEY,
-            estado TEXT,
-            tipo TEXT,
-            imagen TEXT,
-            titulo TEXT,
-            cantidad INTEGER,
-            descuento INTEGER,
-            etiqueta TEXT,
-            created_at TEXT,
-            updated_at TEXT
-          );''');
-    await db.execute('''CREATE TABLE clients(
-            id INTEGER PRIMARY KEY,
-            name TEXT,
-            apellidos TEXT,
-            email TEXT,
-            tipo_identificacion TEXT,
-            dni TEXT,
-            rol_id INTEGER,
-            datos TEXT,
-            created_at TEXT,
-            updated_at TEXT
-          );''');
+    await db.execute(DatabaseTables.dashboardResume);
+    await db.execute(DatabaseTables.clientsResume);
+    await db.execute(DatabaseTables.sellersResume);
+    await db.execute(DatabaseTables.products);
+    await db.execute(DatabaseTables.images);
+    await db.execute(DatabaseTables.catalogues);
+    await db.execute(DatabaseTables.clients);
+    await db.execute(DatabaseTables.stores);
+    await db.execute(DatabaseTables.ratings);
+    await db.execute(DatabaseTables.questions);
+    await db.execute(DatabaseTables.orders);
+    await db.execute(DatabaseTables.offlineOrders);
+    await db.execute(DatabaseTables.offlineQuotas);
+  }
 
-    await db.execute('''CREATE TABLE stores(
-            id INTEGER PRIMARY KEY,
-            nombre TEXT,
-            lugar TEXT,
-            local TEXT,
-            direccion TEXT,
-            telefono TEXT,
-            sucursal TEXT,
-            fecha_ingreso TEXT,
-            fecha_ultima_compra TEXT,
-            cupo INTEGER,
-            ciudad_codigo TEXT,
-            zona TEXT,
-            bloqueado TEXT,
-            bloqueado_fecha TEXT,
-            nombre_representante TEXT,
-            plazo INTEGER,
-            escala_factura TEXT,
-            observaciones TEXT,
-            cliente_id INTEGER,
-            cliente TEXT,
-            vendedores TEXT,
-            created_at TEXT,
-            updated_at TEXT,
-            check_delete INTEGER
-          );''');
-    await db.execute('''CREATE TABLE ratings(
-            id INTEGER PRIMARY KEY,
-            producto_id TEXT,
-            cantidad_valoraciones INTEGER,
-            usuarios TEXT,
-            valoraciones TEXT
-          );''');
-    await db.execute('''CREATE TABLE questions(
-            id INTEGER PRIMARY KEY,
-            id_form INTEGER,
-            catalogo INTEGER,
-            id_pregunta INTEGER,
-            encuesta INTEGER,
-            pregunta TEXT,
-            respuesta INT,
-            created_at TEXT,
-            updated_at TEXT
-          );''');
-    await db.execute('''CREATE TABLE orders(
-            id INTEGER PRIMARY KEY,
-            fecha TEXT,
-            codigo TEXT,
-            total REAL,
-            firma TEXT,
-            vendedor TEXT,
-            cliente TEXT,
-            estado TEXT,
-            estado_id INTEGER,
-            vendedor_id INTEGER,
-            cliente_id INTEGER,
-            metodo_pago TEXT,
-            sub_total REAL,
-            notas TEXT,
-            notas_facturacion TEXT,
-            detalles TEXT,
-            novedades TEXT
-          );''');
-    await db.execute('''CREATE TABLE offline_orders(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            content TEXT
-          );''');
-    await db.execute('''CREATE TABLE offline_quotas(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            content TEXT
-          );''');
+  void _onUpgrade(Database db, int oldVersion, int newVersion) {
+    if (oldVersion < newVersion) {
+      // TODO: Actualizar db.
+    }
   }
 }
